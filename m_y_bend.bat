@@ -2,9 +2,18 @@
 set /p mesaj="Yedekleme notunuzu girin: "
 echo [%date% %time%] Bekent 10'lu yedekleme sistemi baslatiliyor...
 
+
+
+
 :: 1. SQL Yedek Klasör Kontrolü
-if not exist "..\bekent-sql-yedekler" mkdir "..\bekent-sql-yedekler"
+if not exist "bekent-sql-yedekler" mkdir "bekent-sql-yedekler"
 set PGPASSWORD=123456
+
+
+
+
+
+
 
 :: Sira takibi icin bir dosya kullanalim (yoksa olusturur)
 if not exist "sira.txt" echo 1 > sira.txt
@@ -13,7 +22,7 @@ set /p sira=<sira.txt
 echo SQL yedekleniyor (Yedek No: %sira%)...
 
 :: Yedekleme islemi (C:\pgdata\bin yolunu kullaniyoruz)
-"C:\pgdata\bin\pg_dump.exe" -U postgres -d teknik_servis -f "..\bekent-sql-yedekler\db_yedek_%sira%.sql"
+"C:\pgdata\bin\pg_dump.exe" -U postgres -d teknik_servis -f "bekent-sql-yedekler\db_yedek_%sira%.sql"
 
 :: Siradaki numara icin hesaplama yapalim
 set /a "sira=%sira% + 1"
