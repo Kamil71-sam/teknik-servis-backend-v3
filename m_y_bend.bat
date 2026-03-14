@@ -1,24 +1,33 @@
 @echo off
 set /p mesaj="Yedekleme notunuzu girin: "
-echo [%date% %time%] Bekent yedekleme baslatiliyor...
+echo [%date% %time%] Bekent 10'lu yedekleme sistemi baslatiliyor...
 
-:: 1. SQL Yedekleme Bölümü
+:: 1. SQL Yedek Klasör Kontrolü
 if not exist "..\bekent-sql-yedekler" mkdir "..\bekent-sql-yedekler"
 set PGPASSWORD=123456
 
-echo SQL yedekleniyor... lutfen bekleyin...
+:: Sira takibi icin bir dosya kullanalim (yoksa olusturur)
+if not exist "sira.txt" echo 1 > sira.txt
+set /p sira=<sira.txt
 
-:: DİKKAT: Veritabanı adını 'teknik_servis' olarak düzelttim müdürüm!
-"C:\pgdata\bin\pg_dump.exe" -U postgres -d teknik_servis -f "..\bekent-sql-yedekler\db_yedek_guncel.sql"
+echo SQL yedekleniyor (Yedek No: %sira%)...
 
-:: 2. GitHub Yedekleme Bölümü
+:: Yedekleme islemi (C:\pgdata\bin yolunu kullaniyoruz)
+"C:\pgdata\bin\pg_dump.exe" -U postgres -d teknik_servis -f "..\bekent-sql-yedekler\db_yedek_%sira%.sql"
+
+:: Siradaki numara icin hesaplama yapalim
+set /a "sira=%sira% + 1"
+if %sira% gtr 10 set sira=1
+echo %sira% > sira.txt
+
+:: 2. GitHub Yedekleme
 echo GitHub'a gonderiliyor...
 git add .
-git commit -m "MANUEL YEDEK: %mesaj%"
+git commit -m "MANUEL YEDEK %sira%: %mesaj%"
 git push origin main
 
 echo.
 echo ===========================================
-echo   OPERASYON TAMAM! ARTIK GUVENDESİN MUDURUM.
+echo   YEDEK %sira% ALINDI. 10 YEDEKTE BIR DÖNER.
 echo ===========================================
 pause
