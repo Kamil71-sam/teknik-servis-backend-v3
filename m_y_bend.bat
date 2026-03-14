@@ -1,20 +1,19 @@
-
 @echo off
-set /p mesaj="Yedekleme notunuzu girin (Ornegin: SQL Tablolari Bitti): "
+set /p mesaj="Yedekleme notunuzu girin: "
 echo [%date% %time%] Bekent yedekleme baslatiliyor...
 
-:: 1. Bilgisayara SQL Yedeği Al (PostgreSQL Kayıtları)
-:: MÜDÜR: Şifreyi buraya gömdüm, sana bir daha sormaz.
+:: 1. SQL Yedek (Klasör yoksa oluşturur)
+if not exist "..\bekent-sql-yedekler" mkdir "..\bekent-sql-yedekler"
 set PGPASSWORD=123456
 
-if not exist "..\bekent-sql-yedekler" mkdir "..\bekent-sql-yedekler"
-"C:\Program Files\PostgreSQL\16\bin\pg_dump.exe" -U postgres -d teknik_servis_db > "..\bekent-sql-yedekler\db_yedek_%date%.sql"
+:: DİKKAT: Alttaki 16 yazan yeri kendi PostgreSQL sürümünle değiştir müdürüm!
+"C:\Program Files\PostgreSQL\16\bin\pg_dump.exe" -U postgres -d teknik_servis_db > "..\bekent-sql-yedekler\db_yedek_%date:~0,10%.sql"
 
-:: 2. Kodları GitHub'a gönder (Bulut Yedek)
+:: 2. GitHub Yedek
 git add .
 git commit -m "MANUEL YEDEK: %mesaj%"
 git push origin main
 
 echo.
-echo Islem tamam! Hem SQL Veritabanı bilgisayara, hem kodlar GitHub'a kaydedildi.
+echo Islem tamam! SQL verisi klasöre, kodlar GitHub'a kaydedildi.
 pause
