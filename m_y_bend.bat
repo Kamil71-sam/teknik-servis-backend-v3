@@ -6,8 +6,12 @@ echo [%date% %time%] Bekent yedekleme baslatiliyor...
 if not exist "..\bekent-sql-yedekler" mkdir "..\bekent-sql-yedekler"
 set PGPASSWORD=123456
 
-:: DİKKAT: Alttaki 16 yazan yeri kendi PostgreSQL sürümünle değiştir müdürüm!
-"C:\Program Files\PostgreSQL\16\bin\pg_dump.exe" -U postgres -d teknik_servis_db > "..\bekent-sql-yedekler\db_yedek_%date:~0,10%.sql"
+
+:: SQL Yedeği - Tarih formatını her bilgisayara uyacak şekilde güncelledim müdürüm
+"C:\Program Files\PostgreSQL\16\bin\pg_dump.exe" -U postgres -d teknik_servis_db > "..\bekent-sql-yedekler\db_yedek_final.sql"
+
+
+
 
 :: 2. GitHub Yedek
 git add .
@@ -16,4 +20,4 @@ git push origin main
 
 echo.
 echo Islem tamam! SQL verisi klasöre, kodlar GitHub'a kaydedildi.
-pause
+pause 
