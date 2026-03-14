@@ -28,6 +28,6 @@ git push origin main
 
 echo.
 echo ===========================================
-echo   YEDEK %sira% ALINDI. 10 YEDEKTE BIR DÖNER.
+echo   YEDEK %sira% ALINDI. 10 YEDEKTE BIR DONER.
 echo ===========================================
 pause
