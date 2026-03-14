@@ -8,9 +8,14 @@ set PGPASSWORD=123456
 
 echo SQL yedekleniyor... lütfen bekleyin...
 
-:: Yolu komple tırnak içine alıp komutu direkt çağırıyoruz
-set "PG_DUMP_PATH=C:\Program Files\PostgreSQL\16\bin\pg_dump.exe"
-"%PG_DUMP_PATH%" -U postgres -d teknik_servis_db -f "..\bekent-sql-yedekler\db_yedek_guncel.sql"
+
+:: SQL Yedekleme - Kısa yol ve kesin çözüm
+"C:\sql_arac\pg_dump.exe" -U postgres -d teknik_servis_db -f "..\bekent-sql-yedekler\db_yedek_guncel.sql"
+
+
+
+
+
 
 :: 2. GitHub Yedekleme Bölümü
 echo GitHub'a gonderiliyor...
