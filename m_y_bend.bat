@@ -7,9 +7,8 @@ if not exist "..\bekent-sql-yedekler" mkdir "..\bekent-sql-yedekler"
 set PGPASSWORD=123456
 
 
-:: SQL Yedeği - Tarih formatını her bilgisayara uyacak şekilde güncelledim müdürüm
-"C:\Program Files\PostgreSQL\16\bin\pg_dump.exe" -U postgres -d teknik_servis_db > "..\bekent-sql-yedekler\db_yedek_final.sql"
-
+:: SQL Yedeği - Tarih karmaşasını bitiren en sağlam kod:
+"C:\Program Files\PostgreSQL\16\bin\pg_dump.exe" -U postgres -d teknik_servis_db > "..\bekent-sql-yedekler\db_yedek_otomatik.sql"
 
 
 
