@@ -19,7 +19,7 @@ router.post("/", async (req, res) => {
 // --- MÜŞTERİ LİSTELEME (GET) ---
 router.get("/", async (req, res) => {
   try {
-    const result = await db.query("SELECT * FROM customers ORDER BY id ASC");
+    const result = await db.query("SELECT * FROM customers ORDER BY name ASC");
     res.json(result.rows);
   } catch (err) {
     res.status(500).json({ success: false, error: err.message });

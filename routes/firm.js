@@ -43,7 +43,7 @@ router.post('/add', async (req, res) => {
 // --- TÜM FİRMALARI ÇEKME (GET) ---
 router.get('/all', async (req, res) => {
   try {
-    const result = await pool.query('SELECT * FROM firms ORDER BY id DESC');
+    const result = await pool.query('SELECT * FROM firms ORDER BY firma_adi ASC');
     res.json(result.rows);
   } catch (err) {
     console.error("Firma çekme hatası:", err.message);
