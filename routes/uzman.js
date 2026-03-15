@@ -2,68 +2,69 @@ const express = require("express");
 const router = express.Router();
 const db = require("../database");
 
-// DASHBOARD VERİSİ
+// --- MÜDÜR: USTA DASHBOARD (CANLI VERİ VE İSİMLER) ---
 router.post("/dashboard", async (req, res) => {
-    const { email } = req.body;
-    console.log("📢 Dashboard isteği geldi:", email);
+    const { email } = req.body; 
+    const ustaParam = email ? email.replace('_', ' ') : ''; 
+
     try {
-        const atananRes = await db.query(
-            "SELECT COUNT(*) FROM services WHERE TRIM(atanan_usta) = $1", [email]
+        const statsRes = await db.query(
+            `SELECT 
+                COUNT(*) FILTER (WHERE status NOT IN ('Pasif', 'Teslim Edildi', 'İptal Edildi')) as atanan,
+                COUNT(*) FILTER (WHERE status IN ('Onaylandı', 'Tamirde')) as aktif,
+                COUNT(*) FILTER (WHERE status = 'Parça Bekliyor') as parca_bekleyen
+             FROM services 
+             WHERE TRIM(atanan_usta) ILIKE $1`, [`%${ustaParam}%`]
         );
         
-        // MÜDÜR: Dashboard tarafı, marka (brand) tek olarak çekiliyor
         const sonIslerRes = await db.query(
             `SELECT 
-                s.id, 
-                s.servis_no, 
-                s.issue_text as issue, 
-                s.status,
-                d.cihaz_turu,
-                d.brand as marka_model
+                s.id, s.servis_no, s.issue_text as issue, s.status, 
+                d.brand as marka_model, d.cihaz_turu,
+                COALESCE(c.name, f.firma_adi, 'Bilinmeyen Müşteri') as customer
              FROM services s
              LEFT JOIN devices d ON s.device_id = d.id
-             WHERE TRIM(s.atanan_usta) = $1 
+             LEFT JOIN customers c ON d.customer_id = c.id
+             LEFT JOIN firms f ON d.firm_id = f.id
+             WHERE TRIM(s.atanan_usta) ILIKE $1 AND s.status NOT IN ('Teslim Edildi', 'Pasif')
              ORDER BY s.id DESC LIMIT 2`, 
-            [email]
+            [`%${ustaParam}%`]
         );
+
         res.json({
             success: true,
             data: {
-                atanananIslerSayisi: parseInt(atananRes.rows[0].count),
-                aktifIslerSayisi: 0,
-                parcaBekleyenSayisi: 0,
+                atanananIslerSayisi: parseInt(statsRes.rows[0].atanan) || 0,
+                aktifIslerSayisi: parseInt(statsRes.rows[0].aktif) || 0,
+                parcaBekleyenSayisi: parseInt(statsRes.rows[0].parca_bekleyen) || 0,
                 randevuSayisi: 0,
                 sonIsler: sonIslerRes.rows,
             }
         });
     } catch (err) {
-        console.error("❌ DB Hatası:", err.message);
         res.status(500).json({ success: false, error: err.message });
     }
 });
 
-// TÜM İŞLER LİSTESİ
+// --- MÜDÜR: TÜM İŞLER LİSTESİ (İSİM VE NOTLAR BAĞLANDI) ---
 router.post("/tum-isler", async (req, res) => {
     const { email } = req.body;
-    console.log("📢 Tüm işler listesi istendi:", email);
+    const ustaParam = email ? email.replace('_', ' ') : '';
+
     try {
-        // MÜDÜR: Hatalı isimler (muster_notu) düzeltildi. Seri No devices'tan alınıyor. Marka tek kaldı.
         const tumIslerRes = await db.query(
             `SELECT 
-                s.id, 
-                s.servis_no, 
-                s.issue_text as issue, 
-                s.status,
-                s.created_at,
-                d.cihaz_turu,
-                d.brand as marka_model,
-                d.serial_no as seri_no,
-                d.muster_notu as musteri_notu
+                s.id, s.servis_no, s.issue_text as issue, s.status, s.created_at,
+                s.musteri_notu, 
+                d.cihaz_turu, d.brand as marka_model, d.serial_no as seri_no,
+                COALESCE(c.name, f.firma_adi, 'Bilinmeyen Müşteri') as customer
              FROM services s
              LEFT JOIN devices d ON s.device_id = d.id
-             WHERE TRIM(s.atanan_usta) = $1 
+             LEFT JOIN customers c ON d.customer_id = c.id
+             LEFT JOIN firms f ON d.firm_id = f.id
+             WHERE TRIM(s.atanan_usta) ILIKE $1 AND s.status NOT IN ('Pasif', 'Teslim Edildi')
              ORDER BY s.id DESC`, 
-            [email]
+            [`%${ustaParam}%`]
         );
         res.json({ success: true, data: tumIslerRes.rows });
     } catch (err) {
@@ -71,36 +72,20 @@ router.post("/tum-isler", async (req, res) => {
     }
 });
 
-// --- YENİ EKLENEN SÜREÇ TAKİP ROTASI ---
-// MÜDÜR: Bu rota hem işi günceller hem de tarihçeye (Log) kayıt atar.
+// --- MÜDÜR: PİNPON GÜNCELLEME ---
 router.post("/servis-guncelle", async (req, res) => {
     const { id, offer_price, expert_note, status, changed_by, old_status } = req.body;
-    console.log(`📢 Durum Değişimi: ${id} nolu iş, ${old_status} -> ${status}`);
-
     try {
-        // 1. İşlem: Ana tabloyu (services) güncelle
-        // COALESCE kullanarak eğer fiyat veya not gelmezse eski veriyi koruyoruz.
         await db.query(
-            `UPDATE services 
-             SET offer_price = COALESCE($1, offer_price), 
-                 expert_note = COALESCE($2, expert_note), 
-                 status = $3, 
-                 updated_at = NOW() 
-             WHERE id = $4`,
+            `UPDATE services SET offer_price = COALESCE($1, offer_price), expert_note = $2, status = $3, updated_at = NOW() WHERE id = $4`,
             [offer_price, expert_note, status, id]
         );
-
-        // 2. İşlem: Tarihçe (service_status_history) tablosuna kayıt at
-        // Bu sayede "Kim, ne zaman değiştirdi?" sorusunun cevabı saklanır.
         await db.query(
-            `INSERT INTO service_status_history (service_id, old_status, new_status, changed_by, note)
-             VALUES ($1, $2, $3, $4, $5)`,
-            [id, old_status, status, changed_by, expert_note || 'Durum güncellendi']
+            `INSERT INTO service_status_history (service_id, old_status, new_status, changed_by, note) VALUES ($1, $2, $3, $4, $5)`,
+            [id, old_status, status, changed_by, expert_note]
         );
-
-        res.json({ success: true, message: "Süreç başarıyla güncellendi ve kaydedildi." });
+        res.json({ success: true, message: "İşlem tamam" });
     } catch (err) {
-        console.error("❌ Süreç Güncelleme Hatası:", err.message);
         res.status(500).json({ success: false, error: err.message });
     }
 });
