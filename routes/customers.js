@@ -26,40 +26,72 @@ router.get("/", async (req, res) => {
   }
 });
 
-// --- MÜŞTERİ SİLME (DELETE) ---
+// --- MÜDÜR: AKILLI VE KÖKTEN SİLME (DELETE) ---
 router.delete("/:id", async (req, res) => {
   const { id } = req.params;
-  
-  try {
-    // 1. ADIM: Müşteriye bağlı cihaz var mı?
-    const checkDevice = await db.query(
-      "SELECT id FROM devices WHERE customer_id = $1 LIMIT 1", 
-      [id]
-    );
+  const { force } = req.query; // Mobilden "force=true" şifresi gelirse acımadan sileceğiz.
 
-    if (checkDevice.rows.length > 0) {
-      return res.status(400).json({ 
-        success: false, 
-        message: "Müşteriye ait kayıtlı cihazlar bulunmaktadır. Güvenlik nedeniyle önce bu cihazları silmeniz veya başka müşteriye aktarmanız gerekmektedir." 
+  try {
+    // 1. KONTROL AŞAMASI: Bu müşteriye ait içeride servis kaydı var mı?
+    const checkQuery = `
+      SELECT s.servis_no 
+      FROM services s
+      JOIN devices d ON s.device_id = d.id
+      WHERE d.customer_id = $1
+    `;
+    const checkResult = await db.query(checkQuery, [id]);
+
+    // 2. UYARI AŞAMASI: Kayıt varsa ve mobilden "acımadan sil (force)" emri HENÜZ gelmediyse:
+    if (checkResult.rowCount > 0 && force !== 'true') {
+      const servisNumaralari = checkResult.rows.map(row => row.servis_no).join(', ');
+      
+      return res.json({ 
+        uyariVar: true, 
+        message: `Bu müşteriye ait [ ${servisNumaralari} ] numaralı iş kayıtları var.\n\nYine de hem müşteriyi hem de bu işleri SONSUZA KADAR silmek istiyor musunuz?` 
       });
     }
 
-    // 2. ADIM: Cihaz yoksa doğrudan müşteriyi sil
-    const deleteResult = await db.query("DELETE FROM customers WHERE id = $1", [id]);
+    // MÜDÜR NOTU: İş kaydı yok ama cihazı varsa diye ekstra kontrol (Yine uyaralım)
+    const checkDeviceOnly = await db.query("SELECT id FROM devices WHERE customer_id = $1", [id]);
+    if (checkDeviceOnly.rowCount > 0 && checkResult.rowCount === 0 && force !== 'true') {
+        return res.json({
+            uyariVar: true,
+            message: `Bu müşterinin üzerine kayıtlı cihaz(lar) var ama hiç işlem görmemiş.\n\nYine de müşteriyi ve cihazlarını SONSUZA KADAR silmek istiyor musunuz?`
+        });
+    }
+
+    // 3. İNFAZ AŞAMASI: Kayıt yoksa veya mobilden "force=true" emri geldiyse acımıyoruz!
     
+    await db.query('BEGIN'); // Veritabanı işlemini başlatıyoruz (biri patlarsa hepsi iptal olsun diye)
+
+    // a) Varsa bu adama ait servis notlarını (service_notes) uçur
+    await db.query(`DELETE FROM service_notes WHERE service_id IN (SELECT s.id FROM services s JOIN devices d ON s.device_id = d.id WHERE d.customer_id = $1)`, [id]);
+    
+    // b) Servis (iş) kayıtlarını uçur
+    await db.query(`DELETE FROM services WHERE device_id IN (SELECT id FROM devices WHERE customer_id = $1)`, [id]);
+    
+    // c) Cihazları uçur
+    await db.query(`DELETE FROM devices WHERE customer_id = $1`, [id]);
+    
+    // d) En son müşterinin kendisini yeryüzünden sil
+    const deleteResult = await db.query(`DELETE FROM customers WHERE id = $1`, [id]);
+
+    await db.query('COMMIT'); // İşlemi onayla ve fişi çek
+
     if (deleteResult.rowCount > 0) {
-      res.json({ success: true, message: "Müşteri kaydı sistemden başarıyla kaldırıldı." });
+      res.json({ success: true, uyariVar: false, message: "Müşteri ve tüm geçmişi kökten silindi." });
     } else {
       res.status(404).json({ success: false, message: "Silinmek istenen müşteri kaydı bulunamadı." });
     }
 
   } catch (err) {
+    await db.query('ROLLBACK'); // Hata olursa hiçbir şeyi silme, sistemi geri al
     console.error("SİLME HATASI:", err.message);
-    res.status(500).json({ success: false, error: "Veritabanı işlemi sırasında teknik bir hata oluştu." });
+    res.status(500).json({ success: false, error: "Silme işlemi sırasında hata oluştu: " + err.message });
   }
 });
 
-// --- İŞTE EKSİK OLAN KISIM: MÜŞTERİ GÜNCELLEME (PUT) ---
+// --- MÜŞTERİ GÜNCELLEME (PUT) ---
 router.put("/:id", async (req, res) => {
   const { id } = req.params;
   const { name, phone, fax, email, address } = req.body;

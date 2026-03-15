@@ -52,30 +52,66 @@ router.get('/all', async (req, res) => {
 });
 
 
-// --- 1. FİRMA SİLME (Bireyseldeki Gibi Cihaz Kontrolü Eklendi) ---
+// --- MÜDÜR: AKILLI VE KÖKTEN SİLME (DELETE) ---
 router.delete("/:id", async (req, res) => {
   const { id } = req.params;
+  const { force } = req.query; // Mobilden "force=true" şifresi gelirse acımadan sileceğiz.
+
   try {
-    // MÜDÜR: Hata buradaydı! Önce 'devices' tablosuna bakıyoruz.
-    const checkDevice = await pool.query("SELECT id FROM devices WHERE firm_id = $1 LIMIT 1", [id]);
-    
-    if (checkDevice.rows.length > 0) {
-      return res.status(400).json({ 
-        success: false,
-        message: "Bu firmaya ait kayıtlı cihazlar bulunmaktadır. Önce cihazları silmeniz gerekmektedir!" 
+    // 1. KONTROL AŞAMASI: Bu firmaya ait içeride servis kaydı var mı?
+    const checkQuery = `
+      SELECT s.servis_no 
+      FROM services s
+      JOIN devices d ON s.device_id = d.id
+      WHERE d.firm_id = $1
+    `;
+    const checkResult = await pool.query(checkQuery, [id]);
+
+    // 2. UYARI AŞAMASI: Kayıt varsa ve mobilden "acımadan sil (force)" emri HENÜZ gelmediyse:
+    if (checkResult.rowCount > 0 && force !== 'true') {
+      const servisNumaralari = checkResult.rows.map(row => row.servis_no).join(', ');
+      
+      return res.json({ 
+        uyariVar: true, 
+        message: `Bu firmaya ait [ ${servisNumaralari} ] numaralı iş kayıtları var.\n\nYine de hem firmayı hem de bu işleri SONSUZA KADAR silmek istiyor musunuz?` 
       });
     }
 
-    // Cihaz yoksa firmayı sil
-    const deleteResult = await pool.query("DELETE FROM firms WHERE id = $1", [id]);
+    // MÜDÜR NOTU: İş kaydı yok ama cihazı varsa diye ekstra kontrol (Yine uyaralım)
+    const checkDeviceOnly = await pool.query("SELECT id FROM devices WHERE firm_id = $1", [id]);
+    if (checkDeviceOnly.rowCount > 0 && checkResult.rowCount === 0 && force !== 'true') {
+        return res.json({
+            uyariVar: true,
+            message: `Bu firmanın üzerine kayıtlı cihaz(lar) var ama hiç işlem görmemiş.\n\nYine de firmayı ve cihazlarını SONSUZA KADAR silmek istiyor musunuz?`
+        });
+    }
+
+    // 3. İNFAZ AŞAMASI: Kayıt yoksa veya mobilden "force=true" emri geldiyse acımıyoruz!
     
+    await pool.query('BEGIN'); // Veritabanı işlemini başlatıyoruz
+
+    // a) Varsa bu firmaya ait servis notlarını (service_notes) uçur
+    await pool.query(`DELETE FROM service_notes WHERE service_id IN (SELECT s.id FROM services s JOIN devices d ON s.device_id = d.id WHERE d.firm_id = $1)`, [id]);
+    
+    // b) Servis (iş) kayıtlarını uçur
+    await pool.query(`DELETE FROM services WHERE device_id IN (SELECT id FROM devices WHERE firm_id = $1)`, [id]);
+    
+    // c) Cihazları uçur
+    await pool.query(`DELETE FROM devices WHERE firm_id = $1`, [id]);
+    
+    // d) En son firmanın kendisini yeryüzünden sil
+    const deleteResult = await pool.query(`DELETE FROM firms WHERE id = $1`, [id]);
+
+    await pool.query('COMMIT'); // İşlemi onayla ve fişi çek
+
     if (deleteResult.rowCount > 0) {
-      res.json({ success: true, message: "Firma kaydı başarıyla silindi." });
+      res.json({ success: true, uyariVar: false, message: "Firma ve tüm geçmişi kökten silindi." });
     } else {
-      res.status(404).json({ success: false, message: "Silinecek firma bulunamadı." });
+      res.status(404).json({ success: false, message: "Silinmek istenen firma kaydı bulunamadı." });
     }
 
   } catch (err) {
+    await pool.query('ROLLBACK'); // Hata olursa hiçbir şeyi silme, sistemi geri al
     console.error("Firma silme hatası:", err.message);
     res.status(500).json({ success: false, error: "Silme sırasında hata oluştu: " + err.message });
   }
