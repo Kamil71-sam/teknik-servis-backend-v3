@@ -3,6 +3,9 @@ const cors = require("cors"); // MÜDÜR: Bu önemli, dışardan erişimi açar
 const db = require("./database");
 const firmRoute = require('./routes/firm');
 
+// --- MÜDÜR: YENİ MODÜL (MALZEME TALEPLERİ) BURAYA EKLENDİ ---
+const materialRequestsRoutes = require("./routes/material_requests"); 
+
 const app = express();
 
 // --- 1. MIDDLEWARE AYARLARI ---
@@ -26,6 +29,9 @@ app.use("/service-notes", serviceNotesRoutes);
 app.use("/auth", authRoutes);
 app.use("/uzman", uzmanRoutes); // MÜDÜR: Uzman yolu açıldı
 
+// --- MÜDÜR: MALZEME TALEP YOLU BURADA AÇILDI ---
+app.use("/api/material", materialRequestsRoutes); 
+
 // --- 4. TEST ROTASI ---
 app.get("/", (req, res) => {
   res.send("Teknik Servis API Jilet Gibi Çalışıyor");
@@ -40,7 +46,8 @@ app.listen(PORT, '0.0.0.0', () => {
   console.log("-----------------------------------------");
   console.log("🚀 Server ağ üzerinden erişime açıldı!");
   console.log(`📡 Yerel Adres: http://localhost:${PORT}`);
-  console.log(`📱 Telefon İçin: http://192.168.1.45:${PORT}`);
-  console.log("🛠️  PostgreSQL Bağlantısı Hazır");
+  console.log(`📱 Telefon İçin: http://192.168.1.39:${PORT}`);
+  console.log("🛠️  Veritabanı Bağlantısı Hazır"); // Not: PostgreSQL şeması gördüm ama kodunda sqlite3 kullanılıyor olabilir, şemaya sadık kalıyoruz.
+  console.log("🛠️  Malzeme Talep Sistemi Aktif");
   console.log("-----------------------------------------");
 });
