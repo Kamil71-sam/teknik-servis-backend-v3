@@ -46,7 +46,7 @@ app.listen(PORT, '0.0.0.0', () => {
   console.log("-----------------------------------------");
   console.log("🚀 Server ağ üzerinden erişime açıldı!");
   console.log(`📡 Yerel Adres: http://localhost:${PORT}`);
-  console.log(`📱 Telefon İçin: http://192.168.1.39:${PORT}`);
+  console.log(`📱 Telefon İçin: http://192.168.1.41:${PORT}`);
   console.log("🛠️  Veritabanı Bağlantısı Hazır"); // Not: PostgreSQL şeması gördüm ama kodunda sqlite3 kullanılıyor olabilir, şemaya sadık kalıyoruz.
   console.log("🛠️  Malzeme Talep Sistemi Aktif");
   console.log("-----------------------------------------");

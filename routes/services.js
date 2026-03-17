@@ -9,7 +9,10 @@ router.get("/all", async (req, res) => {
       SELECT v.*, s.offer_price 
       FROM servis_detay v
       LEFT JOIN services s ON v.id = s.id
-      WHERE v.durum != 'Pasif' AND v.durum != 'PASIF / ARSIV' 
+
+      
+      WHERE v.durum NOT IN ('Pasif', 'PASIF / ARSIV', 'Teslim Edildi', 'İptal Edildi', 'İptal')
+
       ORDER BY v.id DESC
     `;
     const result = await db.query(query);
@@ -22,7 +25,6 @@ router.get("/all", async (req, res) => {
 
 // --- MÜDÜR: 2. KAPI (KAYIT EKLEME - NOT BORUSU BAĞLANDI) ---
 router.post("/", async (req, res) => {
-  // MÜDÜR: musteri_notu'nu da body'den içeri aldık
   const { device_id, issue_text, atanan_usta, musteri_notu } = req.body;
   try {
     const result = await db.query(
@@ -104,7 +106,6 @@ router.put("/:id", async (req, res) => {
   const { issue_text, status, atanan_usta, offer_price, musteri_notu } = req.body;
 
   try {
-    // MÜDÜR: COALESCE kullanarak eğer yeni veri gelmemişse eskisini koruyoruz!
     const query = `
       UPDATE services 
       SET issue_text = COALESCE($1, issue_text), 
@@ -119,7 +120,7 @@ router.put("/:id", async (req, res) => {
     const values = [
       issue_text || null, 
       status || null, 
-      atanan_usta || null, // Eğer boş gelirse eskisi kalacak
+      atanan_usta || null, 
       offer_price || null, 
       musteri_notu || null, 
       id
