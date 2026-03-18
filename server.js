@@ -20,6 +20,8 @@ const servicesRoutes = require("./routes/services");
 const serviceNotesRoutes = require("./routes/serviceNotes");
 const authRoutes = require("./routes/auth");
 const uzmanRoutes = require('./routes/uzman'); // MÜDÜR: Uzman modülü eklendi
+const appointmentRoutes = require('./routes/appointments');
+
 
 // --- 3. ANA ŞALTERLER ---
 app.use("/customers", customersRoutes);
@@ -28,6 +30,8 @@ app.use("/services", servicesRoutes);
 app.use("/service-notes", serviceNotesRoutes);
 app.use("/auth", authRoutes);
 app.use("/uzman", uzmanRoutes); // MÜDÜR: Uzman yolu açıldı
+app.use("/api/appointments", appointmentRoutes); // MÜDÜR: Randevu yolu açıldı
+
 
 // --- MÜDÜR: MALZEME TALEP YOLU BURADA AÇILDI ---
 app.use("/api/material", materialRequestsRoutes); 
