@@ -5,7 +5,7 @@ const firmRoute = require('./routes/firm');
 
 // --- MÜDÜR: YENİ MODÜL (MALZEME TALEPLERİ) BURAYA EKLENDİ ---
 const materialRequestsRoutes = require("./routes/material_requests"); 
-
+const operationRoutes = require('./routes/operation');
 const app = express();
 
 // --- 1. MIDDLEWARE AYARLARI ---
@@ -25,14 +25,15 @@ const appointmentRoutes = require('./routes/appointments');
 
 // --- 3. ANA ŞALTERLER ---
 app.use("/customers", customersRoutes);
+app.use("/api/customers", customersRoutes); // BU YENİ!
 app.use("/devices", devicesRoutes);
 app.use("/services", servicesRoutes);
 app.use("/service-notes", serviceNotesRoutes);
 app.use("/auth", authRoutes);
 app.use("/uzman", uzmanRoutes); // MÜDÜR: Uzman yolu açıldı
 app.use("/api/appointments", appointmentRoutes); // MÜDÜR: Randevu yolu açıldı
-
-
+app.use("/api/firm", firmRoute);
+app.use('/api/operation', operationRoutes);
 // --- MÜDÜR: MALZEME TALEP YOLU BURADA AÇILDI ---
 app.use("/api/material", materialRequestsRoutes); 
 

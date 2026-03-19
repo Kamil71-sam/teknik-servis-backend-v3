@@ -131,4 +131,28 @@ router.get("/usta/:usta_adi", async (req, res) => {
     }
 });
 
+// --- MÜDÜR: ÇAKIŞMA KONTROLÜ (DÜZELTİLMİŞ HALİ) ---
+router.get("/check-conflict", async (req, res) => {
+  const { date, time } = req.query;
+  try {
+    // MÜDÜR: Veritabanındaki gerçek sütun isimlerini (appointment_date, appointment_time) buraya yazdım.
+    const query = `
+      SELECT id FROM appointments 
+      WHERE appointment_date = $1 AND appointment_time = $2
+    `;
+    const result = await db.query(query, [date, time]);
+
+    // Eğer o tarih ve saatte kayıt varsa isOccupied: true döner
+    res.json({ isOccupied: result.rowCount > 0 });
+  } catch (err) {
+    console.error("ÇAKIŞMA SORGUSU HATASI:", err.message);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+
+
+
+
+
 module.exports = router;
