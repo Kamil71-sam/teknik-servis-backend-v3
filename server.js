@@ -1,6 +1,12 @@
 const express = require("express");
 const cors = require("cors"); // MÜDÜR: Bu önemli, dışardan erişimi açar
+
+
+
+
 const db = require("./database");
+
+
 const firmRoute = require('./routes/firm');
 
 // --- MÜDÜR: YENİ MODÜL (MALZEME TALEPLERİ) BURAYA EKLENDİ ---
