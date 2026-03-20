@@ -77,12 +77,25 @@ router.post("/ekle", async (req, res) => {
     }
 });
 
-// --- 3. RANDEVU LİSTESİ (TAKİP EKRANI) ---
+// --- 3. RANDEVU LİSTESİ (TAKİP EKRANI / BANKO) ---
+// MÜDÜRÜM: Buradaki sorguyu 'parçalayıcı' hale getirdim ve USTAYI ekledim.
 router.get("/liste/aktif", async (req, res) => {
     try {
         const query = `
             SELECT 
-                a.id, a.servis_no, a.appointment_date, a.appointment_time, a.issue_text, a.status,
+                a.id, 
+                a.servis_no, 
+                a.appointment_date, 
+                a.appointment_time, 
+                a.status,
+                a.assigned_usta, -- MÜDÜRÜM: Usta bilgisini buraya ekledim.
+                
+                -- ADRES, CİHAZ VE NOT AYIKLAMA MOTORU:
+                TRIM(SPLIT_PART(a.issue_text, '🖊️ CİHAZ:', 1)) AS parca_adres,
+                TRIM(SPLIT_PART(SPLIT_PART(a.issue_text, '🖊️ CİHAZ:', 2), '📝 NOT:', 1)) AS parca_cihaz,
+                TRIM(SPLIT_PART(a.issue_text, '📝 NOT:', 2)) AS parca_not,
+                
+                a.issue_text, -- Orijinal metin her ihtimale karşı dursun
                 COALESCE(c.name, f.firma_adi) as customer_name, 
                 COALESCE(c.phone, f.telefon) as customer_phone
             FROM appointments a
@@ -99,7 +112,7 @@ router.get("/liste/aktif", async (req, res) => {
     }
 });
 
-// --- 4. İPTAL MOTORU (EK OLARAK EKLEDİM) ---
+// --- 4. İPTAL MOTORU ---
 router.put("/iptal/:id", async (req, res) => {
     const { id } = req.params;
     try {
@@ -110,14 +123,27 @@ router.put("/iptal/:id", async (req, res) => {
     }
 });
 
-// --- 5. USTA ÖZEL LİSTESİ (EK OLARAK EKLEDİM) ---
+// --- 5. USTA ÖZEL LİSTESİ (PARÇALAYICI MOTOR EKLENDİ) ---
 router.get("/usta/:usta_adi", async (req, res) => {
     const usta_adi = req.params.usta_adi;
     try {
         const query = `
-            SELECT a.id, a.appointment_date, a.appointment_time, a.issue_text, a.status,
-            COALESCE(c.name, f.firma_adi) as customer_name, 
-            COALESCE(c.phone, f.telefon) as customer_phone
+            SELECT 
+                a.id, 
+                a.servis_no,
+                a.appointment_date, 
+                a.appointment_time, 
+                a.status,
+                a.assigned_usta,
+                
+                -- ADRES, CİHAZ VE NOT AYIKLAMA MOTORU:
+                TRIM(SPLIT_PART(a.issue_text, '🖊️ CİHAZ:', 1)) AS parca_adres,
+                TRIM(SPLIT_PART(SPLIT_PART(a.issue_text, '🖊️ CİHAZ:', 2), '📝 NOT:', 1)) AS parca_cihaz,
+                TRIM(SPLIT_PART(a.issue_text, '📝 NOT:', 2)) AS parca_not,
+                
+                a.issue_text, -- Orijinal metin her ihtimale karşı dursun
+                COALESCE(c.name, f.firma_adi) as customer_name, 
+                COALESCE(c.phone, f.telefon) as customer_phone
             FROM appointments a
             LEFT JOIN customers c ON a.customer_id = c.id
             LEFT JOIN firms f ON a.firm_id = f.id
@@ -127,22 +153,23 @@ router.get("/usta/:usta_adi", async (req, res) => {
         const result = await db.query(query, [usta_adi]);
         res.json({ success: true, data: result.rows });
     } catch (err) {
+        console.error("Usta Liste Hatası:", err);
         res.status(500).json({ success: false });
     }
 });
 
-// --- MÜDÜR: ÇAKIŞMA KONTROLÜ (DÜZELTİLMİŞ HALİ) ---
+
+
+
+// --- 6. ÇAKIŞMA KONTROLÜ ---
 router.get("/check-conflict", async (req, res) => {
   const { date, time } = req.query;
   try {
-    // MÜDÜR: Veritabanındaki gerçek sütun isimlerini (appointment_date, appointment_time) buraya yazdım.
     const query = `
       SELECT id FROM appointments 
       WHERE appointment_date = $1 AND appointment_time = $2
     `;
     const result = await db.query(query, [date, time]);
-
-    // Eğer o tarih ve saatte kayıt varsa isOccupied: true döner
     res.json({ isOccupied: result.rowCount > 0 });
   } catch (err) {
     console.error("ÇAKIŞMA SORGUSU HATASI:", err.message);
@@ -150,6 +177,27 @@ router.get("/check-conflict", async (req, res) => {
   }
 });
 
+// BANKO: BASİTLEŞTİRİLMİŞ ONAY ROTASI (Mali Tablo Yok, Sadece Statü Değişir)
+router.post("/finance-approve", async (req, res) => {
+    const { id, action } = req.body;
+
+    try {
+        if (action === 'yes') {
+            // MÜDÜR: Şimdilik sadece statüyü "Kapatıldı" yapıyoruz ki aktif listeden (ekrandan) düşsün.
+            // İleride mali modülü yazdığında o "INSERT INTO kasa..." kodlarını tam buraya eklersin!
+            await db.query(`UPDATE appointments SET status = 'Kapatıldı' WHERE id = $1`, [id]);
+            
+        } else if (action === 'no') {
+            // "Hayır" denirse statüyü "İşlem Bekliyor" yap (Ekranda sarı kutuyla asılı kalır)
+            await db.query(`UPDATE appointments SET status = 'İşlem Bekliyor' WHERE id = $1`, [id]);
+        }
+
+        res.json({ success: true });
+    } catch (error) {
+        console.error("Onay Hatası:", error);
+        res.status(500).json({ success: false, error: "İşlem kaydedilemedi" });
+    }
+});
 
 
 
