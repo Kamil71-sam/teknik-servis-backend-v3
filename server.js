@@ -27,7 +27,7 @@ const serviceNotesRoutes = require("./routes/serviceNotes");
 const authRoutes = require("./routes/auth");
 const uzmanRoutes = require('./routes/uzman'); // MÜDÜR: Uzman modülü eklendi
 const appointmentRoutes = require('./routes/appointments');
-
+const stokRoutes = require('./routes/stok');
 
 // --- 3. ANA ŞALTERLER ---
 app.use("/customers", customersRoutes);
@@ -40,8 +40,29 @@ app.use("/uzman", uzmanRoutes); // MÜDÜR: Uzman yolu açıldı
 app.use("/api/appointments", appointmentRoutes); // MÜDÜR: Randevu yolu açıldı
 app.use("/api/firm", firmRoute);
 app.use('/api/operation', operationRoutes);
+app.use('/api/stok', stokRoutes);
+
+
+
+
 // --- MÜDÜR: MALZEME TALEP YOLU BURADA AÇILDI ---
+
+app.use("/api/material-requests", materialRequestsRoutes);
+
+
 app.use("/api/material", materialRequestsRoutes); 
+
+
+
+
+// MÜDÜR: Sunucuya 'pending' yolunu doğrudan tarif ediyoruz
+app.get("/api/material-requests/pending", materialRequestsRoutes);
+app.get("/api/material/pending", materialRequestsRoutes);
+
+
+
+
+
 
 // --- 4. TEST ROTASI ---
 app.get("/", (req, res) => {

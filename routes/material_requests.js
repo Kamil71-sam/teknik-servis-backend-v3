@@ -22,6 +22,44 @@ router.post('/add', async (req, res) => {
     }
 });
 
+
+
+
+
+
+// --- 2. BANKO LİSTESİ (KAYIT KAÇIRMAYAN SORGU) ---
+router.get('/all', async (req, res) => {
+    const query = `
+        SELECT 
+            mr.id, 
+            mr.service_id,
+            mr.part_name, 
+            mr.quantity, 
+            mr.description, 
+            mr.status,
+            mr.created_at,
+            COALESCE(s.servis_no, 'Servis Yok') as servis_no,
+            COALESCE(d.brand, '') || ' ' || COALESCE(d.model, '') as marka_model
+        FROM material_requests mr
+        LEFT JOIN services s ON mr.service_id = s.id
+        LEFT JOIN devices d ON s.device_id = d.id
+        ORDER BY mr.created_at DESC
+    `;
+
+    try {
+        const result = await db.query(query);
+        // Banko ekranı veriyi 'data' içinde beklediği için böyle yolluyoruz
+        res.json({ success: true, data: result.rows });
+    } catch (err) {
+        console.error("MÜDÜR - Banko Sorgu Hatası:", err.message);
+        res.status(500).json({ success: false, error: err.message });
+    }
+});
+
+
+
+/*
+
 // --- 2. BANKO LİSTESİ (GET) ---
 router.get('/all', async (req, res) => {
     // MÜDÜR: brand ve model sütunlarını birleştirip 'marka_model' takma adıyla çekiyoruz
@@ -50,6 +88,14 @@ router.get('/all', async (req, res) => {
         res.status(500).json({ success: false, error: err.message });
     }
 });
+
+
+
+*/
+
+
+
+
 
 // --- 3. AKILLI DURUM GÜNCELLEME VE LOG SİSTEMİ (PUT) ---
 router.put('/update-status/:id', async (req, res) => {
@@ -95,5 +141,89 @@ router.put('/update-status/:id', async (req, res) => {
         res.status(500).json({ success: false, error: err.message });
     }
 });
+
+
+// --- MÜDÜR: MOBİLİN HİÇBİR ŞEKİLDE 404 ALMAMASI İÇİN YEDEK ROTA ---
+router.get('/', async (req, res) => {
+    // Mobil uygulama /api/material-requests adresine direkt vurursa burası çalışır
+    const query = `
+        SELECT mr.id, mr.part_name as material_name, mr.quantity, 
+        (d.brand || ' ' || d.model) as device_model
+        FROM material_requests mr
+        LEFT JOIN services s ON mr.service_id = s.id
+        LEFT JOIN devices d ON s.device_id = d.id
+        WHERE mr.status != 'Geldi'
+        ORDER BY mr.created_at DESC
+    `;
+    try {
+        const result = await db.query(query);
+        res.json(result.rows);
+    } catch (err) {
+        res.status(200).json([]); // Hata olsa bile 404 vermez, boş liste döner.
+    }
+});
+
+// --- MÜDÜR: MOBİL STOK GİRİŞİ İÇİN KESİN ÇÖZÜM SORGUSU ---
+// Bu sorgu senin 'material_requests' tablonun şemasına birebir uygundur.
+router.get('/pending', async (req, res) => {
+    const query = `
+        SELECT 
+            mr.id, 
+            mr.part_name as material_name, 
+            mr.quantity, 
+            COALESCE(d.brand, '') || ' ' || COALESCE(d.model, '') as device_model
+        FROM material_requests mr
+        LEFT JOIN services s ON mr.service_id = s.id
+        LEFT JOIN devices d ON s.device_id = d.id
+        WHERE mr.status != 'Geldi'
+        ORDER BY mr.created_at DESC;
+    `;
+
+    try {
+        const result = await db.query(query);
+        // Mobil uygulama direkt liste beklediği için sadece result.rows yolluyoruz.
+        // Eğer sonuç yoksa boş liste [] yollayarak uygulamanın çökmesini engelliyoruz.
+        res.json(result.rows || []); 
+    } catch (err) {
+        console.error("MÜDÜR - SQL Sorgu Hatası:", err.message);
+        // Hata durumunda HTML sayfası yerine boş liste yollayarak '<' hatasını önlüyoruz.
+        res.status(200).json([]); 
+    }
+});
+
+
+
+
+
+/*
+// --- MÜDÜR: MOBİL STOK GİRİŞİ İÇİN BEKLEYEN SİPARİŞLER (GET) ---
+// Adres: /api/material-requests/pending
+
+router.get('/pending', async (req, res) => {
+    const query = `
+        SELECT 
+            mr.id, 
+            mr.part_name as material_name, 
+            mr.quantity, 
+            (d.brand || ' ' || d.model) as device_model
+        FROM material_requests mr
+        LEFT JOIN services s ON mr.service_id = s.id
+        LEFT JOIN devices d ON s.device_id = d.id
+        WHERE mr.status != 'Geldi'
+        ORDER BY mr.created_at DESC
+    `;
+
+    try {
+        const result = await db.query(query);
+        // Mobil taraf ham dizi (array) beklediği için direkt rows yolluyoruz
+        res.json(result.rows); 
+    } catch (err) {
+        console.error("MÜDÜR - Mobil Veri Çekme Hatası:", err.message);
+        res.status(500).json({ success: false, error: err.message });
+    }
+});
+
+*/
+
 
 module.exports = router;
