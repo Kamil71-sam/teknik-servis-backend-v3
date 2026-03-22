@@ -1,8 +1,8 @@
 const express = require('express');
 const router = express.Router();
-const db = require('../database'); // Müdürüm: Senin db bağlantı dosyanın yolu neyse ona göre ayarla
+const db = require('../database'); 
 
-// --- 1. TÜM DEPOYU GETİR (Ana Ekrandaki Liste İçin) ---
+// --- 1. TÜM DEPOYU GETİR ---
 router.get('/all', async (req, res) => {
     try {
         const result = await db.query("SELECT * FROM envanter ORDER BY son_guncelleme DESC");
@@ -13,15 +13,11 @@ router.get('/all', async (req, res) => {
     }
 });
 
-// --- 2. STOK GİRİŞİ YAP (Tamamlama veya Bekleyen Parça) ---
+// --- 2. STOK GİRİŞİ YAP ---
 router.post('/add', async (req, res) => {
-    // request_id: Eğer Ustanın siparişi ise oradan gelen gizli numara
     const { barkod, malzeme_adi, uyumlu_cihaz, marka, miktar, alis_fiyati, request_id } = req.body;
-    
     try {
-        await db.query('BEGIN'); // ÇELİK KAPIYI KİLİTLE (Zincirleme işlem başlıyor)
-
-        // A. Depoya Malı Ekle (ON CONFLICT zekası: Eğer aynı barkod zaten varsa, hata verme, sadece üstüne ekle!)
+        await db.query('BEGIN');
         const insertQuery = `
             INSERT INTO envanter (barkod, malzeme_adi, uyumlu_cihaz, marka, miktar, alis_fiyati)
             VALUES ($1, $2, $3, $4, $5, $6)
@@ -34,13 +30,8 @@ router.post('/add', async (req, res) => {
         `;
         const result = await db.query(insertQuery, [barkod, malzeme_adi, uyumlu_cihaz, marka, miktar, alis_fiyati]);
 
-        // --- MÜDÜR: İŞTE O YENİ TETİK BURASI ---
-        // B. Eğer Ustanın siparişi geldiyse Banko ekranı için ışıkları yak!
         if (request_id) {
-            // 1. Bayrağı kaldır ve Statüyü Banko'nun göreceği şekilde değiştir
             await db.query("UPDATE material_requests SET stok_girisi_yapildi_mi = TRUE, status = 'Onay Bekliyor' WHERE id = $1", [request_id]);
-            
-            // 2. Sisteme Log düş (Siparişin bağlı olduğu servisi bulup log yazar)
             const logQuery = `
                 INSERT INTO service_notes (service_id, note_text) 
                 SELECT service_id, 'LOG: Parça için stok girişi yapıldı, Banko onayı bekleniyor.' 
@@ -49,106 +40,138 @@ router.post('/add', async (req, res) => {
             `;
             await db.query(logQuery, [request_id]);
         }
-        // ----------------------------------------
-
-        await db.query('COMMIT'); // İŞLEMLERİ ONAYLA VE KAPIYI AÇ
+        await db.query('COMMIT');
         res.json({ success: true, message: 'Stok başarıyla eklendi.', data: result.rows[0] });
-
     } catch (err) {
-        await db.query('ROLLBACK'); // Hata çıkarsa hiçbir şeyi kaydetme, geriye sar!
-        console.error("Stok Ekleme Hatası:", err.message);
+        await db.query('ROLLBACK');
         res.status(500).json({ success: false, error: err.message });
     }
 });
 
-// --- 3. BARKODLU STOK ÇIKIŞI VE KASA ENTEGRASYONU (Altın Vuruş) ---
+
+
+
+
 router.post('/sell', async (req, res) => {
-    // id: Malın depodaki numarası, barkod: Radarın okuduğu numara
-    const { id, barkod, cikan_adet, satis_fiyati } = req.body;
+    const { id, barkod, cikan_adet, manual_discount } = req.body;
 
     try {
         await db.query('BEGIN');
 
-        // A. Depodan Düş
-        const updateQuery = `
-            UPDATE envanter 
-            SET miktar = miktar - $1, son_guncelleme = CURRENT_TIMESTAMP 
-            WHERE (id = $2 OR barkod = $3) AND miktar >= $1
-            RETURNING malzeme_adi, miktar;
-        `;
-        const invResult = await db.query(updateQuery, [cikan_adet, id, barkod]);
+        const invRes = await db.query("SELECT * FROM envanter WHERE id = $1 OR barkod = $2", [id, barkod]);
+        if (invRes.rows.length === 0) throw new Error("Malzeme yok!");
+        const mal = invRes.rows[0];
 
-        if (invResult.rows.length === 0) {
-            throw new Error("Malzeme depoda bulunamadı veya yetersiz stok!");
+        const settingsRes = await db.query("SELECT * FROM shop_settings");
+        const getSetting = (key) => parseFloat(settingsRes.rows.find(r => r.key_name === key)?.value_text || "0");
+
+        // 1. Temel Değerler
+        const birimAlis = parseFloat(mal.alis_fiyati || 0);
+        const defaultKar = parseFloat(getSetting('profit_margin') || 20);
+        const aktifKdv = parseFloat(getSetting('default_tax_rate') || 20);
+        const indirimOrani = parseFloat(manual_discount || 0);
+
+        let birimSatis = 0;
+        let indirimNotu = indirimOrani > 0 ? ` (%${indirimOrani} İskonto)` : "";
+
+        // --- 🚨 MÜDÜR: İŞTE O GERÇEK HESAP BURADA ---
+        if (birimAlis > 0) {
+            // İndirim SADECE kâr oranından düşer
+            const netKarOrani = defaultKar - indirimOrani; 
+            
+            // Yeni Matrah = Alış + (Alış * Net Kâr)
+            const matrah = birimAlis * (1 + (netKarOrani / 100));
+            // KDV'yi de bu yeni matrah üstünden bin
+            const kdvTutari = matrah * (aktifKdv / 100);
+            birimSatis = matrah + kdvTutari;
+        } else {
+            // Eğer alış fiyatı hala sıfırsa, mecburen elle girilen fiyattan yüzde düşer (B planı)
+            const eskiSatis = parseFloat(mal.satis_fiyati || 0);
+            birimSatis = eskiSatis * (1 - (indirimOrani / 100));
         }
 
-        const malzemeAdi = invResult.rows[0].malzeme_adi;
+        const toplamTahsilat = birimSatis * parseInt(cikan_adet);
+
+        // Stok düş ve Kasa işlemleri...
+        await db.query("UPDATE envanter SET miktar = miktar - $1 WHERE id = $2", [cikan_adet, mal.id]);
+        
+        const kasaAciklama = `Stok Satışı: ${mal.malzeme_adi}${indirimNotu} | Alış: ${birimAlis} | Satış: ${birimSatis.toFixed(2)}`;
+        await db.query(`INSERT INTO kasa_islemleri (islem_yonu, kategori, tutar, aciklama, islem_yapan) 
+                        VALUES ('GİRİŞ', 'Stok Satışı', $1, $2, 'Barkod Satış')`, 
+                        [toplamTahsilat, kasaAciklama]);
 
         await db.query('COMMIT');
-        res.json({ success: true, message: 'Satış yapıldı, stoktan düşüldü ve kasaya işlendi.' });
+        res.json({ success: true, message: `Tahsilat: ${toplamTahsilat.toFixed(2)} TL` });
 
     } catch (err) {
         await db.query('ROLLBACK');
-        console.error("Stok Çıkış Hatası:", err.message);
         res.status(500).json({ success: false, error: err.message });
     }
 });
 
-// --- 4. AMELİYAT MASASI: SİLME VE GÜNCELLEME ---
+
+
+// --- 4. SİLME VE GÜNCELLEME ---
 router.delete('/delete/:id', async (req, res) => {
     try {
         await db.query("DELETE FROM envanter WHERE id = $1", [req.params.id]);
-        res.json({ success: true, message: 'Stok kartı kalıcı olarak silindi.' });
+        res.json({ success: true, message: 'Stok kartı silindi.' });
     } catch (err) {
         res.status(500).json({ success: false, error: err.message });
     }
 });
 
 router.put('/update/:id', async (req, res) => {
-    const { malzeme_adi, marka, miktar } = req.body;
+    const { malzeme_adi, marka, miktar, alis_fiyati, barkod, uyumlu_cihaz } = req.body;
     try {
         await db.query(
-            "UPDATE envanter SET malzeme_adi=$1, marka=$2, miktar=$3, son_guncelleme=CURRENT_TIMESTAMP WHERE id=$4",
-            [malzeme_adi, marka, miktar, req.params.id]
+            "UPDATE envanter SET malzeme_adi=$1, marka=$2, miktar=$3, alis_fiyati=$4, barkod=$5, uyumlu_cihaz=$6, son_guncelleme=CURRENT_TIMESTAMP WHERE id=$7",
+            [malzeme_adi, marka, miktar, alis_fiyati, barkod, uyumlu_cihaz, req.params.id]
         );
-        res.json({ success: true, message: 'Stok kartı güncellendi.' });
+        res.json({ success: true, message: 'Güncellendi.' });
     } catch (err) {
         res.status(500).json({ success: false, error: err.message });
     }
 });
 
-// --- 5. AKILLI RADAR (Barkod veya İsimle Depoda Mal Arama) ---
+// --- 5. AKILLI RADAR ---
 router.get('/search', async (req, res) => {
-    // Mobil bize ya barkod gönderecek ya da malzeme adı
     const { malzeme_adi, barkod } = req.query;
-    
     try {
         let query = "";
         let values = [];
-
         if (barkod) {
-            // Barkod okutulduysa direkt onu ara
             query = "SELECT * FROM envanter WHERE barkod = $1 LIMIT 1";
             values = [barkod];
         } else if (malzeme_adi) {
-            // Ustanın siparişi seçildiyse isimden ara (ILIKE ile büyük/küçük harfe bakmadan)
             query = "SELECT * FROM envanter WHERE malzeme_adi ILIKE $1 LIMIT 1";
             values = [`%${malzeme_adi}%`];
-        } else {
-            return res.json({ success: false, message: 'Arama kriteri yok.' });
         }
-
         const result = await db.query(query, values);
-        
-        if (result.rows.length > 0) {
-            // Malzeme bulundu! Alarmları yeşil yakacağız.
-            res.json({ success: true, data: result.rows[0], found: true });
-        } else {
-            // Malzeme yok! Alarmları kırmızı yakacağız.
-            res.json({ success: true, found: false });
-        }
+        res.json({ success: true, data: result.rows[0], found: result.rows.length > 0 });
     } catch (err) {
-        console.error("Radar Hatası:", err.message);
+        res.status(500).json({ success: false, error: err.message });
+    }
+});
+
+
+
+// --- MÜDÜR: ÜRÜN ÖZELİNDE FİYAT GEÇMİŞİNİ GETİR ---
+router.get('/history/:id', async (req, res) => {
+    const { id } = req.params;
+    try {
+        const result = await db.query(
+            "SELECT * FROM price_history WHERE inventory_id = $1 ORDER BY degisim_tarihi DESC LIMIT 20",
+            [id]
+        );
+        
+        // Eğer veri varsa gönder, yoksa boş dizi gönder
+        res.json({ 
+            success: true, 
+            data: result.rows 
+        });
+    } catch (err) {
+        console.error("Geçmiş çekme hatası:", err.message);
         res.status(500).json({ success: false, error: err.message });
     }
 });

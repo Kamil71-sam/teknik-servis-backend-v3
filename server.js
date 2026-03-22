@@ -28,6 +28,8 @@ const authRoutes = require("./routes/auth");
 const uzmanRoutes = require('./routes/uzman'); // MÜDÜR: Uzman modülü eklendi
 const appointmentRoutes = require('./routes/appointments');
 const stokRoutes = require('./routes/stok');
+const kasaRoutes = require('./routes/kasa');
+
 
 // --- 3. ANA ŞALTERLER ---
 app.use("/customers", customersRoutes);
@@ -41,7 +43,7 @@ app.use("/api/appointments", appointmentRoutes); // MÜDÜR: Randevu yolu açıl
 app.use("/api/firm", firmRoute);
 app.use('/api/operation', operationRoutes);
 app.use('/api/stok', stokRoutes);
-
+app.use('/api/kasa', kasaRoutes);
 
 
 
@@ -83,3 +85,5 @@ app.listen(PORT, '0.0.0.0', () => {
   console.log("🛠️  Malzeme Talep Sistemi Aktif");
   console.log("-----------------------------------------");
 });
+
+
