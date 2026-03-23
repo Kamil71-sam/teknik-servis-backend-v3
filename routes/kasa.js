@@ -93,4 +93,44 @@ router.get('/search-service', async (req, res) => {
     }
 });
 
+// --- KASA NAKİT GİRİŞİ (SADECE PARA HAREKETİ) ---
+router.post('/add', async (req, res) => {
+    // Mobil taraftan gelen paket: tutar, aciklama, islem_yapan, kategori
+    const { kategori, tutar, aciklama, islem_yapan } = req.body;
+    
+    try {
+        // Müdürüm, islem_yonu'nu biz burada 'GİRİŞ' olarak sabitliyoruz
+        const query = `
+            INSERT INTO kasa_islemleri (
+                islem_yonu, 
+                kategori, 
+                tutar, 
+                aciklama, 
+                islem_yapan, 
+                islem_tarihi
+            )
+            VALUES ('GİRİŞ', $1, $2, $3, $4, NOW())
+            RETURNING *;
+        `;
+        
+        const result = await db.query(query, [
+            kategori || 'Kasaya Nakit Girişi', 
+            tutar, 
+            aciklama, 
+            islem_yapan || 'Admin'
+        ]);
+
+        res.json({ 
+            success: true, 
+            message: 'Nakit girişi kasaya mühürlendi.', 
+            data: result.rows[0] 
+        });
+
+    } catch (err) {
+        console.error("Kasa Nakit Giriş Hatası:", err.message);
+        res.status(500).json({ success: false, error: err.message });
+    }
+});
+
+
 module.exports = router;
