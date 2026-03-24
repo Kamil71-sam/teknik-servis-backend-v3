@@ -69,6 +69,29 @@ app.get("/api/material/pending", materialRequestsRoutes);
 
 
 
+// --- MÜDÜR: USTA TAHSİLAT GÜMRÜK KAPISI (SADECE EKLEME) ---
+app.post('/api/operation/tahsilat-kaydet', async (req, res) => {
+    const { id, usta_maliyet, tahsil_edilen_tutar } = req.body;
+    
+    try {
+        // Not: database.js içindeki pool/db nesneni kullanarak sorgu atar
+        const query = `
+            UPDATE appointments 
+            SET usta_maliyet = $1, 
+                tahsil_edilen_tutar = $2, 
+                status = 'Mali Onay Bekliyor' 
+            WHERE id = $3
+        `;
+        
+        await db.query(query, [usta_maliyet, tahsil_edilen_tutar, id]);
+        
+        console.log(`✅ Gümrükten Geçti: ID ${id} için ${tahsil_edilen_tutar} TL kaydedildi.`);
+        res.json({ success: true, message: "Maliyet ve tahsilat başarıyla gümrüğe bildirildi." });
+    } catch (err) {
+        console.error("❌ Gümrük Hatası:", err);
+        res.status(500).json({ success: false, message: "Veritabanı güncellenemedi!" });
+    }
+});
 
 
 
