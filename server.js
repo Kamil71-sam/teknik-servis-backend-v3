@@ -29,6 +29,10 @@ const uzmanRoutes = require('./routes/uzman'); // MÜDÜR: Uzman modülü eklend
 const appointmentRoutes = require('./routes/appointments');
 const stokRoutes = require('./routes/stok');
 const kasaRoutes = require('./routes/kasa');
+const tahsilatRoutes = require('./routes/tahsilat'); // Üst tarafa ekle
+const kasaV2Router = require('./routes/kasa_v2');
+
+
 
 
 // --- 3. ANA ŞALTERLER ---
@@ -44,6 +48,8 @@ app.use("/api/firm", firmRoute);
 app.use('/api/operation', operationRoutes);
 app.use('/api/stok', stokRoutes);
 app.use('/api/kasa', kasaRoutes);
+app.use('/api/tahsilat', tahsilatRoutes); // app.use listesinin sonuna ekle
+app.use('/api/kasa_v2', kasaV2Router);
 
 
 

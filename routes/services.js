@@ -160,7 +160,11 @@ router.put("/:id", async (req, res) => {
     const result = await db.query(query, [issue_text || null, status || null, atanan_usta || null, offer_price || null, musteri_notu || null, id]);
     const guncelServis = result.rows[0];
 
+
+    /*
     // 🚨 OTOMASYON BURADA DA VAR (Eğer durumu buradan güncellerlerse kaçırmayalım) 🚨
+
+    
     if (status === 'Teslim Edildi' && guncelServis.offer_price && parseFloat(guncelServis.offer_price) > 0) {
       const checkKasa = await db.query("SELECT id FROM kasa_islemleri WHERE servis_no = $1 AND kategori = 'Tamir Geliri'", [guncelServis.servis_no]);
       if (checkKasa.rows.length === 0) {
@@ -172,13 +176,17 @@ router.put("/:id", async (req, res) => {
         console.log(`✅ [OTOMASYON] ${guncelServis.servis_no} numaralı işin ücreti kasaya aktarıldı!`);
       }
     }
-
+    */
     await db.query('COMMIT');
     res.json({ success: true, message: "Güncellendi!", data: guncelServis });
   } catch (err) { 
     await db.query('ROLLBACK');
     res.status(500).json({ success: false, error: err.message }); 
+
+    
   }
+
 });
+
 
 module.exports = router;

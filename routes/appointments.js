@@ -29,6 +29,91 @@ router.get("/search-customer", async (req, res) => {
     }
 });
 
+
+// --- 2. RANDEVU EKLEME (VARSAYILAN STATÜ: 'Beklemede') ---
+router.post("/ekle", async (req, res) => {
+    const { customer_id, type, date, time, usta, issue } = req.body;
+    try {
+        const today = new Date();
+        const yy = String(today.getFullYear()).slice(-2);
+        const mm = String(today.getMonth() + 1).padStart(2, '0');
+        const dd = String(today.getDate()).padStart(2, '0');
+        const prefix = `${yy}${mm}${dd}`;
+
+        const seqQuery = `
+            SELECT MAX(servis_no) as max_no FROM (
+                SELECT servis_no FROM appointments WHERE servis_no LIKE $1
+                UNION ALL
+                SELECT servis_no FROM services WHERE servis_no LIKE $1
+            ) as combined
+        `;
+        const seqResult = await db.query(seqQuery, [`${prefix}%`]);
+        let nextSeqNum = 1;
+        if (seqResult.rows.length > 0 && seqResult.rows[0].max_no) {
+            nextSeqNum = parseInt(seqResult.rows[0].max_no.substring(6), 10) + 1;
+        }
+        const servisNo = `${prefix}${String(nextSeqNum).padStart(2, '0')}`;
+
+        const insertQuery = `
+            INSERT INTO appointments (
+                customer_id, firm_id, appointment_date, appointment_time, 
+                assigned_usta, issue_text, servis_no, status
+            ) 
+            VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+        `;
+        
+        // MÜDÜR: Statü burada 'Beklemede' olarak standart açılıyor
+        const values = [
+            type === 'bireysel' ? customer_id : null, 
+            type === 'firma' ? customer_id : null,
+            date, time, usta, issue, servisNo, 'Beklemede'
+        ];
+
+        await db.query(insertQuery, values);
+        console.log(`✅ KAYIT BAŞARILI: ${servisNo}`);
+        res.json({ success: true, message: "Randevu oluşturuldu", servis_no: servisNo });
+
+    } catch (err) {
+        console.error("🚨 Ekleme Hatası:", err.message);
+        res.status(500).json({ success: false, error: "Veritabanı kayıt hatası" });
+    }
+});
+
+// --- 3. RANDEVU LİSTESİ (SÜZGEÇ STANDARTLAŞTIRILDI) ---
+router.get("/liste/aktif", async (req, res) => {
+    try {
+        const query = `
+            SELECT 
+                a.id, 
+                a.servis_no, 
+                a.appointment_date, 
+                a.appointment_time, 
+                a.status,
+                a.assigned_usta,
+                TRIM(SPLIT_PART(a.issue_text, '🖊️ CİHAZ:', 1)) AS parca_adres,
+                TRIM(SPLIT_PART(SPLIT_PART(a.issue_text, '🖊️ CİHAZ:', 2), '📝 NOT:', 1)) AS parca_cihaz,
+                TRIM(SPLIT_PART(a.issue_text, '📝 NOT:', 2)) AS parca_not,
+                a.issue_text,
+                COALESCE(c.name, f.firma_adi) as customer_name, 
+                COALESCE(c.phone, f.telefon) as customer_phone
+            FROM appointments a
+            LEFT JOIN customers c ON a.customer_id = c.id
+            LEFT JOIN firms f ON a.firm_id = f.id
+            -- MÜDÜR: İptal Edildi ve Kapatıldı olanlar listeye girmez
+            WHERE a.status NOT IN ('İptal Edildi', 'Kapatıldı', 'Pasif')
+            ORDER BY a.servis_no DESC
+        `;
+        const result = await db.query(query);
+        res.json(result.rows);
+    } catch (err) {
+        console.error("🚨 Liste Hatası:", err.message);
+        res.status(500).json({ error: "Liste çekilemedi" });
+    }
+});
+
+
+
+/*
 // --- 2. RANDEVU EKLEME (8 SÜTUN 8 DEĞER - KARAKUTU) ---
 router.post("/ekle", async (req, res) => {
     const { customer_id, type, date, time, usta, issue } = req.body;
@@ -112,6 +197,14 @@ router.get("/liste/aktif", async (req, res) => {
     }
 });
 
+*/
+
+
+
+
+
+
+
 // --- 4. İPTAL MOTORU ---
 router.put("/iptal/:id", async (req, res) => {
     const { id } = req.params;
@@ -159,25 +252,48 @@ router.get("/usta/:usta_adi", async (req, res) => {
 });
 
 
-
-
-// --- 6. ÇAKIŞMA KONTROLÜ ---
+// --- 6. ÇAKIŞMA KONTROLÜ (SÜZGEÇ STANDARTLAŞTIRILDI) ---
 router.get("/check-conflict", async (req, res) => {
   const { date, time } = req.query;
   try {
     const query = `
       SELECT id FROM appointments 
-      WHERE appointment_date = $1 AND appointment_time = $2
+      WHERE appointment_date = $1 
+        AND appointment_time = $2
+        -- MÜDÜR: Sadece 'Beklemede' veya 'İşlem Bekliyor' olanlar yolu tıkar.
+        -- İptal Edildi veya Kapatıldı olanlar artık dolu uyarısı vermez!
+        AND status NOT IN ('İptal Edildi', 'Kapatıldı', 'Teslim Edildi', 'İptal', 'Pasif')
     `;
     const result = await db.query(query, [date, time]);
     res.json({ isOccupied: result.rowCount > 0 });
   } catch (err) {
-    console.error("ÇAKIŞMA SORGUSU HATASI:", err.message);
+    console.error("🚨 ÇAKIŞMA SORGUSU HATASI:", err.message);
     res.status(500).json({ error: err.message });
   }
 });
 
-// BANKO: BASİTLEŞTİRİLMİŞ ONAY ROTASI (Mali Tablo Yok, Sadece Statü Değişir)
+/*
+// --- 6. ÇAKIŞMA KONTROLÜ (GÜNCELLENDİ: İPTAL OLANLAR YOLU TIKAMAZ!) ---
+router.get("/check-conflict", async (req, res) => {
+  const { date, time } = req.query;
+  try {
+    const query = `
+      SELECT id FROM appointments 
+      WHERE appointment_date = $1 
+        AND appointment_time = $2
+        AND status NOT IN ('İptal Edildi', 'İptal', 'Pasif', 'Kapatıldı') -- MÜDÜR: İŞTE O FİLTRE!
+    `;
+    const result = await db.query(query, [date, time]);
+    res.json({ isOccupied: result.rowCount > 0 });
+  } catch (err) {
+    console.error("🚨 ÇAKIŞMA SORGUSU HATASI:", err.message);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+*/
+
+// 7 BANKO: BASİTLEŞTİRİLMİŞ ONAY ROTASI (Mali Tablo Yok, Sadece Statü Değişir)
 router.post("/finance-approve", async (req, res) => {
     const { id, action } = req.body;
 
