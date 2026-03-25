@@ -65,6 +65,31 @@ router.get('/usta-jobs/:ustaName', async (req, res) => {
     }
 });
 
+
+
+// 4. USTA: İşi Bitir (MÜDÜR: Burası artık 'Mali Onay Bekliyor' yapacak!)
+router.patch('/complete-job/:id', async (req, res) => {
+    const { id } = req.params;
+    const { price, usta_notu } = req.body;
+    try {
+        const query = `
+            UPDATE appointments 
+            SET price = $1, 
+                usta_notu = $2, 
+                status = 'Mali Onay Bekliyor' -- MÜDÜR: 'Tamamlandı' yazısını sildik, gümrüğe çektik!
+            WHERE id = $3
+        `;
+        await db.query(query, [price, usta_notu, id]);
+        
+        console.log(`✅ [USTA BİTİRDİ] ID: ${id} - Fiyat: ${price} TL - Gümrükte Bekliyor.`);
+        res.json({ success: true, message: "İşlem gümrüğe (Mali Onaya) gönderildi." });
+    } catch (err) {
+        console.error("❌ Usta Bitirme Hatası:", err.message);
+        res.status(500).json({ success: false, error: err.message });
+    }
+});
+
+/*
 // 4. USTA: İşi Bitir (Fiyat ve Not Gir)
 router.patch('/complete-job/:id', async (req, res) => {
     const { id } = req.params;
@@ -82,6 +107,7 @@ router.patch('/complete-job/:id', async (req, res) => {
     }
 });
 
+*/
 
 router.get('/usta-stats/:ustaName', async (req, res) => {
     const { ustaName } = req.params;
