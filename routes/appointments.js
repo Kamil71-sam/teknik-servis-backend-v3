@@ -80,7 +80,10 @@ router.post("/ekle", async (req, res) => {
 });
 
 // --- 3. RANDEVU LİSTESİ (SÜZGEÇ STANDARTLAŞTIRILDI) ---
+<<<<<<< HEAD
 // --- 3. RANDEVU LİSTESİ (HATASIZ VE ZIRHLI VERSİYON) ---
+=======
+>>>>>>> 2aea985ecbaf54b4c81b26198c61d3e124edf943
 router.get("/liste/aktif", async (req, res) => {
     try {
         const query = `
@@ -89,6 +92,7 @@ router.get("/liste/aktif", async (req, res) => {
                 a.servis_no, 
                 a.appointment_date, 
                 a.appointment_time, 
+<<<<<<< HEAD
                 a.status, 
                 a.assigned_usta,
                 -- CİHAZ PARÇALAMA
@@ -108,6 +112,22 @@ router.get("/liste/aktif", async (req, res) => {
             LEFT JOIN firms f ON a.firm_id = f.id
             WHERE a.status NOT IN ('İptal Edildi', 'Kapatıldı', 'Pasif')
             ORDER BY a.servis_no DESC;
+=======
+                a.status,
+                a.assigned_usta,
+                TRIM(SPLIT_PART(a.issue_text, '🖊️ CİHAZ:', 1)) AS parca_adres,
+                TRIM(SPLIT_PART(SPLIT_PART(a.issue_text, '🖊️ CİHAZ:', 2), '📝 NOT:', 1)) AS parca_cihaz,
+                TRIM(SPLIT_PART(a.issue_text, '📝 NOT:', 2)) AS parca_not,
+                a.issue_text,
+                COALESCE(c.name, f.firma_adi) as customer_name, 
+                COALESCE(c.phone, f.telefon) as customer_phone
+            FROM appointments a
+            LEFT JOIN customers c ON a.customer_id = c.id
+            LEFT JOIN firms f ON a.firm_id = f.id
+            -- MÜDÜR: İptal Edildi ve Kapatıldı olanlar listeye girmez
+            WHERE a.status NOT IN ('İptal Edildi', 'Kapatıldı', 'Pasif')
+            ORDER BY a.servis_no DESC
+>>>>>>> 2aea985ecbaf54b4c81b26198c61d3e124edf943
         `;
         const result = await db.query(query);
         res.json(result.rows);
@@ -119,6 +139,82 @@ router.get("/liste/aktif", async (req, res) => {
 
 
 
+<<<<<<< HEAD
+=======
+// --- 3.1 BANKO ÖZEL: TAHSİLAT LİSTESİ (GÜNCELLENDİ) ---
+router.get("/liste/tahsilat", async (req, res) => {
+    try {
+        const query = `
+            SELECT 
+                a.*, 
+                -- MÜDÜRÜM: İşte o altın dokunuş burası!
+                -- Önce usta ekranındaki hesaplanmış fiyata (1499) bakıyoruz, 
+                -- o boşsa ham fiyata (999) bakıyoruz.
+                COALESCE(a.tahsil_edilen_tutar, a.price, 0) as usta_fiyati,
+                COALESCE(c.name, f.firma_adi) as customer_name
+            FROM appointments a
+            LEFT JOIN customers c ON a.customer_id = c.id
+            LEFT JOIN firms f ON a.firm_id = f.id
+            WHERE a.status = 'Mali Onay Bekliyor'
+            ORDER BY a.id DESC
+        `;
+        const result = await db.query(query);
+        res.json(result.rows);
+    } catch (err) {
+        console.error("🚨 Tahsilat Liste Hatası:", err.message);
+        res.status(500).json({ error: "Veri çekilemedi" });
+    }
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*
+    // --- 3.1 BANKO ÖZEL: TAHSİLAT LİSTESİ (Sadece Tahsilat Ekranı İçin) ---
+// Müdürüm: Bu rota yenidir, eskisine dokunmaz, hiçbir şeyi bozmaz!
+router.get("/liste/tahsilat", async (req, res) => {
+    try {
+        const query = `
+            SELECT 
+                a.*, 
+                a.price as usta_fiyati, -- Parayı burada özel isimle alıyoruz
+                COALESCE(c.name, f.firma_adi) as customer_name
+            FROM appointments a
+            LEFT JOIN customers c ON a.customer_id = c.id
+            LEFT JOIN firms f ON a.firm_id = f.id
+            WHERE a.status = 'Mali Onay Bekliyor' -- Sadece parası girilmişleri getir
+            ORDER BY a.id DESC
+        `;
+        const result = await db.query(query);
+        res.json(result.rows);
+    } catch (err) {
+        console.error("🚨 Tahsilat Liste Hatası:", err.message);
+        res.status(500).json({ error: "Veri çekilemedi" });
+    }
+});
+
+*/
+
+
+>>>>>>> 2aea985ecbaf54b4c81b26198c61d3e124edf943
 
 
 // --- 4. İPTAL MOTORU ---
@@ -132,6 +228,7 @@ router.put("/iptal/:id", async (req, res) => {
     }
 });
 
+<<<<<<< HEAD
 
 
 
@@ -234,6 +331,8 @@ diiikkaaat yukarıdaki iyi
 
 
 
+=======
+>>>>>>> 2aea985ecbaf54b4c81b26198c61d3e124edf943
 // --- 5. USTA ÖZEL LİSTESİ (PARÇALAYICI MOTOR EKLENDİ) ---
 router.get("/usta/:usta_adi", async (req, res) => {
     const usta_adi = req.params.usta_adi;
@@ -269,6 +368,7 @@ router.get("/usta/:usta_adi", async (req, res) => {
     }
 });
 
+<<<<<<< HEAD
 */
 
 
@@ -276,6 +376,8 @@ router.get("/usta/:usta_adi", async (req, res) => {
 
 
 
+=======
+>>>>>>> 2aea985ecbaf54b4c81b26198c61d3e124edf943
 
 // --- 6. ÇAKIŞMA KONTROLÜ (SÜZGEÇ STANDARTLAŞTIRILDI) ---
 router.get("/check-conflict", async (req, res) => {
@@ -297,8 +399,60 @@ router.get("/check-conflict", async (req, res) => {
   }
 });
 
+<<<<<<< HEAD
 
 
+=======
+/*
+// --- 6. ÇAKIŞMA KONTROLÜ (GÜNCELLENDİ: İPTAL OLANLAR YOLU TIKAMAZ!) ---
+router.get("/check-conflict", async (req, res) => {
+  const { date, time } = req.query;
+  try {
+    const query = `
+      SELECT id FROM appointments 
+      WHERE appointment_date = $1 
+        AND appointment_time = $2
+        AND status NOT IN ('İptal Edildi', 'İptal', 'Pasif', 'Kapatıldı') -- MÜDÜR: İŞTE O FİLTRE!
+    `;
+    const result = await db.query(query, [date, time]);
+    res.json({ isOccupied: result.rowCount > 0 });
+  } catch (err) {
+    console.error("🚨 ÇAKIŞMA SORGUSU HATASI:", err.message);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+*/
+
+
+// 7 BANKO: ONAY ROTASI (GÜNCELLENDİ)
+router.post("/finance-approve", async (req, res) => {
+    const { id, action } = req.body;
+    try {
+        if (action === 'yes') {
+            // Statüyü 'Kapatıldı' yapıyoruz ki '/liste/tahsilat' sorgusundaki 
+            // "WHERE status = 'Mali Onay Bekliyor'" filtresine takılmasın ve listeden düşsün.
+            await db.query(`UPDATE appointments SET status = 'Kapatıldı' WHERE id = $1`, [id]);
+        } else if (action === 'no') {
+            await db.query(`UPDATE appointments SET status = 'İşlem Bekliyor' WHERE id = $1`, [id]);
+        }
+        res.json({ success: true });
+    } catch (error) {
+        console.error("Onay Hatası:", error);
+        res.status(500).json({ success: false });
+    }
+});
+
+
+
+
+
+
+
+
+
+/*
+>>>>>>> 2aea985ecbaf54b4c81b26198c61d3e124edf943
 // 7 BANKO: BASİTLEŞTİRİLMİŞ ONAY ROTASI (Mali Tablo Yok, Sadece Statü Değişir)
 router.post("/finance-approve", async (req, res) => {
     const { id, action } = req.body;
@@ -321,6 +475,55 @@ router.post("/finance-approve", async (req, res) => {
     }
 });
 
+<<<<<<< HEAD
+=======
+?/
+
+*/
+
+// --- YENİ BÜYÜTEÇ KAPISI (SADECE RANDEVULARA BAKAR) ---
+router.get("/search-randevu", async (req, res) => {
+    const { servis_no } = req.query;
+
+// MÜDÜR: 1. Ajan (İstek geldi mi?)
+    console.log("🛠️ BÜYÜTEÇE BASILDI! Gelen Numara:", servis_no);
+
+
+
+    try {
+        const query = `
+            SELECT 
+                a.id,
+                a.servis_no,
+                COALESCE(f.firma_adi, c.name, 'Bilinmeyen Müşteri') AS musteri_adi,
+                'Randevu Geliri Tahsili' AS cihaz_turu,
+                a.status,
+                -- MÜDÜR: Ustanın kârlı rakamını (1499) burada çeker
+                COALESCE(a.tahsil_edilen_tutar, a.price, 0) AS "fiyatTeklifi"
+            FROM appointments a
+            LEFT JOIN customers c ON a.customer_id = c.id
+            LEFT JOIN firms f ON a.firm_id = f.id 
+            WHERE a.servis_no = $1 AND a.status = 'Mali Onay Bekliyor'
+            LIMIT 1
+        `;
+        const result = await db.query(query, [servis_no]);
+        
+        // MÜDÜR: 2. Ajan (Veritabanı ne buldu?)
+        console.log("🛠️ SQL NE BULDU?:", result.rows)
+
+        if (result.rows.length > 0) {
+            res.json({ success: true, found: true, device: result.rows[0] });
+        } else {
+            res.json({ success: true, found: false });
+        }
+    } catch (err) {
+        console.error("🚨 Randevu Arama Hatası:", err);
+        res.status(500).json({ success: false });
+    }
+});
+
+
+>>>>>>> 2aea985ecbaf54b4c81b26198c61d3e124edf943
 
 
 

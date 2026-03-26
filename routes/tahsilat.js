@@ -30,6 +30,7 @@ router.post('/process', async (req, res) => {
     }
 });
 
+<<<<<<< HEAD
 
 // --- MÜDÜR: YENİ VE İZOLE KAPI (SADECE BANKO RANDEVULARINI KAPATIR) ---
 router.post('/banko-tahsilat', async (req, res) => {
@@ -67,4 +68,6 @@ router.post('/banko-tahsilat', async (req, res) => {
 
 
 
+=======
+>>>>>>> 2aea985ecbaf54b4c81b26198c61d3e124edf943
 module.exports = router;

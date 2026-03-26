@@ -38,6 +38,7 @@ router.patch('/confirm-appointment/:id', async (req, res) => {
     }
 });
 
+<<<<<<< HEAD
 
 
 // 3. USTA: Kendine Atanan İşleri Getir (GÜMRÜK KAPISI AÇILDI)
@@ -72,6 +73,8 @@ router.get('/usta-jobs/:ustaName', async (req, res) => {
 
 
 /*
+=======
+>>>>>>> 2aea985ecbaf54b4c81b26198c61d3e124edf943
 // 3. USTA: Kendine Atanan İşleri Getir
 router.get('/usta-jobs/:ustaName', async (req, res) => {
     const { ustaName } = req.params;
@@ -98,6 +101,7 @@ router.get('/usta-jobs/:ustaName', async (req, res) => {
         res.status(500).json({ success: false, error: err.message });
     }
 });
+<<<<<<< HEAD
 */
 
 
@@ -106,6 +110,34 @@ router.get('/usta-jobs/:ustaName', async (req, res) => {
 
 
 
+=======
+
+
+
+// 4. USTA: İşi Bitir (MÜDÜR: Burası artık 'Mali Onay Bekliyor' yapacak!)
+router.patch('/complete-job/:id', async (req, res) => {
+    const { id } = req.params;
+    const { price, usta_notu } = req.body;
+    try {
+        const query = `
+            UPDATE appointments 
+            SET price = $1, 
+                usta_notu = $2, 
+                status = 'Mali Onay Bekliyor' -- MÜDÜR: 'Tamamlandı' yazısını sildik, gümrüğe çektik!
+            WHERE id = $3
+        `;
+        await db.query(query, [price, usta_notu, id]);
+        
+        console.log(`✅ [USTA BİTİRDİ] ID: ${id} - Fiyat: ${price} TL - Gümrükte Bekliyor.`);
+        res.json({ success: true, message: "İşlem gümrüğe (Mali Onaya) gönderildi." });
+    } catch (err) {
+        console.error("❌ Usta Bitirme Hatası:", err.message);
+        res.status(500).json({ success: false, error: err.message });
+    }
+});
+
+/*
+>>>>>>> 2aea985ecbaf54b4c81b26198c61d3e124edf943
 // 4. USTA: İşi Bitir (Fiyat ve Not Gir)
 router.patch('/complete-job/:id', async (req, res) => {
     const { id } = req.params;
@@ -123,6 +155,10 @@ router.patch('/complete-job/:id', async (req, res) => {
     }
 });
 
+<<<<<<< HEAD
+=======
+*/
+>>>>>>> 2aea985ecbaf54b4c81b26198c61d3e124edf943
 
 router.get('/usta-stats/:ustaName', async (req, res) => {
     const { ustaName } = req.params;
@@ -138,7 +174,11 @@ router.get('/usta-stats/:ustaName', async (req, res) => {
                 COUNT(*)::int as randevu_sayisi
             FROM appointments 
             WHERE assigned_usta = $1 
+<<<<<<< HEAD
             AND status IN ('Beklemede', 'Devam Ediyor', 'İşlem Bekliyor')
+=======
+            AND status IN ('Beklemede', 'Devam Ediyor')
+>>>>>>> 2aea985ecbaf54b4c81b26198c61d3e124edf943
         `;
         const result = await db.query(query, [ustaName]);
         

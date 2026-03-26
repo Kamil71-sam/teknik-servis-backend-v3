@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const db = require("../database");
 
+<<<<<<< HEAD
 
 
 // --- MÜDÜR: USTA DASHBOARD (SIFIR HATALI TAM VERSİYON) ---
@@ -78,6 +79,8 @@ router.post("/dashboard", async (req, res) => {
 
 
 /*
+=======
+>>>>>>> 2aea985ecbaf54b4c81b26198c61d3e124edf943
 // --- MÜDÜR: USTA DASHBOARD (ONAY VE PARÇA BEKLEYENLER AYRILDI) ---
 router.post("/dashboard", async (req, res) => {
     const { email } = req.body; 
@@ -126,6 +129,7 @@ router.post("/dashboard", async (req, res) => {
     }
 });
 
+<<<<<<< HEAD
 */
 
 
@@ -136,6 +140,8 @@ router.post("/dashboard", async (req, res) => {
 
 
 
+=======
+>>>>>>> 2aea985ecbaf54b4c81b26198c61d3e124edf943
 // --- MÜDÜR: TÜM İŞLER LİSTESİ (MARKA-MODEL BİRLEŞTİRİLDİ) ---
 router.post("/tum-isler", async (req, res) => {
     const { email } = req.body;

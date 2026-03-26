@@ -2,7 +2,11 @@
 -- PostgreSQL database dump
 --
 
+<<<<<<< HEAD
 \restrict uSFPUb3eu0t5Q82T5d3RgoKyrh0SgJfRfsPeodbeCIAbcHdj71gnvtufBJalHj5
+=======
+\restrict RS1Wcy7DIiMeHmFvH4KqJx599nMkNx7bEvieWBVdKf1AoA4FBj9FYXTOHajnrJj
+>>>>>>> 2aea985ecbaf54b4c81b26198c61d3e124edf943
 
 -- Dumped from database version 16.13
 -- Dumped by pg_dump version 16.13
@@ -913,10 +917,17 @@ COPY public.appointments (id, customer_id, device_id, appointment_date, appointm
 50	\N	\N	2026-03-29	12:00:00	Usta 1	📍 ADRES: Jsjdjd\n🔧 CİHAZ: Hdhdh Jdhdhf Hdhdhd\n📝 NOT: Hshshdhndbshs	Teslim Edildi	f	2026-03-19 20:08:46.7787	26031919	2	2500.00	Tamam	0.00	0.00	f
 55	\N	\N	2026-03-24	10:00:00	Usta 1	📍 ADRES: Ggg\n🔧 CİHAZ: T T T\n📝 NOT: Kirmizi	Teslim Edildi	f	2026-03-22 22:19:03.151624	26032203	1	40000.00	Hayda	0.00	0.00	f
 58	\N	\N	2026-03-29	14:00:00	Usta 1	📍 ADRES: Hehehrjrjr\n🔧 CİHAZ: Jeueuruf Jrjrjrjf Jejdjfjf\n📝 NOT: Bshdhdhd	Teslim Edildi	f	2026-03-23 21:56:22.597304	26032316	12	1001.00	gece	0.00	0.00	f
+<<<<<<< HEAD
 80	11	\N	2026-03-27	14:30:00	Usta 1	📍 ADRES: Ihuguu\n🔧 CİHAZ: Ggg Ggg Ghh\n📝 NOT: Hh	Kapatıldı	f	2026-03-25 15:59:45.205765	26032511	\N	999.00	Vb	999.00	1499.00	f
 59	11	\N	2026-03-27	10:00:00	Usta 1	📍 ADRES: ,kgxoydiyd\n🔧 CİHAZ: Ig igxiyx Ohxigxiyxiyc T8xiyciyx8y\n📝 NOT: U9cohciyc8y	Teslim Edildi	f	2026-03-24 20:30:46.664623	26032421	\N	1010.00	ddc	0.00	0.00	f
 57	11	\N	2026-03-29	13:00:00	Usta 1	📍 ADRES: Jehdhd\n🔧 CİHAZ: Bshshd Nshshsh Hshdhdh\n📝 NOT: Jebdhdbd	Teslim Edildi	f	2026-03-23 21:55:18.40494	26032315	\N	1005.00	sıuwhdıu	0.00	0.00	f
 56	\N	\N	2026-03-25	10:00:00	Usta 1	📍 ADRES: Hshdhd\n🔧 CİHAZ: Simens Hh H\n📝 NOT: Dbdhdhxh	Teslim Edildi	f	2026-03-23 21:02:30.04677	26032314	11	8050.00	Gggg	0.00	0.00	f
+=======
+59	11	\N	2026-03-27	10:00:00	Usta 1	📍 ADRES: ,kgxoydiyd\n🔧 CİHAZ: Ig igxiyx Ohxigxiyxiyc T8xiyciyx8y\n📝 NOT: U9cohciyc8y	Teslim Edildi	f	2026-03-24 20:30:46.664623	26032421	\N	1010.00	ddc	0.00	0.00	f
+57	11	\N	2026-03-29	13:00:00	Usta 1	📍 ADRES: Jehdhd\n🔧 CİHAZ: Bshshd Nshshsh Hshdhdh\n📝 NOT: Jebdhdbd	Teslim Edildi	f	2026-03-23 21:55:18.40494	26032315	\N	1005.00	sıuwhdıu	0.00	0.00	f
+56	\N	\N	2026-03-25	10:00:00	Usta 1	📍 ADRES: Hshdhd\n🔧 CİHAZ: Simens Hh H\n📝 NOT: Dbdhdhxh	Teslim Edildi	f	2026-03-23 21:02:30.04677	26032314	11	8050.00	Gggg	0.00	0.00	f
+80	11	\N	2026-03-27	14:30:00	Usta 1	📍 ADRES: Ihuguu\n🔧 CİHAZ: Ggg Ggg Ghh\n📝 NOT: Hh	Mali Onay Bekliyor	f	2026-03-25 15:59:45.205765	26032511	\N	999.00	Vb	999.00	1499.00	f
+>>>>>>> 2aea985ecbaf54b4c81b26198c61d3e124edf943
 65	\N	\N	2026-03-31	10:00:00	Usta 1	📍 ADRES: Yvyv7c\n🔧 CİHAZ: Ctc6c6c 7vuv7 Yvuvuv\n📝 NOT: Ibvuv	Teslim Edildi	f	2026-03-24 22:06:42.928118	26032429	11	4545.00	Vyvuc	0.00	0.00	f
 64	2	\N	2026-03-30	10:00:00	Usta 1	📍 ADRES: Vuvuv7\n🔧 CİHAZ: Uv7g7h Ucuv7g Vuv7g\n📝 NOT: Uvuvuv	Teslim Edildi	f	2026-03-24 21:54:34.683335	26032428	\N	833838.00	Uvubuv	0.00	0.00	f
 63	8	\N	2026-03-29	10:00:00	Usta 1	📍 ADRES: Tygh\n🔧 CİHAZ: Yyhuuu Yuj Huj\n📝 NOT: Hhhu	Teslim Edildi	f	2026-03-24 21:21:51.664817	26032427	\N	60686.00	Ychc	0.00	0.00	f
@@ -924,6 +935,10 @@ COPY public.appointments (id, customer_id, device_id, appointment_date, appointm
 70	\N	\N	2026-03-26	15:00:00	Usta 1	📍 ADRES: Ggggh\n🔧 CİHAZ: Gtg Ggh Gh\n📝 NOT: Gggh	Teslim Edildi	f	2026-03-24 23:07:12.539821	26032434	4	12.00	Cc	12.00	18.00	f
 61	\N	\N	2026-03-27	11:00:00	Usta 1	📍 ADRES: Ghehrhrh\n🔧 CİHAZ: Hehrhru Hehdhd Hehfhfj\n📝 NOT: Iyc8yc8yc	Teslim Edildi	f	2026-03-24 20:58:22.588418	26032423	4	1500.00	Gghj	0.00	0.00	f
 60	\N	\N	2026-03-27	10:00:00	Usta 1	📍 ADRES: Uvub8h\n🔧 CİHAZ: 7gibub 7vibub Iguv7v7v\n📝 NOT: Uvuvuvuv	Teslim Edildi	f	2026-03-24 20:53:54.924946	26032422	6	1111.00	vvdv	0.00	0.00	f
+<<<<<<< HEAD
+=======
+81	\N	\N	2026-03-28	15:00:00	Usta 1	📍 ADRES: Ggg\n🔧 CİHAZ: Ggh Ggg Ggg\n📝 NOT: Jhj	Mali Onay Bekliyor	f	2026-03-25 16:00:11.174857	26032512	12	9991.00	Ccc	9991.00	14987.00	f
+>>>>>>> 2aea985ecbaf54b4c81b26198c61d3e124edf943
 79	\N	\N	2026-03-29	19:00:00	Usta 1	📍 ADRES: Uzak sk geri cd. Yuksek no1\n🔧 CİHAZ: Tablet Sony 11a\n📝 NOT: Cok calis isler fazla dikatli ol	Kapatıldı	f	2026-03-25 13:28:36.550169	26032510	2	2222.00	U.notu burada	2222.00	3333.00	f
 66	10	\N	2026-03-31	11:00:00	Usta 1	📍 ADRES: Jvivig\n🔧 CİHAZ: Ugugi 7f7g7 Ig8g8\n📝 NOT: U uvug	Teslim Edildi	f	2026-03-24 22:11:45.129487	26032430	\N	505.00	Gg	0.00	0.00	f
 67	\N	\N	2026-03-31	15:00:00	Usta 1	📍 ADRES: Viv8v8\n🔧 CİHAZ: 8g8g 8g8g8g Ig8g7g\n📝 NOT: Igiv8g	Teslim Edildi	f	2026-03-24 22:17:33.260912	26032431	5	1900.00	ddddcc	0.00	0.00	f
@@ -937,6 +952,7 @@ COPY public.appointments (id, customer_id, device_id, appointment_date, appointm
 73	1	\N	2026-03-27	10:00:00	Usta 1	📍 ADRES: Hdhdh\n🔧 CİHAZ: Hshdh Hshdh Hehdhd\n📝 NOT: Hh	Teslim Edildi	f	2026-03-25 10:39:48.092718	26032503	\N	1000.00	qqq	500.00	750.00	f
 74	\N	\N	2026-03-29	14:50:00	Usta 1	📍 ADRES: Ggh\n🔧 CİHAZ: Ttg Ghh Ggh\n📝 NOT: Ghgg	Teslim Edildi	f	2026-03-25 11:13:18.25513	26032504	8	555.00	Ggg	0.00	0.00	f
 75	\N	\N	2026-03-28	15:00:00	Usta 1	📍 ADRES: Buuv\n🔧 CİHAZ: 7g8g Ug7g Iviv\n📝 NOT: Hcuc	Teslim Edildi	f	2026-03-25 11:24:48.784154	26032505	12	8000.00	Yg	0.00	0.00	f
+<<<<<<< HEAD
 82	\N	\N	2026-04-04	10:00:00	Usta 1	📍 ADRES: Garaj\n🔧 CİHAZ: Tv Sam Sun\n📝 NOT: Ransevu	Kapatıldı	f	2026-03-25 18:49:31.5449	26032514	11	1000.00		1000.00	1500.00	f
 81	\N	\N	2026-03-28	15:00:00	Usta 1	📍 ADRES: Ggg\n🔧 CİHAZ: Ggh Ggg Ggg\n📝 NOT: Jhj	Kapatıldı	f	2026-03-25 16:00:11.174857	26032512	12	9991.00	Ccc	9991.00	14987.00	f
 83	\N	\N	2026-04-04	10:00:00	Usta 1	📍 ADRES: Q\n🔧 CİHAZ: Q Q Q\n📝 NOT: Hsbsbs	Teslim Edildi	f	2026-03-25 23:50:28.360899	26032517	4	10.00	g	0.00	0.00	f
@@ -961,6 +977,8 @@ COPY public.appointments (id, customer_id, device_id, appointment_date, appointm
 100	\N	\N	2026-04-02	10:00:00	Usta 1	📍 ADRES: Djdjdj\n🔧 CİHAZ: Ndndj Jdjdjd Jdjdj\n📝 NOT: Nbb	İşlem Bekliyor	f	2026-03-26 17:37:28.516656	26032620	2	848787.00	Bebe	0.00	0.00	f
 102	\N	\N	2026-03-29	15:50:00	Usta 1	📍 ADRES: Jsjd\n🔧 CİHAZ: Nsjdj Jejd Jdjdj\n📝 NOT: Nshs	Teslim Edildi	f	2026-03-26 18:57:02.635168	26032622	5	6465.00	Jdj	6465.00	9698.00	f
 101	\N	\N	2026-03-29	11:30:00	Usta 1	📍 ADRES: Bsdj\n🔧 CİHAZ: Jdjd Hdhd Hdhd\n📝 NOT: Hshs	Teslim Edildi	f	2026-03-26 18:10:14.043392	26032621	6	555.00	Y5	555.00	833.00	f
+=======
+>>>>>>> 2aea985ecbaf54b4c81b26198c61d3e124edf943
 \.
 
 
@@ -1022,7 +1040,10 @@ COPY public.devices (id, customer_id, brand, model, serial_no, created_at, cihaz
 32	3	Alkatel	Asl	001	2026-03-24 13:48:10.385114	Cep Telefonu	Var (Resmi)	Anten	\N
 33	6	App	1	121	2026-03-24 13:56:46.96404	Tablet	Yok	Wifi	\N
 34	\N	App	Hsgsgs	Bshshs	2026-03-24 18:06:47.090891	Tablet	Yok	Hshdbdndnd	10
+<<<<<<< HEAD
 35	6	App	01	2	2026-03-25 18:54:23.940916	Cep Telefonu	Var (Resmi)	Gaz	\N
+=======
+>>>>>>> 2aea985ecbaf54b4c81b26198c61d3e124edf943
 \.
 
 
@@ -1167,6 +1188,7 @@ COPY public.kasa_islemleri (id, islem_yonu, kategori, tutar, aciklama, baglanti_
 92	GİRİŞ	Randevu Geliri Tahsili	1001.00	26032509 nolu randevu tahsilatı.	78	2026-03-25 15:55:52.274112	Banko	26032509
 93	GİRİŞ	Randevu Geliri Tahsili	1001.00	26032508 nolu randevu tahsilatı.	77	2026-03-25 15:56:02.047172	Banko	26032508
 94	GİRİŞ	Randevu Geliri Tahsili	1555.00	26032506 nolu randevu tahsilatı.	76	2026-03-25 15:56:25.290784	Banko	26032506
+<<<<<<< HEAD
 95	GİRİŞ	Tamir Ücreti Tahsili	222.00	26032507 nolu randevu tahsilatı.	110	2026-03-25 18:44:29.885111	Banko	26032507
 96	GİRİŞ	Randevu Geliri Tahsili	1500.00	26032514 nolu randevu tahsilatı.	82	2026-03-25 18:51:34.038894	Banko	26032514
 97	GİRİŞ	Tamir Ücreti Tahsili	255.00	26032513 nolu randevu tahsilatı.	111	2026-03-25 18:52:27.909232	Banko	26032513
@@ -1202,6 +1224,8 @@ COPY public.kasa_islemleri (id, islem_yonu, kategori, tutar, aciklama, baglanti_
 127	GİRİŞ	Randevu Geliri Tahsili	1250.00	26032621 nolu servis tahsilatı.	101	2026-03-26 19:23:02.594226	Banko	26032621
 128	GİRİŞ	Randevu Geliri Tahsili	1251.00	26032623 nolu servis tahsilatı.	103	2026-03-26 19:35:02.459966	Banko	26032623
 129	GİRİŞ	Randevu Geliri Tahsili	300.00	26032624 nolu servis tahsilatı.	104	2026-03-26 20:26:42.917118	Banko	26032624
+=======
+>>>>>>> 2aea985ecbaf54b4c81b26198c61d3e124edf943
 \.
 
 
@@ -1250,8 +1274,11 @@ COPY public.material_requests (id, service_id, usta_email, part_name, quantity, 
 38	77	Usta_1	cam	1	Cihaz: Xiaomi Redmi Note 12 - Not: 1	Geldi	2026-03-23 15:38:54.4393	f
 40	90	Usta_1	lehim	3	Cihaz: Alkatel Asl - Not: bakırlı	Geldi	2026-03-24 13:52:13.9623	f
 39	90	Usta_1	anten teli	2	Cihaz: Alkatel Asl - Not: 1 metre	Geldi	2026-03-24 13:52:13.957212	f
+<<<<<<< HEAD
 42	116	Usta_1	Hehe	1	Cihaz: Apple T10 - Not: Bsbd	Geldi	2026-03-26 13:32:43.28886	f
 41	116	Usta_1	Bddhdhd	1	Cihaz: Apple T10 - Not: Hshe	Geldi	2026-03-26 13:32:43.273675	f
+=======
+>>>>>>> 2aea985ecbaf54b4c81b26198c61d3e124edf943
 \.
 
 
@@ -1318,8 +1345,11 @@ COPY public.service_notes (id, service_id, note_text, created_at) FROM stdin;
 48	77	Kemal Müdür: cam teslim alındı. Cihaz otomatik 'Tamirde' moduna çekildi.	2026-03-23 15:39:07.328216
 49	90	Kemal Müdür: lehim teslim alındı. Cihaz otomatik 'Tamirde' moduna çekildi.	2026-03-24 13:53:31.958264
 50	90	Kemal Müdür: anten teli teslim alındı. Cihaz otomatik 'Tamirde' moduna çekildi.	2026-03-24 13:53:35.309288
+<<<<<<< HEAD
 51	116	Kemal Müdür: Hehe teslim alındı. Cihaz otomatik 'Tamirde' moduna çekildi.	2026-03-26 13:33:38.700464
 52	116	Kemal Müdür: Bddhdhd teslim alındı. Cihaz otomatik 'Tamirde' moduna çekildi.	2026-03-26 13:33:41.701038
+=======
+>>>>>>> 2aea985ecbaf54b4c81b26198c61d3e124edf943
 \.
 
 
@@ -1458,6 +1488,7 @@ COPY public.service_status_history (id, service_id, old_status, new_status, chan
 120	109	Yeni Kayıt	Onay Bekliyor	Usta_1	Usta 1508 TL fiyat verdi	2026-03-24 21:44:19.193778
 121	109	Onaylandı	Tamirde	Usta_1	Durum usta tarafından güncellendi	2026-03-24 21:44:49.332001
 122	109	Tamirde	Hazır	Usta_1	Durum usta tarafından güncellendi	2026-03-24 21:44:52.585903
+<<<<<<< HEAD
 123	108	Yeni Kayıt	Onay Bekliyor	Usta_1	Usta 250 TL fiyat verdi	2026-03-25 18:46:06.119587
 124	111	Yeni Kayıt	Onay Bekliyor	Usta_1	Usta 255 TL fiyat verdi	2026-03-25 18:46:22.040034
 125	112	Yeni Kayıt	Onay Bekliyor	Usta_1	Usta 550 TL fiyat verdi	2026-03-25 18:56:13.093019
@@ -1466,6 +1497,8 @@ COPY public.service_status_history (id, service_id, old_status, new_status, chan
 128	116	Tamirde	Parça Bekliyor	Usta_1	Durum usta tarafından güncellendi	2026-03-26 13:32:43.308261
 129	116	Tamirde	Hazır	Usta_1	Durum usta tarafından güncellendi	2026-03-26 13:34:04.315709
 130	118	Yeni Kayıt	Onay Bekliyor	Usta_1	Usta 1500 TL fiyat verdi	2026-03-26 17:00:55.961876
+=======
+>>>>>>> 2aea985ecbaf54b4c81b26198c61d3e124edf943
 \.
 
 
@@ -1533,7 +1566,11 @@ COPY public.services (id, device_id, issue_text, status, created_at, atanan_usta
 48	2	3	İptal Edildi	2026-03-18 16:43:05.445527	Usta 1	26031828	\N	\N		0.00	\N	2026-03-18 18:22:09.902852	1	\N
 35	11	B8	İptal Edildi	2026-03-18 15:57:15.088944	Usta 1	26031815	\N	\N		0.00	\N	2026-03-18 18:23:00.697265	\N	6
 98	16	Bbbh	Teslim Edildi	2026-03-24 14:23:23.601013	Usta 1	26032411	\N	\N		9999.00	Durum usta tarafından güncellendi	2026-03-24 14:24:13.366916	\N	11
+<<<<<<< HEAD
 99	26	kgıuohg	Teslim Edildi	2026-03-24 14:26:37.67078	Usta 1	26032412	\N	\N		1.00	Durum usta tarafından güncellendi	2026-03-26 17:32:07.131985	11	\N
+=======
+84	27	GFHH	Teslim Edildi	2026-03-23 18:15:33.655772	Usta 1	26032310	\N	\N	HFG	5001.00	Durum usta tarafından güncellendi	2026-03-24 12:18:19.836109	11	\N
+>>>>>>> 2aea985ecbaf54b4c81b26198c61d3e124edf943
 76	17	çatlak	Teslim Edildi	2026-03-23 14:38:32.383194	Usta 1	26032302	\N	\N		2000.00	Durum usta tarafından güncellendi	2026-03-25 15:56:25.290784	\N	2
 77	5	Cam	Teslim Edildi	2026-03-23 15:37:53.123193	Usta 1	26032303	\N	\N		12000.00	Durum usta tarafından güncellendi	2026-03-25 15:56:02.047172	3	\N
 72	13	Bdbdbd	Teslim Edildi	2026-03-22 14:26:39.172362	Usta 1	26032201	\N	\N		0.00	\N	2026-03-22 15:33:59.721039	\N	11
@@ -1554,17 +1591,29 @@ COPY public.services (id, device_id, issue_text, status, created_at, atanan_usta
 60	17	Ll	İptal Edildi	2026-03-18 18:42:24.434555	Usta 1	26031840	\N	\N		2500.00	Usta 2500 TL fiyat verdi	2026-03-22 22:12:00.223943	\N	2
 3	3	Sıvı teması sonrası cihaz açılmıyor.	İptal Edildi	2026-03-16 13:49:25.33498	Usta 1	26031603	\N	\N	Acil işi olduğunu, bugün teslim alıp alamayacağını sordu.	0.00	Durum usta tarafından güncellendi	2026-03-22 22:14:40.188057	\N	\N
 90	32	Anten kirik	Teslim Edildi	2026-03-24 13:48:28.966822	Usta 1	26032403	\N	\N	Anten kablosu	3500.00	Durum usta tarafından güncellendi	2026-03-24 13:55:12.615665	3	\N
+<<<<<<< HEAD
 84	27	GFHH	Teslim Edildi	2026-03-23 18:15:33.655772	Usta 1	26032310	\N	\N	HFG	5001.00	Durum usta tarafından güncellendi	2026-03-26 09:51:13.822153	11	\N
 86	11	Hdhdhd	Teslim Edildi	2026-03-23 18:52:36.868727	Usta 1	26032312	\N	\N		10000.00	Usta 10000 TL fiyat verdi	2026-03-24 00:16:19.522179	\N	6
 80	10	bbb	Teslim Edildi	2026-03-23 16:12:30.349202	Usta 1	26032306	\N	\N		50.00	Usta 50 TL fiyat verdi	2026-03-25 23:03:03.855427	\N	5
 93	8	Kass	Teslim Edildi	2026-03-24 14:03:06.469281	Usta 1	26032406	\N	\N		6666.00	Usta 6666 TL fiyat verdi	2026-03-24 14:04:17.610022	\N	3
 110	2	Hgg	Teslim Edildi	2026-03-25 12:13:26.931108	Usta 1	26032507	\N	\N		222.00	\N	2026-03-25 18:44:29.885111	1	\N
 111	9	Vvvh	Teslim Edildi	2026-03-25 18:45:21.94449	Usta 1	26032513	\N	\N		255.00	Usta 255 TL fiyat verdi	2026-03-25 18:52:27.909232	\N	4
+=======
+80	10	bbb	Teslim Edildi	2026-03-23 16:12:30.349202	Usta 1	26032306	\N	\N		50.00	Usta 50 TL fiyat verdi	2026-03-23 16:13:36.977968	\N	5
+86	11	Hdhdhd	Teslim Edildi	2026-03-23 18:52:36.868727	Usta 1	26032312	\N	\N		10000.00	Usta 10000 TL fiyat verdi	2026-03-24 00:16:19.522179	\N	6
+81	22	Shshd	Teslim Edildi	2026-03-23 17:16:16.074085	Usta 1	26032307	\N	\N		1.00	Usta 1 TL fiyat verdi	2026-03-23 17:17:56.158809	9	\N
+93	8	Kass	Teslim Edildi	2026-03-24 14:03:06.469281	Usta 1	26032406	\N	\N		6666.00	Usta 6666 TL fiyat verdi	2026-03-24 14:04:17.610022	\N	3
+82	9	ere	Teslim Edildi	2026-03-23 17:25:31.658712	Usta 1	26032308	\N	\N		1750.00	Usta 1750 TL fiyat verdi	2026-03-23 17:31:29.413156	\N	4
+>>>>>>> 2aea985ecbaf54b4c81b26198c61d3e124edf943
 73	23	Cam	Teslim Edildi	2026-03-22 22:17:49.118601	Usta 1	26032202	\N	\N		5000.00	Durum usta tarafından güncellendi	2026-03-23 14:44:26.183022	11	\N
 75	13	bozuk	Teslim Edildi	2026-03-23 14:38:10.276368	Usta 1	26032301	\N	\N		0.00	\N	2026-03-23 15:23:31.457541	\N	11
 89	31	Garip	Teslim Edildi	2026-03-24 12:25:30.341299	Usta 1	26032402	\N	\N	Aman	5005.00	Durum usta tarafından güncellendi	2026-03-24 13:45:46.541196	\N	6
 83	21	Vhh	Teslim Edildi	2026-03-23 17:36:06.354867	Usta 1	26032309	\N	\N		100.00	Usta 100 TL fiyat verdi	2026-03-23 17:43:43.161302	\N	9
+<<<<<<< HEAD
 94	22	Vhhh	Teslim Edildi	2026-03-24 14:09:45.779435	Usta 1	26032407	\N	\N		0.00	\N	2026-03-26 16:24:54.418983	9	\N
+=======
+94	22	Vhhh	Teslim Edildi	2026-03-24 14:09:45.779435	Usta 1	26032407	\N	\N		0.00	\N	2026-03-24 14:10:55.168357	9	\N
+>>>>>>> 2aea985ecbaf54b4c81b26198c61d3e124edf943
 88	30	Dikkat	Teslim Edildi	2026-03-24 00:31:15.30836	Usta 1	26032401	\N	\N	Aman ha	120000.00	Durum usta tarafından güncellendi	2026-03-24 11:45:00.988053	\N	11
 91	33	Cekmiyor	Teslim Edildi	2026-03-24 13:57:00.054789	Usta 1	26032404	\N	\N	Wifi	501.00	Durum usta tarafından güncellendi	2026-03-24 14:00:15.07362	6	\N
 85	28	FDGDFG	Teslim Edildi	2026-03-23 18:24:45.870833	Usta 1	26032311	\N	\N	DFGDFG	4000.00	Usta 4000 TL fiyat verdi	2026-03-24 12:10:54.429776	\N	12
@@ -1573,13 +1622,20 @@ COPY public.services (id, device_id, issue_text, status, created_at, atanan_usta
 92	10	Ucuvu 	Teslim Edildi	2026-03-24 14:01:08.471612	Usta 1	26032405	\N	\N		11.00	Usta 11 TL fiyat verdi	2026-03-24 14:02:11.82952	\N	5
 96	20	Hhhj	Teslim Edildi	2026-03-24 14:19:24.444099	Usta 1	26032409	\N	\N		888.00	\N	2026-03-24 14:21:20.931701	7	\N
 100	25	Bsbdb	Teslim Edildi	2026-03-24 14:32:54.582778	Usta 1	26032413	\N	\N		100.00	\N	2026-03-24 14:33:17.551674	\N	12
+<<<<<<< HEAD
 102	26	Bbbh	Teslim Edildi	2026-03-24 14:37:51.859086	Usta 1	26032415	\N	\N		0.00	\N	2026-03-26 19:04:08.466206	11	\N
 101	11	Vbbnj	Teslim Edildi	2026-03-24 14:35:45.51377	Usta 1	26032414	\N	\N		501.00	\N	2026-03-26 18:51:49.624745	\N	6
+=======
+99	26	kgıuohg	Teslim Edildi	2026-03-24 14:26:37.67078	Usta 1	26032412	\N	\N		1.00	Durum usta tarafından güncellendi	2026-03-24 14:27:49.821575	11	\N
+101	11	Vbbnj	Teslim Edildi	2026-03-24 14:35:45.51377	Usta 1	26032414	\N	\N		501.00	\N	2026-03-24 14:37:30.439148	\N	6
+102	26	Bbbh	Teslim Edildi	2026-03-24 14:37:51.859086	Usta 1	26032415	\N	\N		0.00	\N	2026-03-24 14:41:13.801128	11	\N
+>>>>>>> 2aea985ecbaf54b4c81b26198c61d3e124edf943
 103	27	Gshshw	Teslim Edildi	2026-03-24 14:49:04.539631	Usta 1	26032416	\N	\N		9991.00	\N	2026-03-24 15:08:04.089493	11	\N
 104	2	Ghj	Teslim Edildi	2026-03-24 15:09:16.85568	Usta 1	26032417	\N	\N		1000.00	\N	2026-03-24 16:51:46.709259	1	\N
 105	34	Whheehdh	Teslim Edildi	2026-03-24 18:06:56.514243	Usta 1	26032418	\N	\N	Hshdbdndnd	2509.00	Durum usta tarafından güncellendi	2026-03-24 18:09:15.068765	\N	10
 106	9	Hsjehe	Teslim Edildi	2026-03-24 18:12:27.370158	Usta 1	26032419	\N	\N		700.00	\N	2026-03-24 18:21:38.297946	\N	4
 107	25	Hhcv	Teslim Edildi	2026-03-24 18:51:05.9353	Usta 1	26032420	\N	\N		105.00	\N	2026-03-24 18:52:04.41597	\N	12
+<<<<<<< HEAD
 109	17	rrrer	Teslim Edildi	2026-03-24 21:21:09.0319	Usta 1	26032426	\N	\N		1508.00	Durum usta tarafından güncellendi	2026-03-24 21:46:32.416027	\N	2
 78	26	Ggg	Teslim Edildi	2026-03-23 16:05:23.659859	Usta 1	26032304	\N	\N		0.00	\N	2026-03-25 15:55:52.274112	11	\N
 81	22	Shshd	Teslim Edildi	2026-03-23 17:16:16.074085	Usta 1	26032307	\N	\N		1.00	Usta 1 TL fiyat verdi	2026-03-25 23:02:58.303687	9	\N
@@ -1592,6 +1648,12 @@ COPY public.services (id, device_id, issue_text, status, created_at, atanan_usta
 116	14	Hshdh	Teslim Edildi	2026-03-26 13:30:50.812652	Usta 1	26032607	\N	\N		1500.00	Durum usta tarafından güncellendi	2026-03-26 13:35:20.958675	\N	11
 117	14	Vvv	Yeni Kayıt	2026-03-26 16:58:54.523027	Usta 1	26032615	\N	\N		0.00	\N	2026-03-26 16:58:54.523027	\N	11
 118	22	Hhh	Onay Bekliyor	2026-03-26 16:59:13.210824	Usta 1	26032616	\N	\N		1500.00	Usta 1500 TL fiyat verdi	2026-03-26 17:00:55.960308	9	\N
+=======
+108	27	ewerf	Yeni Kayıt	2026-03-24 21:20:51.762693	Usta 1	26032425	\N	\N		0.00	\N	2026-03-24 21:20:51.762693	11	\N
+109	17	rrrer	Teslim Edildi	2026-03-24 21:21:09.0319	Usta 1	26032426	\N	\N		1508.00	Durum usta tarafından güncellendi	2026-03-24 21:46:32.416027	\N	2
+78	26	Ggg	Teslim Edildi	2026-03-23 16:05:23.659859	Usta 1	26032304	\N	\N		0.00	\N	2026-03-25 15:55:52.274112	11	\N
+110	2	Hgg	Hazır	2026-03-25 12:13:26.931108	Usta 1	26032507	\N	\N		222.00	\N	2026-03-25 12:14:06.611345	1	\N
+>>>>>>> 2aea985ecbaf54b4c81b26198c61d3e124edf943
 \.
 
 
@@ -1621,7 +1683,11 @@ COPY public.users (id, email, password, role) FROM stdin;
 -- Name: appointments_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
+<<<<<<< HEAD
 SELECT pg_catalog.setval('public.appointments_id_seq', 104, true);
+=======
+SELECT pg_catalog.setval('public.appointments_id_seq', 81, true);
+>>>>>>> 2aea985ecbaf54b4c81b26198c61d3e124edf943
 
 
 --
@@ -1635,7 +1701,11 @@ SELECT pg_catalog.setval('public.customers_id_seq', 11, true);
 -- Name: devices_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
+<<<<<<< HEAD
 SELECT pg_catalog.setval('public.devices_id_seq', 35, true);
+=======
+SELECT pg_catalog.setval('public.devices_id_seq', 34, true);
+>>>>>>> 2aea985ecbaf54b4c81b26198c61d3e124edf943
 
 
 --
@@ -1656,14 +1726,22 @@ SELECT pg_catalog.setval('public.firms_id_seq', 12, true);
 -- Name: kasa_islemleri_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
+<<<<<<< HEAD
 SELECT pg_catalog.setval('public.kasa_islemleri_id_seq', 129, true);
+=======
+SELECT pg_catalog.setval('public.kasa_islemleri_id_seq', 94, true);
+>>>>>>> 2aea985ecbaf54b4c81b26198c61d3e124edf943
 
 
 --
 -- Name: material_requests_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
+<<<<<<< HEAD
 SELECT pg_catalog.setval('public.material_requests_id_seq', 42, true);
+=======
+SELECT pg_catalog.setval('public.material_requests_id_seq', 40, true);
+>>>>>>> 2aea985ecbaf54b4c81b26198c61d3e124edf943
 
 
 --
@@ -1677,7 +1755,11 @@ SELECT pg_catalog.setval('public.price_history_id_seq', 1, false);
 -- Name: service_notes_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
+<<<<<<< HEAD
 SELECT pg_catalog.setval('public.service_notes_id_seq', 52, true);
+=======
+SELECT pg_catalog.setval('public.service_notes_id_seq', 50, true);
+>>>>>>> 2aea985ecbaf54b4c81b26198c61d3e124edf943
 
 
 --
@@ -1691,14 +1773,22 @@ SELECT pg_catalog.setval('public.service_records_id_seq', 1, false);
 -- Name: service_status_history_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
+<<<<<<< HEAD
 SELECT pg_catalog.setval('public.service_status_history_id_seq', 130, true);
+=======
+SELECT pg_catalog.setval('public.service_status_history_id_seq', 122, true);
+>>>>>>> 2aea985ecbaf54b4c81b26198c61d3e124edf943
 
 
 --
 -- Name: services_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
+<<<<<<< HEAD
 SELECT pg_catalog.setval('public.services_id_seq', 118, true);
+=======
+SELECT pg_catalog.setval('public.services_id_seq', 110, true);
+>>>>>>> 2aea985ecbaf54b4c81b26198c61d3e124edf943
 
 
 --
@@ -1993,5 +2083,9 @@ ALTER TABLE ONLY public.services
 -- PostgreSQL database dump complete
 --
 
+<<<<<<< HEAD
 \unrestrict uSFPUb3eu0t5Q82T5d3RgoKyrh0SgJfRfsPeodbeCIAbcHdj71gnvtufBJalHj5
+=======
+\unrestrict RS1Wcy7DIiMeHmFvH4KqJx599nMkNx7bEvieWBVdKf1AoA4FBj9FYXTOHajnrJj
+>>>>>>> 2aea985ecbaf54b4c81b26198c61d3e124edf943
 

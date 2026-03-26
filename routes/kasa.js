@@ -45,9 +45,12 @@ router.get('/all', async (req, res) => {
     }
 });
 
+<<<<<<< HEAD
 
 
 /*
+=======
+>>>>>>> 2aea985ecbaf54b4c81b26198c61d3e124edf943
 // --- 2. KASAYA İŞLEM EKLEME ---
 router.post('/add', async (req, res) => {
     const { islem_yonu, kategori, tutar, aciklama, islem_yapan, baglanti_id, servis_no } = req.body;
@@ -68,10 +71,13 @@ router.post('/add', async (req, res) => {
         res.status(500).json({ success: false, error: err.message });
     }
 });
+<<<<<<< HEAD
 */
 
 
 
+=======
+>>>>>>> 2aea985ecbaf54b4c81b26198c61d3e124edf943
 
 // --- 3. CİHAZ ARAMA (Para Girişi Formundaki Radar İçin) ---
 router.get('/search-service', async (req, res) => {
@@ -100,9 +106,12 @@ router.get('/search-service', async (req, res) => {
     }
 });
 
+<<<<<<< HEAD
 
 
 /*
+=======
+>>>>>>> 2aea985ecbaf54b4c81b26198c61d3e124edf943
 // --- KASA NAKİT GİRİŞİ (SADECE PARA HAREKETİ) ---
 router.post('/add', async (req, res) => {
     // Mobil taraftan gelen paket: tutar, aciklama, islem_yapan, kategori
@@ -141,6 +150,7 @@ router.post('/add', async (req, res) => {
         res.status(500).json({ success: false, error: err.message });
     }
 });
+<<<<<<< HEAD
 */
 // --- KASAYA İŞLEM EKLEME VE STATÜ KAPATMA (TEK VE KESİN GÜÇ) ---
 router.post('/add', async (req, res) => {
@@ -189,6 +199,8 @@ router.post('/add', async (req, res) => {
 });
 
 
+=======
+>>>>>>> 2aea985ecbaf54b4c81b26198c61d3e124edf943
 
 
 module.exports = router;
