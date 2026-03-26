@@ -101,7 +101,7 @@ router.get('/search-service', async (req, res) => {
     }
 });
 
-
+/*
 // --- KASA NAKİT GİRİŞİ (SADECE PARA HAREKETİ) ---
 router.post('/add', async (req, res) => {
     // Mobil taraftan gelen paket: tutar, aciklama, islem_yapan, kategori
@@ -141,6 +141,7 @@ router.post('/add', async (req, res) => {
     }
 });
 
+*/
 
 // --- KASAYA İŞLEM EKLEME VE STATÜ KAPATMA (TEK VE KESİN GÜÇ) ---
 router.post('/add', async (req, res) => {
@@ -188,7 +189,38 @@ router.post('/add', async (req, res) => {
     }
 });
 
-
-
+// --- MÜDÜR: RANDEVU ARAMA MOTORU (SÜTUN HATASI GİDERİLDİ) ---
+router.get('/search-randevu', async (req, res) => {
+    const { servis_no } = req.query;
+    try {
+        const query = `
+            SELECT 
+                a.id, 
+                a.servis_no, 
+                COALESCE(c.name, f.firma_adi, 'Bilinmeyen Müşteri') as musteri_adi,
+                -- MÜDÜR: parca_cihaz yoksa issue_text'i cihaz_turu olarak alıyoruz
+                COALESCE(a.issue_text, 'Randevu İşlemi') as cihaz_turu,
+                'Randevu' as marka,
+                '' as model,
+                a.status,
+                a.tahsil_edilen_tutar as "fiyatTeklifi"
+            FROM appointments a
+            LEFT JOIN customers c ON a.customer_id = c.id
+            LEFT JOIN firms f ON a.firm_id = f.id
+            WHERE TRIM(a.servis_no) = TRIM($1) 
+            LIMIT 1
+        `;
+        const result = await db.query(query, [servis_no]);
+        
+        if (result.rows.length > 0) {
+            res.json({ success: true, found: true, device: result.rows[0] });
+        } else {
+            res.json({ success: true, found: false });
+        }
+    } catch (err) { 
+        console.error("HATA:", err.message);
+        res.status(500).json({ success: false, error: err.message }); 
+    }
+});
 
 module.exports = router;
