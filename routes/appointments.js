@@ -80,10 +80,10 @@ router.post("/ekle", async (req, res) => {
 });
 
 // --- 3. RANDEVU LİSTESİ (SÜZGEÇ STANDARTLAŞTIRILDI) ---
-<<<<<<< HEAD
+
 // --- 3. RANDEVU LİSTESİ (HATASIZ VE ZIRHLI VERSİYON) ---
-=======
->>>>>>> 2aea985ecbaf54b4c81b26198c61d3e124edf943
+
+
 router.get("/liste/aktif", async (req, res) => {
     try {
         const query = `
@@ -92,7 +92,6 @@ router.get("/liste/aktif", async (req, res) => {
                 a.servis_no, 
                 a.appointment_date, 
                 a.appointment_time, 
-<<<<<<< HEAD
                 a.status, 
                 a.assigned_usta,
                 -- CİHAZ PARÇALAMA
@@ -112,22 +111,7 @@ router.get("/liste/aktif", async (req, res) => {
             LEFT JOIN firms f ON a.firm_id = f.id
             WHERE a.status NOT IN ('İptal Edildi', 'Kapatıldı', 'Pasif')
             ORDER BY a.servis_no DESC;
-=======
-                a.status,
-                a.assigned_usta,
-                TRIM(SPLIT_PART(a.issue_text, '🖊️ CİHAZ:', 1)) AS parca_adres,
-                TRIM(SPLIT_PART(SPLIT_PART(a.issue_text, '🖊️ CİHAZ:', 2), '📝 NOT:', 1)) AS parca_cihaz,
-                TRIM(SPLIT_PART(a.issue_text, '📝 NOT:', 2)) AS parca_not,
-                a.issue_text,
-                COALESCE(c.name, f.firma_adi) as customer_name, 
-                COALESCE(c.phone, f.telefon) as customer_phone
-            FROM appointments a
-            LEFT JOIN customers c ON a.customer_id = c.id
-            LEFT JOIN firms f ON a.firm_id = f.id
-            -- MÜDÜR: İptal Edildi ve Kapatıldı olanlar listeye girmez
-            WHERE a.status NOT IN ('İptal Edildi', 'Kapatıldı', 'Pasif')
-            ORDER BY a.servis_no DESC
->>>>>>> 2aea985ecbaf54b4c81b26198c61d3e124edf943
+               
         `;
         const result = await db.query(query);
         res.json(result.rows);
@@ -139,8 +123,8 @@ router.get("/liste/aktif", async (req, res) => {
 
 
 
-<<<<<<< HEAD
-=======
+
+
 // --- 3.1 BANKO ÖZEL: TAHSİLAT LİSTESİ (GÜNCELLENDİ) ---
 router.get("/liste/tahsilat", async (req, res) => {
     try {
@@ -214,7 +198,6 @@ router.get("/liste/tahsilat", async (req, res) => {
 */
 
 
->>>>>>> 2aea985ecbaf54b4c81b26198c61d3e124edf943
 
 
 // --- 4. İPTAL MOTORU ---
@@ -228,7 +211,7 @@ router.put("/iptal/:id", async (req, res) => {
     }
 });
 
-<<<<<<< HEAD
+
 
 
 
@@ -331,8 +314,7 @@ diiikkaaat yukarıdaki iyi
 
 
 
-=======
->>>>>>> 2aea985ecbaf54b4c81b26198c61d3e124edf943
+
 // --- 5. USTA ÖZEL LİSTESİ (PARÇALAYICI MOTOR EKLENDİ) ---
 router.get("/usta/:usta_adi", async (req, res) => {
     const usta_adi = req.params.usta_adi;
@@ -368,7 +350,6 @@ router.get("/usta/:usta_adi", async (req, res) => {
     }
 });
 
-<<<<<<< HEAD
 */
 
 
@@ -376,8 +357,7 @@ router.get("/usta/:usta_adi", async (req, res) => {
 
 
 
-=======
->>>>>>> 2aea985ecbaf54b4c81b26198c61d3e124edf943
+
 
 // --- 6. ÇAKIŞMA KONTROLÜ (SÜZGEÇ STANDARTLAŞTIRILDI) ---
 router.get("/check-conflict", async (req, res) => {
@@ -399,10 +379,8 @@ router.get("/check-conflict", async (req, res) => {
   }
 });
 
-<<<<<<< HEAD
 
 
-=======
 /*
 // --- 6. ÇAKIŞMA KONTROLÜ (GÜNCELLENDİ: İPTAL OLANLAR YOLU TIKAMAZ!) ---
 router.get("/check-conflict", async (req, res) => {
@@ -475,8 +453,7 @@ router.post("/finance-approve", async (req, res) => {
     }
 });
 
-<<<<<<< HEAD
-=======
+
 ?/
 
 */
@@ -523,7 +500,6 @@ router.get("/search-randevu", async (req, res) => {
 });
 
 
->>>>>>> 2aea985ecbaf54b4c81b26198c61d3e124edf943
 
 
 

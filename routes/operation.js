@@ -38,7 +38,7 @@ router.patch('/confirm-appointment/:id', async (req, res) => {
     }
 });
 
-<<<<<<< HEAD
+
 
 
 // 3. USTA: Kendine Atanan İşleri Getir (GÜMRÜK KAPISI AÇILDI)
@@ -101,7 +101,7 @@ router.get('/usta-jobs/:ustaName', async (req, res) => {
         res.status(500).json({ success: false, error: err.message });
     }
 });
-<<<<<<< HEAD
+
 */
 
 
@@ -110,7 +110,6 @@ router.get('/usta-jobs/:ustaName', async (req, res) => {
 
 
 
-=======
 
 
 
@@ -155,10 +154,9 @@ router.patch('/complete-job/:id', async (req, res) => {
     }
 });
 
-<<<<<<< HEAD
-=======
+
 */
->>>>>>> 2aea985ecbaf54b4c81b26198c61d3e124edf943
+
 
 router.get('/usta-stats/:ustaName', async (req, res) => {
     const { ustaName } = req.params;
@@ -174,11 +172,8 @@ router.get('/usta-stats/:ustaName', async (req, res) => {
                 COUNT(*)::int as randevu_sayisi
             FROM appointments 
             WHERE assigned_usta = $1 
-<<<<<<< HEAD
             AND status IN ('Beklemede', 'Devam Ediyor', 'İşlem Bekliyor')
-=======
-            AND status IN ('Beklemede', 'Devam Ediyor')
->>>>>>> 2aea985ecbaf54b4c81b26198c61d3e124edf943
+            
         `;
         const result = await db.query(query, [ustaName]);
         
