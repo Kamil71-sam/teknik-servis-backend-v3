@@ -13,6 +13,128 @@ router.get('/all', async (req, res) => {
     }
 });
 
+
+
+
+// --- 2. STOK GİRİŞİ YAP (ZIRHLI VE KASAYA BAĞLI VERSİYON) ---
+router.post('/add', async (req, res) => {
+    const { barkod, malzeme_adi, uyumlu_cihaz, marka, miktar, alis_fiyati, request_id } = req.body;
+    try {
+        await db.query('BEGIN');
+        
+        // 1. ZIRHLI EKLEME / GÜNCELLEME İŞLEMİ
+        const insertQuery = `
+            INSERT INTO envanter (barkod, malzeme_adi, uyumlu_cihaz, marka, miktar, alis_fiyati)
+            VALUES ($1, $2, $3, $4, $5, $6)
+            ON CONFLICT (barkod) 
+            DO UPDATE SET 
+                miktar = envanter.miktar + EXCLUDED.miktar,
+                alis_fiyati = CASE WHEN EXCLUDED.alis_fiyati > 0 THEN EXCLUDED.alis_fiyati ELSE envanter.alis_fiyati END,
+                malzeme_adi = CASE WHEN EXCLUDED.malzeme_adi <> '' AND EXCLUDED.malzeme_adi IS NOT NULL THEN EXCLUDED.malzeme_adi ELSE envanter.malzeme_adi END,
+                marka = CASE WHEN EXCLUDED.marka <> '' AND EXCLUDED.marka IS NOT NULL THEN EXCLUDED.marka ELSE envanter.marka END,
+                uyumlu_cihaz = CASE WHEN EXCLUDED.uyumlu_cihaz <> '' AND EXCLUDED.uyumlu_cihaz IS NOT NULL THEN EXCLUDED.uyumlu_cihaz ELSE envanter.uyumlu_cihaz END,
+                son_guncelleme = CURRENT_TIMESTAMP
+            RETURNING *;
+        `;
+        const result = await db.query(insertQuery, [barkod, malzeme_adi, uyumlu_cihaz, marka, miktar, alis_fiyati]);
+        const guncelMalzeme = result.rows[0];
+
+        // --- 🚨 MÜDÜRÜN MUSLUĞU: SADECE HIZLI İŞLEMLERDE KASADAN PARA ÇIKAR ---
+        // Eğer malzeme_adi boş gelmişse (Bu kesinlikle Hızlı İşlem Radarıdır!)
+        if (!malzeme_adi || malzeme_adi.trim() === '') {
+            const cikisTutari = parseFloat(guncelMalzeme.alis_fiyati) * parseInt(miktar);
+            
+            // Eğer ürünün gerçekten bir alış fiyatı varsa kasadan düş
+            if (cikisTutari > 0) {
+                const kasaAciklama = `Hızlı Stok Alımı: ${guncelMalzeme.malzeme_adi} | Adet: ${miktar} | Birim: ${guncelMalzeme.alis_fiyati} ₺`;
+                
+                await db.query(
+                    `INSERT INTO kasa_islemleri (islem_yonu, kategori, tutar, aciklama, islem_yapan) 
+                     VALUES ('ÇIKIŞ', 'Hızlı Barkod Alımı', $1, $2, 'Barkod İşlem')`,
+                    [cikisTutari, kasaAciklama]
+                );
+            }
+        }
+
+        // 3. EĞER TALEP (REQUEST) ÜZERİNDEN GELDİYSE ONAY SÜRECİNİ İŞLET
+        if (request_id) {
+            await db.query("UPDATE material_requests SET stok_girisi_yapildi_mi = TRUE, status = 'Onay Bekliyor' WHERE id = $1", [request_id]);
+            const logQuery = `
+                INSERT INTO service_notes (service_id, note_text) 
+                SELECT service_id, 'LOG: Parça için stok girişi yapıldı, Banko onayı bekleniyor.' 
+                FROM material_requests 
+                WHERE id = $1
+            `;
+            await db.query(logQuery, [request_id]);
+        }
+
+        await db.query('COMMIT');
+        res.json({ success: true, message: 'Stok eklendi ve işlem tamamlandı.', data: guncelMalzeme });
+    } catch (err) {
+        await db.query('ROLLBACK');
+        console.error("Stok Giriş Hatası:", err.message);
+        res.status(500).json({ success: false, error: err.message });
+    }
+});
+
+
+
+
+
+
+
+/*
+// --- 2. STOK GİRİŞİ YAP (ZIRHLI VERSİYON) ---
+router.post('/add', async (req, res) => {
+    const { barkod, malzeme_adi, uyumlu_cihaz, marka, miktar, alis_fiyati, request_id } = req.body;
+    try {
+        await db.query('BEGIN');
+        
+        // MÜDÜR DİKKAT: CASE WHEN ile fiyatı ve isimleri korumaya aldık!
+        const insertQuery = `
+            INSERT INTO envanter (barkod, malzeme_adi, uyumlu_cihaz, marka, miktar, alis_fiyati)
+            VALUES ($1, $2, $3, $4, $5, $6)
+            ON CONFLICT (barkod) 
+            DO UPDATE SET 
+                miktar = envanter.miktar + EXCLUDED.miktar,
+                
+                -- Eğer gelen fiyat 0'dan büyükse yenisini yaz, yoksa ESKİ fiyatı koru
+                alis_fiyati = CASE WHEN EXCLUDED.alis_fiyati > 0 THEN EXCLUDED.alis_fiyati ELSE envanter.alis_fiyati END,
+                
+                -- Eğer isim boş gönderilmişse (Hızlı işlemdeki gibi), ESKİ ismi koru
+                malzeme_adi = CASE WHEN EXCLUDED.malzeme_adi <> '' AND EXCLUDED.malzeme_adi IS NOT NULL THEN EXCLUDED.malzeme_adi ELSE envanter.malzeme_adi END,
+                marka = CASE WHEN EXCLUDED.marka <> '' AND EXCLUDED.marka IS NOT NULL THEN EXCLUDED.marka ELSE envanter.marka END,
+                uyumlu_cihaz = CASE WHEN EXCLUDED.uyumlu_cihaz <> '' AND EXCLUDED.uyumlu_cihaz IS NOT NULL THEN EXCLUDED.uyumlu_cihaz ELSE envanter.uyumlu_cihaz END,
+                
+                son_guncelleme = CURRENT_TIMESTAMP
+            RETURNING *;
+        `;
+        const result = await db.query(insertQuery, [barkod, malzeme_adi, uyumlu_cihaz, marka, miktar, alis_fiyati]);
+
+        if (request_id) {
+            await db.query("UPDATE material_requests SET stok_girisi_yapildi_mi = TRUE, status = 'Onay Bekliyor' WHERE id = $1", [request_id]);
+            const logQuery = `
+                INSERT INTO service_notes (service_id, note_text) 
+                SELECT service_id, 'LOG: Parça için stok girişi yapıldı, Banko onayı bekleniyor.' 
+                FROM material_requests 
+                WHERE id = $1
+            `;
+            await db.query(logQuery, [request_id]);
+        }
+        await db.query('COMMIT');
+        res.json({ success: true, message: 'Stok başarıyla eklendi.', data: result.rows[0] });
+    } catch (err) {
+        await db.query('ROLLBACK');
+        res.status(500).json({ success: false, error: err.message });
+    }
+});
+
+
+
+
+
+
+
 // --- 2. STOK GİRİŞİ YAP ---
 router.post('/add', async (req, res) => {
     const { barkod, malzeme_adi, uyumlu_cihaz, marka, miktar, alis_fiyati, request_id } = req.body;
@@ -47,6 +169,9 @@ router.post('/add', async (req, res) => {
         res.status(500).json({ success: false, error: err.message });
     }
 });
+
+*/
+
 
 
 
