@@ -52,6 +52,73 @@ router.post('/add', async (req, res) => {
 
 
 
+// --- 🚨 MÜDÜR: BU KISMI 'sell' ROUTER'I İÇİNE YAPIŞTIR ( 1. verdiği )---
+
+router.post('/sell', async (req, res) => {
+    const { id, barkod, cikan_adet, manual_discount } = req.body;
+
+    try {
+        await db.query('BEGIN');
+
+        // 1. Ürünü Veritabanından Bul
+        const invRes = await db.query("SELECT * FROM envanter WHERE id = $1 OR barkod = $2", [id, barkod]);
+        if (invRes.rows.length === 0) throw new Error("Malzeme yok!");
+        const mal = invRes.rows[0];
+
+        // 2. Ayarları Çek (Bozulma Olmasın Diye Dinamik Tutuyoruz)
+        const settingsRes = await db.query("SELECT * FROM shop_settings");
+        const getSetting = (key, defaultValue) => 
+            parseFloat(settingsRes.rows.find(r => r.key_name === key)?.value_text || defaultValue);
+
+        const birimAlis = parseFloat(mal.alis_fiyati || 0);
+        const varsayilanKarOrani = getSetting('profit_margin', 25); // Ayar yoksa %25 (Senin fotoğrafın)
+        const aktifKdvOrani = getSetting('default_tax_rate', 20);   // Ayar yoksa %20
+        const indirimYuzdesi = parseFloat(manual_discount || 0);
+
+        let birimSatis = 0;
+
+        // 3. 🚨 İŞTE O FOTOĞRAFTAKİ ÖZEL HESAP (İndirim Kârdan Düşer)
+        if (birimAlis > 0) {
+            const hamKarMiktari = birimAlis * (varsayilanKarOrani / 100);
+            const indirimliKarMiktari = hamKarMiktari * (1 - (indirimYuzdesi / 100));
+            
+            const matrah = birimAlis + indirimliKarMiktari;
+            birimSatis = matrah * (1 + (aktifKdvOrani / 100)); // En son KDV ekle
+        } else {
+            // Alış fiyatı girilmemiş ürünler için B planı (Eski satış üzerinden indirim)
+            const eskiSatis = parseFloat(mal.satis_fiyati || 0);
+            birimSatis = eskiSatis * (1 - (indirimYuzdesi / 100));
+        }
+
+        // Yuvarlama yapalım (6912.12 yerine 6912)
+        const nihaiBirimSatis = Math.round(birimSatis);
+        const toplamTahsilat = nihaiBirimSatis * parseInt(cikan_adet);
+
+        // 4. Stok Düş (Miktar NULL korumalı)
+        await db.query("UPDATE envanter SET miktar = COALESCE(miktar, 0) - $1 WHERE id = $2", [cikan_adet, mal.id]);
+        
+        // 5. 💰 KASAYA GİRİŞ YAP (Tam Entegrasyon)
+        const indirimNotu = indirimYuzdesi > 0 ? ` (%${indirimYuzdesi} İskonto)` : "";
+        const kasaAciklama = `Stok Satışı: ${mal.malzeme_adi}${indirimNotu} | Adet: ${cikan_adet} | Birim: ${nihaiBirimSatis} ₺`;
+        
+        await db.query(`INSERT INTO kasa_islemleri (islem_yonu, kategori, tutar, aciklama, islem_yapan) 
+                        VALUES ('GİRİŞ', 'Stok Satışı', $1, $2, 'Barkod Satış')`, 
+                        [toplamTahsilat, kasaAciklama]);
+
+        await db.query('COMMIT');
+        res.json({ success: true, message: `Tahsilat: ${toplamTahsilat} TL Kasaya Yazıldı.` });
+
+    } catch (err) {
+        await db.query('ROLLBACK');
+        res.status(500).json({ success: false, error: err.message });
+    }
+});
+
+
+
+
+//  burası stok içideki satışın kasa ya yollaması ve satış fiyatı düzeltmesi için pasif oldu 
+/*
 router.post('/sell', async (req, res) => {
     const { id, barkod, cikan_adet, manual_discount } = req.body;
 
@@ -108,7 +175,7 @@ router.post('/sell', async (req, res) => {
         res.status(500).json({ success: false, error: err.message });
     }
 });
-
+*/
 
 
 // --- 4. SİLME VE GÜNCELLEME ---
