@@ -341,12 +341,10 @@ router.post('/add', async (req, res) => {
 
 
 
-
-
-// --- 🚨 MÜDÜR: BU KISMI 'sell' ROUTER'I İÇİNE YAPIŞTIR ( 1. verdiği )---
-
+// --- 🚨 MÜDÜR: 'sell' ROUTER'ININ YENİ VE KESİN HALİ ---
 router.post('/sell', async (req, res) => {
-    const { id, barkod, cikan_adet, manual_discount } = req.body;
+    // 1. 🚨 BÜYÜK DÜZELTME: 'satis_fiyati' değerini mobilden teslim alıyoruz!
+    const { id, barkod, cikan_adet, manual_discount, satis_fiyati } = req.body;
 
     try {
         await db.query('BEGIN');
@@ -354,42 +352,66 @@ router.post('/sell', async (req, res) => {
         // 1. Ürünü Veritabanından Bul
         const invRes = await db.query("SELECT * FROM envanter WHERE id = $1 OR barkod = $2", [id, barkod]);
         if (invRes.rows.length === 0) throw new Error("Malzeme yok!");
+        
+        // 🚨 KRİTİK SATIR BURASI: 'mal' değişkeni burada doğuyor!
         const mal = invRes.rows[0];
 
-        // 2. Ayarları Çek (Bozulma Olmasın Diye Dinamik Tutuyoruz)
-        const settingsRes = await db.query("SELECT * FROM shop_settings");
-        const getSetting = (key, defaultValue) => 
-            parseFloat(settingsRes.rows.find(r => r.key_name === key)?.value_text || defaultValue);
-
-        const birimAlis = parseFloat(mal.alis_fiyati || 0);
-        const varsayilanKarOrani = getSetting('profit_margin', 25); // Ayar yoksa %25 (Senin fotoğrafın)
-        const aktifKdvOrani = getSetting('default_tax_rate', 20);   // Ayar yoksa %20
-        const indirimYuzdesi = parseFloat(manual_discount || 0);
-
-        let birimSatis = 0;
-
-        // 3. 🚨 İŞTE O FOTOĞRAFTAKİ ÖZEL HESAP (İndirim Kârdan Düşer)
-        if (birimAlis > 0) {
-            const hamKarMiktari = birimAlis * (varsayilanKarOrani / 100);
-            const indirimliKarMiktari = hamKarMiktari * (1 - (indirimYuzdesi / 100));
-            
-            const matrah = birimAlis + indirimliKarMiktari;
-            birimSatis = matrah * (1 + (aktifKdvOrani / 100)); // En son KDV ekle
-        } else {
-            // Alış fiyatı girilmemiş ürünler için B planı (Eski satış üzerinden indirim)
-            const eskiSatis = parseFloat(mal.satis_fiyati || 0);
-            birimSatis = eskiSatis * (1 - (indirimYuzdesi / 100));
+        // 🚨 MÜDÜRÜN KANUNU: EKSİ STOK YASAK! (Bunu yeni ekledik)
+        if (parseInt(mal.miktar) < parseInt(cikan_adet)) {
+            throw new Error(`Yetersiz stok! Depoda sadece ${mal.miktar} adet var.`);
         }
 
-        // Yuvarlama yapalım (6912.12 yerine 6912)
-        const nihaiBirimSatis = Math.round(birimSatis);
+
+
+        let nihaiBirimSatis = 0;
+
+        // 2. 🚨 MÜDÜRÜN KANUNU (VİTRİN NEYSE KASA ODUR):
+        // Eğer mobilden o jilet gibi hesaplanmış fiyat geldiyse, arka planda hiç formüle girme!
+        if (satis_fiyati !== undefined && satis_fiyati !== null) {
+            nihaiBirimSatis = Math.round(parseFloat(satis_fiyati));
+        } else {
+            // Eğer eski bir ekrandan veya başka bir yerden fiyat gelmeden tetiklenirse B Planı çalışsın:
+            const settingsRes = await db.query("SELECT * FROM shop_settings");
+            const getSetting = (key, defaultValue) => parseFloat(settingsRes.rows.find(r => r.key_name === key)?.value_text || defaultValue);
+
+            const birimAlis = parseFloat(mal.alis_fiyati || 0);
+            const varsayilanKarOrani = getSetting('profit_margin', 25);
+            const aktifKdvOrani = getSetting('default_tax_rate', 20);
+            const indirimYuzdesi = parseFloat(manual_discount || 0);
+
+            if (birimAlis > 0) {
+                // 🚨 ESNAF MATEMATİĞİ BURADA DA DEVREDE
+                const hamKarMiktari = birimAlis * (varsayilanKarOrani / 100);
+                const netKarMiktari = hamKarMiktari * (1 - (indirimYuzdesi / 100));
+                const matrah = birimAlis + netKarMiktari;
+                nihaiBirimSatis = Math.round(matrah * (1 + (aktifKdvOrani / 100)));
+            } else {
+
+
+                /*
+
+            if (birimAlis > 0) {
+                const netKarOrani = varsayilanKarOrani - indirimYuzdesi;
+                const matrah = birimAlis * (1 + (netKarOrani / 100));
+                nihaiBirimSatis = Math.round(matrah * (1 + (aktifKdvOrani / 100)));
+            } else {
+
+                */
+
+                const eskiSatis = parseFloat(mal.satis_fiyati || 0);
+                nihaiBirimSatis = Math.round(eskiSatis * (1 - (indirimYuzdesi / 100)));
+            }
+        }
+
         const toplamTahsilat = nihaiBirimSatis * parseInt(cikan_adet);
 
-        // 4. Stok Düş (Miktar NULL korumalı)
-        await db.query("UPDATE envanter SET miktar = COALESCE(miktar, 0) - $1 WHERE id = $2", [cikan_adet, mal.id]);
+        // 3. Stok Düş (Miktar NULL korumalı)
+
+        await db.query("UPDATE envanter SET miktar = COALESCE(miktar, 0) - $1, son_guncelleme = CURRENT_TIMESTAMP WHERE id = $2", [cikan_adet, mal.id]);
+       // await db.query("UPDATE envanter SET miktar = COALESCE(miktar, 0) - $1 WHERE id = $2", [cikan_adet, mal.id]);
         
-        // 5. 💰 KASAYA GİRİŞ YAP (Tam Entegrasyon)
-        const indirimNotu = indirimYuzdesi > 0 ? ` (%${indirimYuzdesi} İskonto)` : "";
+        // 4. 💰 KASAYA GİRİŞ YAP (Tam Entegrasyon)
+        const indirimNotu = parseFloat(manual_discount || 0) > 0 ? ` (%${manual_discount} İskonto)` : "";
         const kasaAciklama = `Stok Satışı: ${mal.malzeme_adi}${indirimNotu} | Adet: ${cikan_adet} | Birim: ${nihaiBirimSatis} ₺`;
         
         await db.query(`INSERT INTO kasa_islemleri (islem_yonu, kategori, tutar, aciklama, islem_yapan) 
