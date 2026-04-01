@@ -163,6 +163,75 @@ router.get('/', async (req, res) => {
     }
 });
 
+
+
+
+
+// --- MÜDÜR: MOBİL STOK GİRİŞİ İÇİN KESİN ÇÖZÜM SORGUSU (USTA NOTU EKLENMİŞ HALİ) ---
+router.get('/pending', async (req, res) => {
+    const query = `
+        SELECT 
+            mr.id, 
+            mr.part_name as material_name, 
+            mr.quantity, 
+            mr.description, -- 🚨 İŞTE USTANIN GİRDİĞİ O KRİTİK BİLGİ NOTU!
+            COALESCE(d.brand, '') || ' ' || COALESCE(d.model, '') as device_model,
+            mr.stok_girisi_yapildi_mi 
+        FROM material_requests mr
+        LEFT JOIN services s ON mr.service_id = s.id
+        LEFT JOIN devices d ON s.device_id = d.id
+        WHERE mr.status != 'Geldi' 
+          AND (mr.stok_girisi_yapildi_mi IS FALSE OR mr.stok_girisi_yapildi_mi IS NULL)
+        ORDER BY mr.created_at DESC;
+    `;
+
+    try {
+        const result = await db.query(query);
+        res.json(result.rows || []); 
+    } catch (err) {
+        console.error("MÜDÜR - SQL Sorgu Hatası:", err.message);
+        res.status(200).json([]); 
+    }
+});
+
+
+
+
+
+
+/*
+// --- MÜDÜR: MOBİL STOK GİRİŞİ İÇİN KESİN ÇÖZÜM SORGUSU (AKILLANDIRILMIŞ VERSİYON) ---
+router.get('/pending', async (req, res) => {
+    // Müdürüm dikkat! Artık hem 'Geldi' olmayanları hem de stok girişi yapılmamış olanları getiriyoruz.
+    const query = `
+        SELECT 
+            mr.id, 
+            mr.part_name as material_name, 
+            mr.quantity, 
+            COALESCE(d.brand, '') || ' ' || COALESCE(d.model, '') as device_model,
+            mr.stok_girisi_yapildi_mi 
+        FROM material_requests mr
+        LEFT JOIN services s ON mr.service_id = s.id
+        LEFT JOIN devices d ON s.device_id = d.id
+        WHERE mr.status != 'Geldi' 
+          AND (mr.stok_girisi_yapildi_mi IS FALSE OR mr.stok_girisi_yapildi_mi IS NULL)
+        ORDER BY mr.created_at DESC;
+    `;
+
+    try {
+        const result = await db.query(query);
+        res.json(result.rows || []); 
+    } catch (err) {
+        console.error("MÜDÜR - SQL Sorgu Hatası:", err.message);
+        res.status(200).json([]); 
+    }
+});
+
+
+
+
+
+
 // --- MÜDÜR: MOBİL STOK GİRİŞİ İÇİN KESİN ÇÖZÜM SORGUSU ---
 // Bu sorgu senin 'material_requests' tablonun şemasına birebir uygundur.
 router.get('/pending', async (req, res) => {
@@ -195,7 +264,7 @@ router.get('/pending', async (req, res) => {
 
 
 
-/*
+
 // --- MÜDÜR: MOBİL STOK GİRİŞİ İÇİN BEKLEYEN SİPARİŞLER (GET) ---
 // Adres: /api/material-requests/pending
 
