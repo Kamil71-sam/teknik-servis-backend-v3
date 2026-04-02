@@ -5,6 +5,89 @@ const db = require('../database');
 
 
 
+
+// --- 1. KASA ÖZETİ VE LİSTESİ (Genel + Günlük Kasa Zırhlı Versiyon) ---
+router.get('/all', async (req, res) => {
+    try {
+        const listeQuery = `
+            SELECT 
+                k.*,
+                CASE 
+                    WHEN c.name IS NOT NULL THEN c.name
+                    WHEN f.firma_adi IS NOT NULL THEN f.firma_adi
+                    WHEN c_app.name IS NOT NULL THEN c_app.name
+                    WHEN f_app.firma_adi IS NOT NULL THEN f_app.firma_adi
+                    WHEN k.kategori = 'Stok Satışı' THEN 'Hızlı Barkod Satışı'
+                    WHEN k.kategori = 'Kasaya Nakit Girişi' THEN 'Banko İşlemi'
+                    ELSE 'Sistem İşlemi'
+                END as musteri_adi,
+                COALESCE(d.brand, app.issue_text, k.kategori) as marka,
+                COALESCE(d.model, '') as model
+            FROM kasa_islemleri k
+            LEFT JOIN services s ON k.servis_no = s.servis_no AND k.servis_no IS NOT NULL
+            LEFT JOIN devices d ON s.device_id = d.id AND s.device_id IS NOT NULL
+            LEFT JOIN customers c ON s.customer_id = c.id AND s.customer_id IS NOT NULL
+            LEFT JOIN firms f ON s.firm_id = f.id AND s.firm_id IS NOT NULL
+            LEFT JOIN appointments app ON k.servis_no = app.servis_no AND k.servis_no IS NOT NULL
+            LEFT JOIN customers c_app ON app.customer_id = c_app.id AND app.customer_id IS NOT NULL
+            LEFT JOIN firms f_app ON app.firm_id = f_app.id AND app.firm_id IS NOT NULL
+            ORDER BY k.islem_tarihi DESC
+        `;
+        const listeResult = await db.query(listeQuery);
+
+        // 🚨 MÜDÜRÜN VİZYONU: HEM GENEL KASAYI HEM GÜNLÜK KASAYI ÇEKİYORUZ!
+        const bakiyeQuery = `
+            SELECT 
+                -- GENEL KASA (Tüm Zamanlar)
+                COALESCE(SUM(CASE WHEN islem_yonu = 'GİRİŞ' THEN tutar ELSE 0 END), 0) as genel_giris,
+                COALESCE(SUM(CASE WHEN islem_yonu = 'ÇIKIŞ' THEN tutar ELSE 0 END), 0) as genel_cikis,
+                
+                -- GÜNLÜK KASA (Sadece Bugün)
+                COALESCE(SUM(CASE WHEN islem_yonu = 'GİRİŞ' AND DATE(islem_tarihi) = CURRENT_DATE THEN tutar ELSE 0 END), 0) as gunluk_giris,
+                COALESCE(SUM(CASE WHEN islem_yonu = 'ÇIKIŞ' AND DATE(islem_tarihi) = CURRENT_DATE THEN tutar ELSE 0 END), 0) as gunluk_cikis
+            FROM kasa_islemleri;
+        `;
+        const bakiyeResult = await db.query(bakiyeQuery);
+        const hesap = bakiyeResult.rows[0];
+
+        // Matematiksel Hesaplamalar
+        const genel_net = parseFloat(hesap.genel_giris) - parseFloat(hesap.genel_cikis);
+        const gunluk_net = parseFloat(hesap.gunluk_giris) - parseFloat(hesap.gunluk_cikis);
+
+        res.json({ 
+            success: true, 
+            data: listeResult.rows, 
+            ozet: {
+                genel: {
+                    giris: parseFloat(hesap.genel_giris),
+                    cikis: parseFloat(hesap.genel_cikis),
+                    net: genel_net
+                },
+                gunluk: {
+                    giris: parseFloat(hesap.gunluk_giris),
+                    cikis: parseFloat(hesap.gunluk_cikis),
+                    net: gunluk_net
+                }
+            }
+        });
+    } catch (err) {
+        console.error("Kasa Listeleme Hatası:", err.message);
+        res.status(500).json({ success: false, error: err.message });
+    }
+});
+
+
+
+
+
+
+
+
+
+
+/*
+
+
 // --- 1. KASA ÖZETİ VE LİSTESİ (Tam Uyumlu ve Akıllı Versiyon) ---
 router.get('/all', async (req, res) => {
     try {
@@ -85,7 +168,6 @@ router.get('/all', async (req, res) => {
 
 
 
-/*
 // --- 1. KASA ÖZETİ VE LİSTESİ (Tam Uyumlu Versiyon) ---
 router.get('/all', async (req, res) => {
     try {
@@ -132,12 +214,12 @@ router.get('/all', async (req, res) => {
     }
 });
 
-*/
 
 
 
 
-/*
+
+
 // burası tüm ödemelerin çekildiği yer eski kodu kasaya eklemek için kaldırık eskiden hem randevu hemde servis içim mükemmel çalışıyordu.// --- 1. KASA ÖZETİ VE LİSTESİ (Hatalı sütun kaldırıldı) ---
 router.get('/all', async (req, res) => {
     try {
