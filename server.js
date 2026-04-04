@@ -31,6 +31,7 @@ const stokRoutes = require('./routes/stok');
 const kasaRoutes = require('./routes/kasa');
 const tahsilatRoutes = require('./routes/tahsilat'); // Üst tarafa ekle
 const kasaV2Router = require('./routes/kasa_v2');
+const faturaRoutes = require('./routes/fatura'); // Dosyanın olduğu yolu doğru ayarla
 
 
 
@@ -50,7 +51,7 @@ app.use('/api/stok', stokRoutes);
 app.use('/api/kasa', kasaRoutes);
 app.use('/api/tahsilat', tahsilatRoutes); // app.use listesinin sonuna ekle
 app.use('/api/kasa_v2', kasaV2Router);
-
+app.use('/api/fatura', faturaRoutes);
 
 
 // --- MÜDÜR: MALZEME TALEP YOLU BURADA AÇILDI ---
