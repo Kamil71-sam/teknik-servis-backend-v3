@@ -7,6 +7,29 @@ router.post('/process', async (req, res) => {
     const { id, servis_no, kategori, tutar, aciklama, islem_yapan, new_status } = req.body;
 
     try {
+        // 🛡️ ANA MOTOR KALKANI (KASAYA GİRMEDEN ÖNCE BURAYA TOSLAR) 🛡️
+        if (id) {
+            // Taktığı parçaların GÜNCEL ALIŞ MALİYETİNİ (Depodan) topla
+            const pQuery = `
+                SELECT SUM(mr.quantity * COALESCE(e.alis_fiyati, 0)) as toplam_maliyet
+                FROM material_requests mr
+                LEFT JOIN envanter e ON TRIM(mr.part_name) ILIKE '%' || TRIM(e.malzeme_adi) || '%'
+                WHERE mr.service_id = $1
+            `;
+            const pResult = await db.query(pQuery, [id]);
+            const maliyet = parseFloat(pResult.rows[0].toplam_maliyet || 0);
+            const girilenTutar = parseFloat(tutar || 0);
+
+            // 🚨 ZARARINA İŞLEMSE VERİTABANINI KİLİTLE VE İŞLEMİ REDDET!
+            if (maliyet > girilenTutar) {
+                return res.status(400).json({ 
+                    success: false, 
+                    error: `🚨 SİSTEM REDDETTİ!\n\nTahsil Etmek İstediğiniz: ${girilenTutar.toFixed(2)} ₺\nKullanılan Parça Maliyeti: ${maliyet.toFixed(2)} ₺\n\nBu işlem dükkanı zarara soktuğu için kasa girişi YAPILAMAZ ve cihaz 'Teslim Edildi' yapılamaz!` 
+                });
+            }
+        }
+
+        // Kalkanı geçtiyse işlemi başlat
         await db.query('BEGIN'); // Zinciri başlat (Hata olursa geri sarar)
 
         // 1. Kasa Kaydı (Mühürleme)
@@ -29,7 +52,6 @@ router.post('/process', async (req, res) => {
         res.status(500).json({ success: false, error: err.message });
     }
 });
-
 
 
 // --- MÜDÜR: YENİ VE İZOLE KAPI (SADECE BANKO RANDEVULARINI KAPATIR) ---
@@ -63,10 +85,5 @@ router.post('/banko-tahsilat', async (req, res) => {
         res.status(500).json({ success: false, error: err.message });
     }
 });
-
-
-
-
-
 
 module.exports = router;

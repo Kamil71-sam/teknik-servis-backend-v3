@@ -296,6 +296,91 @@ router.get('/search-service', async (req, res) => {
 });
 
 
+// --- KASAYA İŞLEM EKLEME VE STATÜ KAPATMA (TEK VE KESİN GÜÇ) ---
+router.post('/add', async (req, res) => {
+    // MÜDÜR: Bütün verileri tek bir yerde topladık
+    const { islem_yonu, kategori, tutar, aciklama, islem_yapan, baglanti_id, servis_no } = req.body;
+    
+    try {
+        // 🛡️ ANA MOTOR KALKANI (GÜVENLİK DUVARI) 🛡️
+        // Para kasaya GİRMEDEN 1 salise önce çalışır! Hangi kapıdan gelirse gelsin buraya toslar.
+        if (servis_no && (islem_yonu === 'GİRİŞ' || !islem_yonu)) {
+            // Sadece 'services' (Tamir) tablosundaki işleri kontrol eder (Randevuları es geçer)
+            const sQuery = await db.query('SELECT id FROM services WHERE servis_no = $1', [servis_no]);
+            
+            if (sQuery.rows.length > 0) {
+                const service_id = sQuery.rows[0].id;
+
+                // Taktığı parçaların GÜNCEL ALIŞ MALİYETİNİ (Depodan) topla
+                const pQuery = `
+                    SELECT SUM(mr.quantity * COALESCE(e.alis_fiyati, 0)) as toplam_maliyet
+                    FROM material_requests mr
+                    LEFT JOIN envanter e ON TRIM(mr.part_name) ILIKE '%' || TRIM(e.malzeme_adi) || '%'
+                    WHERE mr.service_id = $1
+                `;
+                const pResult = await db.query(pQuery, [service_id]);
+                const maliyet = parseFloat(pResult.rows[0].toplam_maliyet || 0);
+                const girilenTutar = parseFloat(tutar || 0);
+
+                // 🚨 ZARARINA İŞLEMSE KASAYI KİLİTLE VE İŞLEMİ REDDET!
+                if (maliyet > girilenTutar) {
+                    return res.json({ 
+                        success: false, 
+                        // Telefonda direkt "HATA" başlığıyla bu mesaj fırlayacak:
+                        error: `🚨 SİSTEM REDDETTİ!\n\nTahsil Etmek İstediğiniz: ${girilenTutar.toFixed(2)} ₺\nKullanılan Parça Maliyeti: ${maliyet.toFixed(2)} ₺\n\nBu işlem dükkanı zarara soktuğu için kasa girişi YAPILAMAZ ve cihaz 'Teslim Edildi' yapılamaz!` 
+                    });
+                }
+            }
+        }
+
+        // 1. ADIM: Kalkanı geçtiyse Parayı Kasaya Mühürle
+        const yon = islem_yonu || 'GİRİŞ'; 
+        
+        const kasaQuery = `
+            INSERT INTO kasa_islemleri (islem_yonu, kategori, tutar, aciklama, islem_yapan, baglanti_id, servis_no, islem_tarihi)
+            VALUES ($1, $2, $3, $4, $5, $6, $7, NOW())
+            RETURNING *;
+        `;
+        const result = await db.query(kasaQuery, [
+            yon, 
+            kategori || 'Kasaya Nakit Girişi', 
+            tutar, 
+            aciklama, 
+            islem_yapan || 'Admin', 
+            baglanti_id || null, 
+            servis_no || null
+        ]);
+
+        // 2. ADIM: İŞTE HAYATİ DOKUNUŞ! 
+        // Eğer bu para bir servis numarasından geldiyse, o işi 'Teslim Edildi' yapıyoruz.
+        if (servis_no) {
+            // Hem randevular tablosunu hem de servis tablosunu kapatıyoruz ki hiçbir yerde asılı kalmasın!
+            await db.query(`UPDATE appointments SET status = 'Teslim Edildi' WHERE servis_no = $1`, [servis_no]);
+            await db.query(`UPDATE services SET status = 'Teslim Edildi' WHERE servis_no = $1`, [servis_no]);
+            
+            console.log(`✅ [OTOMASYON] ${servis_no} nolu iş Teslim Edildi olarak kapatıldı!`);
+        }
+
+        res.json({ 
+            success: true, 
+            message: 'Para kasaya girdi ve iş ekrandan düşürüldü.', 
+            data: result.rows[0] 
+        });
+
+    } catch (err) {
+        console.error("Kasa İşlem Hatası:", err.message);
+        res.status(500).json({ success: false, error: err.message });
+    }
+});
+
+
+
+
+
+
+
+
+/*
 
 // --- KASAYA İŞLEM EKLEME VE STATÜ KAPATMA (TEK VE KESİN GÜÇ) ---
 router.post('/add', async (req, res) => {
@@ -343,6 +428,12 @@ router.post('/add', async (req, res) => {
     }
 });
 
+*/
+
+
+
+
+
 // --- MÜDÜR: RANDEVU ARAMA MOTORU (SÜTUN HATASI GİDERİLDİ) ---
 router.get('/search-randevu', async (req, res) => {
     const { servis_no } = req.query;
@@ -376,5 +467,7 @@ router.get('/search-randevu', async (req, res) => {
         res.status(500).json({ success: false, error: err.message }); 
     }
 });
+
+
 
 module.exports = router;
