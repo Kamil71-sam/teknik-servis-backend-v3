@@ -2,7 +2,7 @@
 -- PostgreSQL database dump
 --
 
-\restrict UnSgVaUmekTGhe8ovTiA7uKzecvoeaZophmJMgAGt19Ra7DWbM1y5hXmKklR9op
+\restrict 58poHSXJsi8YBdgzebhnjT6U320ThxReNB9k7dPNhWPgO3sXupVuKq4SLncgkbz
 
 -- Dumped from database version 16.13
 -- Dumped by pg_dump version 16.13
@@ -951,6 +951,7 @@ COPY public.appointments (id, customer_id, device_id, appointment_date, appointm
 92	11	\N	2026-03-29	18:00:00	Usta 1	📍 ADRES: Q\n🔧 CİHAZ: Q Q Q\n📝 NOT: H	İptal Edildi	f	2026-03-26 13:59:17.068525	26032610	\N	111.00	111	0.00	0.00	f
 93	\N	\N	2026-03-29	19:00:00	Usta 1	📍 ADRES: Bhhh\n🔧 CİHAZ: Gyh Ggh Ggy\n📝 NOT: Bhj	Teslim Edildi	f	2026-03-26 14:21:15.312637	26032611	2	444.00	G	444.00	666.00	f
 94	1	\N	2026-03-27	23:00:00	Usta 1	📍 ADRES: Hdhdj\n🔧 CİHAZ: Hshdh Jsjdj Nsjdj\n📝 NOT: Jshdh	İptal Edildi	f	2026-03-26 15:47:21.604707	26032612	\N	501.00	H	501.00	752.00	f
+112	\N	\N	2026-04-26	11:00:00	Usta 1	📍 ADRES: Jdjdj\n🔧 CİHAZ: Jejrj Jrjrj Jejdjd\n📝 NOT: Jeheh	Mali Onay Bekliyor	f	2026-04-04 11:31:55.871404	26040402	11	21000.00	Randevu 05	21000.00	31500.00	f
 103	\N	\N	2026-03-27	19:00:00	Usta 1	📍 ADRES: Bbb\n🔧 CİHAZ: Ggg Gg Hg\n📝 NOT: Ghh	Teslim Edildi	f	2026-03-26 19:34:15.129582	26032623	12	556.00		556.00	834.00	f
 109	\N	\N	2026-03-28	11:00:00	Usta 1	📍 ADRES: Ndhdh\n🔧 CİHAZ: Lab Q Q\n📝 NOT: Arizali	Teslim Edildi	f	2026-03-31 14:08:35.10374	26033102	12	11000.00	Kasa	11000.00	16500.00	f
 97	\N	\N	2026-03-27	18:00:00	Usta 1	📍 ADRES: Ɓhhwn\n🔧 CİHAZ: J2j2 N3j3 J3j3j\n📝 NOT: Gyh	İptal Edildi	f	2026-03-26 16:59:42.708575	26032617	4	1.00	1	0.00	0.00	f
@@ -961,13 +962,18 @@ COPY public.appointments (id, customer_id, device_id, appointment_date, appointm
 105	1	\N	2026-03-29	11:50:00	Usta 1	📍 ADRES: Hzhxh\n🔧 CİHAZ: Jdhxj Hdhd Jdjx\n📝 NOT: Hshdh	Teslim Edildi	f	2026-03-26 23:49:19.883041	26032625	\N	9464.00	U2hw	9464.00	14196.00	f
 98	\N	\N	2026-04-24	10:00:00	Usta 1	📍 ADRES: Uejdjd\n🔧 CİHAZ: Ieiei Krjrk Jejri\n📝 NOT: Ndnfnf	İptal Edildi	f	2026-03-26 17:28:52.503445	26032618	7	1.00	1	0.00	0.00	f
 110	\N	\N	2026-03-28	19:00:00	Usta 1	📍 ADRES: Hahsh\n🔧 CİHAZ: Hahaha Haha Haha\n📝 NOT: Hahah	Teslim Edildi	f	2026-03-31 14:12:38.82726	26033104	12	22000.00	Hshe	22000.00	33000.00	f
+115	\N	\N	2026-04-23	10:00:00	Usta 1	📍 ADRES: Jsjdjd\n🔧 CİHAZ: Lab Son Fon\n📝 NOT: Sari lale	Teslim Edildi	f	2026-04-05 16:15:01.555905	26040506	2	5000.00	Ham fiyat	5000.00	7500.00	f
 100	\N	\N	2026-04-02	10:00:00	Usta 1	📍 ADRES: Djdjdj\n🔧 CİHAZ: Ndndj Jdjdjd Jdjdj\n📝 NOT: Nbb	Teslim Edildi	f	2026-03-26 17:37:28.516656	26032620	2	600.00		600.00	900.00	f
+116	1	\N	2026-04-24	10:00:00	Usta 1	📍 ADRES: Hshdj\n🔧 CİHAZ: Jdhdhd Hrhdhf Jdhdh\n📝 NOT: Ndhdh	Beklemede	f	2026-04-05 20:35:41.337102	26040507	\N	0.00	\N	0.00	0.00	f
 111	\N	\N	2026-03-29	12:00:00	Usta 1	📍 ADRES: Jsjdj\n🔧 CİHAZ: Jshsh Jshs Jehdh\n📝 NOT: Jeheh	Teslim Edildi	f	2026-03-31 14:33:47.545408	26033106	2	8750.00	Gg	8750.00	13125.00	f
 106	\N	\N	2026-03-29	15:00:00	Usta 1	📍 ADRES: Yhhi\n🔧 CİHAZ: Uhh Ghh Ggh\n📝 NOT: Bhhj	Teslim Edildi	f	2026-03-27 00:32:48.619715	26032701	11	404.00		404.00	606.00	f
 102	\N	\N	2026-03-29	15:50:00	Usta 1	📍 ADRES: Jsjd\n🔧 CİHAZ: Nsjdj Jejd Jdjdj\n📝 NOT: Nshs	Teslim Edildi	f	2026-03-26 18:57:02.635168	26032622	5	6465.00	Jdj	6465.00	9698.00	f
 101	\N	\N	2026-03-29	11:30:00	Usta 1	📍 ADRES: Bsdj\n🔧 CİHAZ: Jdjd Hdhd Hdhd\n📝 NOT: Hshs	Teslim Edildi	f	2026-03-26 18:10:14.043392	26032621	6	555.00	Y5	555.00	833.00	f
 108	\N	\N	2026-03-28	10:00:00	Usta 1	📍 ADRES: Yukarı mah. Sarı sk. Alma apt. No 5 elmadag ANKARA\n🔧 CİHAZ: Labtop Fuji F16\n📝 NOT: Cihazdan ses gelmiyor	Teslim Edildi	f	2026-03-30 18:37:53.28264	26033002	13	1570.00	İşlem tamam	1570.00	2355.00	f
+117	7	\N	2026-04-06	10:00:00	Usta 1	📍 ADRES: Yhhhu\n🔧 CİHAZ: Uuu Hhh Hhh\n📝 NOT: Bhh	Beklemede	f	2026-04-05 20:44:06.71586	26040508	\N	0.00	\N	0.00	0.00	f
 107	\N	\N	2026-03-29	14:20:00	Usta 1	📍 ADRES: Jcjfjf\n🔧 CİHAZ: Ueufj Hfjfjf Jejdjf\n📝 NOT: Jckgkf	Teslim Edildi	f	2026-03-28 15:02:45.890852	26032801	2	6666.00	Cam degisti	6666.00	9999.00	f
+113	\N	\N	2026-04-23	10:00:00	Usta 1	📍 ADRES: Baba adres ayni\n🔧 CİHAZ: Cep baba Sony 001\n📝 NOT: Kirmizi ev yani sari ev	Teslim Edildi	f	2026-04-04 14:14:15.914995	26040405	15	1200.00	kumanda değişti	1200.00	1800.00	f
+114	14	\N	2026-04-25	10:00:00	Usta 1	📍 ADRES: Cocuk2 ev adresi\n🔧 CİHAZ: Cep c2 Ericsonn T16\n📝 NOT: Sari evin yani kirmizi ev	Teslim Edildi	f	2026-04-04 14:15:40.661544	26040406	\N	7500.00	gg	7500.00	11250.00	f
 \.
 
 
@@ -988,6 +994,8 @@ COPY public.customers (id, name, phone, created_at, fax, email, address, musteri
 10	Murat Doğan	05441000020	2026-03-16 13:38:57.709668	02624220000	murat@yandex.com	Değirmendere Yalı Mah. Gölcük/Kocaeli	Bireysel
 11	ARDA BİR	05320000001	2026-03-20 16:04:39.106084	05320000001	ARDA@A.COM	KANAVA LOJ ERDEK BALIKESİR	bireysel
 12	Kazım KARTAL	05453333333	2026-03-30 13:26:26.215565	05453333334	Kaz@kaz.com	Karatepe mah. Kullukcu sk. Ege apt. No4 degirmen köy gölcük KOCAELİ	bireysel
+13	COCUK 1	0532	2026-04-04 14:06:13.751423	0532	C1@c.com	Denizevler golcuk bolu	bireysel
+14	Cocuk 2	0532	2026-04-04 14:07:32.953313	0532	C2@c.com	Deniz evler golcuk bolu2	bireysel
 \.
 
 
@@ -1034,6 +1042,10 @@ COPY public.devices (id, customer_id, brand, model, serial_no, created_at, cihaz
 36	12	Apple	M4	00101	2026-03-30 16:39:39.49279	Notebook	Var (Resmi)	Mavi ekran sorunu var	\N
 37	12	Apple	M4	00101	2026-03-30 16:53:51.149086	Notebook	Var (Resmi)	Acele lazim	\N
 38	\N	Samsu	K41	P01	2026-03-31 13:56:37.362149	Tablet	Var (Resmi)	Kablo sizde	13
+39	\N	Hp	Bictus	009	2026-04-01 13:17:50.251618	Yazıcı	Var (Dükkan)	Toner verdim	12
+40	\N	Ana1	Ss	01	2026-04-04 14:11:04.630735	Cep Telefonu	Var (Resmi)	Sarjli verildi	14
+41	13	C1 	Ss1	001	2026-04-04 14:12:20.956368	Cep Telefonu	Var (Resmi)	Sarji yok	\N
+42	\N	Traş	Canli	19	2026-04-05 12:26:15.490585	Tablet	Var (Resmi)	Kesmiyor	11
 \.
 
 
@@ -1047,13 +1059,14 @@ COPY public.envanter (id, barkod, malzeme_adi, uyumlu_cihaz, marka, miktar, alis
 7	GLCK-888956-6112	Kasa	Asus	Asus	1	4.00	2026-03-21 15:28:05.03987	0.00	\N	\N
 11	GLCK-276022-6118	Kopuk	Genel	Genel	1	1.00	2026-03-21 17:11:54.327991	0.00	\N	\N
 13	GLCK-744376-2991	Yeni Ad degisti	Samsung Galaxy S23	Asil	1	123.00	2026-03-21 19:32:32.913569	0.00	\N	\N
-14	GLCK-493578-1042	Saksak	Samsung Galaxy S23	Boss	10	525.00	2026-03-21 20:02:40.256584	0.00	\N	\N
 15	GLCK-293761-1140	Gvvb	Samsung Galaxy S23	Son durum	4	20.00	2026-03-21 20:32:53.616149	0.00	\N	\N
 16	GLCK-434594-4058	Gvvb	Samsung Galaxy S23	Son2	3	25.00	2026-03-21 20:34:18.801469	0.00	\N	\N
+99	GLCK-037474-8159	Ddr ram 1600	sony	Yeni 	4	4000.00	2026-04-06 21:32:51.982439	0.00	\N	\N
 17	GLCK-273328-2512	san	Apple iPad Air 5		6	0.00	2026-03-21 22:33:11.195905	0.00	\N	\N
-10	GLCK-546704-7568	Hardisk	Hdhdhf	Hdd	22	4500.00	2026-03-31 18:59:54.56987	1250.00	\N	\N
 8	GLCK-565660-5703	Cpu	1980 oncesi	Cikma	151	1000.00	2026-03-31 18:56:41.73705	0.00	\N	\N
-12	GLCK-595837-6515	masa	Apple iPad Air 5	Exper	2	2500.00	2026-03-31 19:45:30.913598	0.00	\N	\N
+6	1231231231232	Ekran ipad	11 ler	Apple	9	12000.00	2026-04-01 17:36:52.918459	0.00	\N	\N
+66	GLCK-508359-9625	Terminal gözü mercek	Zebra TC21 El Terminali	Uno	2	1000.00	2026-04-06 21:36:03.750464	0.00	\N	\N
+9	GLCK-484958-9000	Apple cep	14/17	Apple	93	2500.00	2026-04-02 19:50:36.213656	0.00	\N	\N
 19	GLCK-443442-1577	Tornavida kısa 3mm	Hepsi	İzeltaş	50	675.00	2026-03-31 19:55:39.538761	0.00	\N	\N
 23	0123456789	Cpu	13 pro	App	7	4000.00	2026-03-22 12:16:12.413941	0.00	\N	\N
 59	GLCK-367020-3220	Kalem	Hepsi	Fibo	20	15.00	2026-03-31 19:59:57.121099	0.00	\N	\N
@@ -1063,9 +1076,18 @@ COPY public.envanter (id, barkod, malzeme_adi, uyumlu_cihaz, marka, miktar, alis
 63	GLCK-869458-5276	Mayonez	Casped 1		3	25.00	2026-03-31 20:07:55.973548	0.00	\N	\N
 64	GLCK-478340-7538	Hardal	Casped 1		1	255.00	2026-03-31 20:18:07.125835	0.00	\N	\N
 65	GLCK-388274-6690	Mayonez	Casped 1		3	222.00	2026-03-31 20:51:21.486284	0.00	\N	\N
-26	1123456799	Ekran karti1	Tv1	Sony12	10	1500.00	2026-03-22 13:53:00.260226	0.00	\N	\N
-6	1231231231232	Ekran ipad	11 ler	Apple	15	12000.00	2026-03-22 13:56:31.449979	0.00	\N	\N
-9	GLCK-484958-9000	Apple cep	14/17	Apple	96	2500.00	2026-03-31 12:31:46.397265	0.00	\N	\N
+68	GLCK-087301-2448	Varyete	Son S2	Hakki	2	255.00	2026-04-01 12:18:25.256616	0.00	\N	\N
+67	GLCK-695629-2647	Biber	Zebra TC21 El Terminali	Tuzot	15	750.00	2026-04-03 00:07:08.892724	0.00	\N	\N
+70	GLCK-222920-6458	Vida	Son S2	Sap	23	57.00	2026-04-01 13:47:20.834276	0.00	\N	\N
+91	GLCK-892314-3464	Ekran	Hp Bictus		1	7050.00	2026-04-03 17:03:24.573454	0.00	\N	\N
+10	GLCK-546704-7568	Hardisk	Hdhdhf	Hdd	20	4500.00	2026-04-03 17:14:35.296899	1250.00	\N	\N
+26	1123456799	Ekran karti1	Tv1	Sony12	9	1500.00	2026-04-04 15:15:55.482242	0.00	\N	\N
+92	GLCK-394218-1642	Razor	Traş Canli	Sanyo	2	1200.00	2026-04-05 12:30:21.176538	0.00	\N	\N
+93	GLCK-525443-6270	Kesme bicagi	Traş Canli	Sony	3	550.00	2026-04-05 12:32:23.916617	0.00	\N	\N
+69	GLCK-505928-1928	Somun	Son S2	Aeg	18	72.00	2026-04-01 16:30:53.316257	0.00	\N	\N
+94	GLCK-635690-8456	Elek	Traş Canli	Tras	2	85.00	2026-04-05 14:14:32.538429	0.00	\N	\N
+12	GLCK-595837-6515	masa	Apple iPad Air 5	Exper	4	2500.00	2026-04-05 15:40:09.419355	0.00	\N	\N
+90	GLCK-730692-9993	Ram	Hp Bictus	App	4	3800.00	2026-04-05 15:41:05.709365	0.00	\N	\N
 \.
 
 
@@ -1087,6 +1109,8 @@ COPY public.firms (id, firma_adi, yetkili_ad_soyad, telefon, faks, vergi_no, epo
 11	Kamil holding	AHMET KAMIL	0532	0532	222	g@g.com	Karayollari	2026-03-16 16:39:00.956743
 12	ARDA İKİ	ARDA DARDA	05320000002	05320000002	001	ARDA2@A.COM	ELMALI MAH EŞME TRABZON	2026-03-20 16:06:12.41277
 13	Kara Kazım A.Ş.	Kazım KARTAL	05335555555	05335555556	123456	KK@a.Com	Düvenli mah. dereli sk. inci apt. no 26 ciflik köy sultanhisar gebze KOCAELİ	2026-03-30 16:14:46.651765
+14	Ana	Anne	0532	0532	001	a1@a.com	Denizevler ana golcuk baba	2026-04-04 14:08:41.831709
+15	Baba	Babi	0532	0532	0002	b1@b.com	Deniz evler baba golcuk bolu	2026-04-04 14:09:45.637404
 \.
 
 
@@ -1215,6 +1239,7 @@ COPY public.kasa_islemleri (id, islem_yonu, kategori, tutar, aciklama, baglanti_
 121	GİRİŞ	Randevu Geliri Tahsili	12500.00	26032621 nolu servis tahsilatı.	101	2026-03-26 18:35:17.982836	Banko	26032621
 122	GİRİŞ	Randevu Geliri Tahsili	1250.00	26032621 nolu servis tahsilatı.	101	2026-03-26 18:51:49.624745	Banko	26032621
 123	GİRİŞ	Randevu Geliri Tahsili	14547.00	26032622 nolu servis tahsilatı.	102	2026-03-26 18:58:03.841792	Banko	26032622
+240	ÇIKIŞ	Diğer Giderler	1500.00	Avans 2	\N	2026-04-03 00:07:54.926953	Sistem	\N
 124	GİRİŞ	Randevu Geliri Tahsili	14547.00	26032622 nolu servis tahsilatı.	102	2026-03-26 19:03:41.503811	Banko	26032622
 125	GİRİŞ	Randevu Geliri Tahsili	14547.00	26032622 nolu servis tahsilatı.	102	2026-03-26 19:04:08.466206	Banko	26032622
 126	GİRİŞ	Randevu Geliri Tahsili	14547.00	26032622 nolu servis tahsilatı.	102	2026-03-26 19:21:11.254683	Banko	26032622
@@ -1272,6 +1297,99 @@ COPY public.kasa_islemleri (id, islem_yonu, kategori, tutar, aciklama, baglanti_
 178	GİRİŞ	Stok Satışı	825.00	Stok Satışı: Tornavida kısa 3mm | Adet: 1 | Birim: 825 ₺	\N	2026-03-31 19:51:36.461571	Barkod Satış	\N
 179	ÇIKIŞ	Hızlı Barkod Alımı	550.00	Hızlı Stok Alımı: Tornavida kısa 3mm | Adet: 1 | Birim: 550.00 ₺	\N	2026-03-31 19:53:08.556126	Barkod İşlem	\N
 180	GİRİŞ	Stok Satışı	75.00	Stok Satışı: Kalem tras | Adet: 1 | Birim: 75 ₺	\N	2026-03-31 19:57:38.203552	Barkod Satış	\N
+181	GİRİŞ	Tamir Ücreti Tahsili	18750.00	26033108 nolu işlem tahsilatı.	124	2026-04-01 11:09:15.079068	Banko	26033108
+182	GİRİŞ	Tamir Ücreti Tahsili	14999.00	26040101 nolu işlem tahsilatı.	125	2026-04-01 12:14:02.686619	Banko	26040101
+183	ÇIKIŞ	Mal Alımı	570.00	Usta Siparişi Alımı: Vida | Adet: 10 | Birim: 57 ₺	\N	2026-04-01 13:10:51.806416	Banko Stok Girişi	\N
+184	GİRİŞ	Tamir Ücreti Tahsili	8333.00	26040102 nolu işlem tahsilatı.	126	2026-04-01 13:16:16.699565	Banko	26040102
+185	ÇIKIŞ	Mal Alımı	68.00	Usta Siparişi Alımı: Vida | Adet: 1 | Birim: 68 ₺	\N	2026-04-01 13:21:11.154646	Banko Stok Girişi	\N
+186	GİRİŞ	Stok Satışı	86.00	Stok Satışı: Vida | Adet: 1 | Birim: 86 ₺	\N	2026-04-01 13:22:53.046005	Barkod Satış	\N
+187	ÇIKIŞ	Mal Alımı	570.00	Genel Stok Alımı: Vida | Adet: 10 | Birim: 57 ₺	\N	2026-04-01 13:46:49.308446	Banko Stok Girişi	\N
+188	ÇIKIŞ	Mal Alımı	57.00	Hızlı İşlem Radarı (+1): Vida | Adet: 1 | Birim: 57 ₺	\N	2026-04-01 13:47:20.834276	Banko Stok Girişi	\N
+189	ÇIKIŞ	Mal Alımı	195.00	Usta Siparişi Alımı: Somun | Adet: 3 | Birim: 65 ₺	\N	2026-04-01 13:48:55.622411	Banko Stok Girişi	\N
+190	GİRİŞ	Stok Satışı	784.00	Stok Satışı: Somun | Adet: 8 | Birim: 98 ₺	\N	2026-04-01 13:54:46.608671	Barkod Satış	\N
+191	ÇIKIŞ	Mal Alımı	72.00	Genel Stok Alımı: Somun | Adet: 1 | Birim: 72 ₺	\N	2026-04-01 14:06:44.973675	Banko Stok Girişi	\N
+192	GİRİŞ	Stok Satışı	108.00	Stok Satışı: Somun | Adet: 1 | Birim: 108 ₺	\N	2026-04-01 15:24:26.695924	Barkod Satış	\N
+193	GİRİŞ	Stok Satışı	108.00	Stok Satışı: Somun | Adet: 1 | Birim: 108 ₺	\N	2026-04-01 15:25:41.680928	Barkod Satış	\N
+194	GİRİŞ	Stok Satışı	108.00	Stok Satışı: Somun | Adet: 1 | Birim: 108 ₺	\N	2026-04-01 15:32:02.21784	Barkod Satış	\N
+195	GİRİŞ	Stok Satışı	1080.00	Stok Satışı: Somun | Adet: 10 | Birim: 108 ₺	\N	2026-04-01 15:51:03.280999	Barkod Satış	\N
+196	ÇIKIŞ	Mal Alımı	864.00	Genel Stok Alımı: Somun | Adet: 12 | Birim: 72 ₺	\N	2026-04-01 15:52:57.607731	Banko Stok Girişi	\N
+197	GİRİŞ	Stok Satışı	104.00	Stok Satışı: Somun (%20 İskonto) | Adet: 1 | Birim: 104 ₺	\N	2026-04-01 16:14:46.762681	Barkod Satış	\N
+198	GİRİŞ	Stok Satışı	104.00	Stok Satışı: Somun (%20 İskonto) | Adet: 1 | Birim: 104 ₺	\N	2026-04-01 16:21:03.937884	Barkod Satış	\N
+199	GİRİŞ	Stok Satışı	91.00	Stok Satışı: Somun (%20 İskonto) | Adet: 1 | Birim: 91 ₺	\N	2026-04-01 16:30:01.234044	Barkod Satış	\N
+200	ÇIKIŞ	Mal Alımı	72.00	Hızlı İşlem Radarı (+1): Somun | Adet: 1 | Birim: 72 ₺	\N	2026-04-01 16:30:53.316257	Banko Stok Girişi	\N
+201	ÇIKIŞ	Mal Alımı	2222.00	Hızlı İşlem Radarı (+1): Biber | Adet: 1 | Birim: 2222 ₺	\N	2026-04-01 16:32:58.281402	Banko Stok Girişi	\N
+202	ÇIKIŞ	Mal Alımı	2222.00	Hızlı İşlem Radarı (+1): Biber | Adet: 1 | Birim: 2222 ₺	\N	2026-04-01 16:33:56.491811	Banko Stok Girişi	\N
+203	GİRİŞ	Stok Satışı	3333.00	Stok Satışı: Biber | Adet: 1 | Birim: 3333 ₺	\N	2026-04-01 16:34:30.661587	Barkod Satış	\N
+204	GİRİŞ	Stok Satışı	2000.00	Stok Satışı: Biber (%50 İskonto) | Adet: 1 | Birim: 2000 ₺	\N	2026-04-01 16:35:36.037261	Barkod Satış	\N
+205	GİRİŞ	Stok Satışı	3000.00	Stok Satışı: Biber (%50 İskonto) | Adet: 1 | Birim: 3000 ₺	\N	2026-04-01 16:58:51.618413	Barkod Satış	\N
+206	GİRİŞ	Stok Satışı	3333.00	Stok Satışı: Biber | Adet: 1 | Birim: 3333 ₺	\N	2026-04-01 17:00:01.86242	Barkod Satış	\N
+207	ÇIKIŞ	Mal Alımı	5500.00	Genel Stok Alımı: Biber | Adet: 11 | Birim: 500 ₺	\N	2026-04-01 17:08:10.077042	Banko Stok Girişi	\N
+208	GİRİŞ	Stok Satışı	3750.00	Stok Satışı: Biber | Adet: 5 | Birim: 750 ₺	\N	2026-04-01 17:17:35.060044	Barkod Satış	\N
+209	GİRİŞ	Stok Satışı	36000.00	Stok Satışı: Ekran ipad | Adet: 2 | Birim: 18000 ₺	\N	2026-04-01 17:19:43.253475	Barkod Satış	\N
+210	GİRİŞ	Stok Satışı	54000.00	Stok Satışı: Ekran ipad | Adet: 3 | Birim: 18000 ₺	\N	2026-04-01 17:25:54.838445	Barkod Satış	\N
+211	GİRİŞ	Stok Satışı	18000.00	Stok Satışı: Ekran ipad | Adet: 1 | Birim: 18000 ₺	\N	2026-04-01 17:36:52.918459	Barkod Satış	\N
+212	GİRİŞ	Kasaya Nakit Girişi	25088.00	Duz	\N	2026-04-01 17:40:56.672575	Admin	\N
+213	GİRİŞ	Kasaya Nakit Girişi	9000.00	Ggg	\N	2026-04-01 17:41:23.062713	Admin	\N
+214	GİRİŞ	Kasaya Nakit Girişi	5500.00	Tt	\N	2026-04-01 18:57:00.343958	Admin	\N
+215	GİRİŞ	Kasaya Nakit Girişi	2500.00	Hayirli olsun	\N	2026-04-02 19:41:43.350453	Admin	\N
+216	ÇIKIŞ	Mal Alımı	2500.00	Hızlı İşlem Radarı (+1): Apple cep | Adet: 1 | Birim: 2500 ₺	\N	2026-04-02 19:43:03.098566	Banko Stok Girişi	\N
+217	GİRİŞ	Stok Satışı	3750.00	Stok Satışı: Apple cep | Adet: 1 | Birim: 3750 ₺	\N	2026-04-02 19:43:56.211016	Barkod Satış	\N
+218	GİRİŞ	Stok Satışı	7500.00	Stok Satışı: Apple cep | Adet: 2 | Birim: 3750 ₺	\N	2026-04-02 19:49:32.123642	Barkod Satış	\N
+219	GİRİŞ	Stok Satışı	3375.00	Stok Satışı: Apple cep (%50 İskonto) | Adet: 1 | Birim: 3375 ₺	\N	2026-04-02 19:50:36.213656	Barkod Satış	\N
+220	ÇIKIŞ	Genel Gider Çıkışı	55.00	Acil	\N	2026-04-02 23:05:06.78896	Sistem	\N
+221	ÇIKIŞ	Genel Gider Çıkışı	8888.00	Ceza	\N	2026-04-02 23:05:41.633592	Sistem	\N
+222	ÇIKIŞ	Genel Gider Çıkışı	1.00	F	\N	2026-04-02 23:13:22.422926	Sistem	\N
+223	ÇIKIŞ	Genel Gider Çıkışı	2.00	T	\N	2026-04-02 23:14:12.803396	Sistem	\N
+224	ÇIKIŞ	Toptancıya Ödeme / Stok Alımı	999.00	Stok Alımı: Apple cep (5 Adet)	\N	2026-04-02 23:16:51.177749	Sistem	\N
+225	ÇIKIŞ	Genel Gider Çıkışı	880.00	Gsgdgd	\N	2026-04-02 23:36:03.138712	Sistem	\N
+226	ÇIKIŞ	Genel Gider Çıkışı	222.00	Hg	\N	2026-04-02 23:36:21.875415	Sistem	\N
+227	ÇIKIŞ	Toptancıya Ödeme / Stok Alımı	2500.00	Stok Alımı: Biber (5 Adet)	\N	2026-04-02 23:37:48.703968	Sistem	\N
+228	ÇIKIŞ	Toptancıya Ödeme / Stok Alımı	1500.00	Stok Alımı: Biber (2 Adet)	\N	2026-04-02 23:39:20.069754	Sistem	\N
+229	ÇIKIŞ	Toptancıya Ödeme / Stok Alımı	250.00	Stok Alımı: Biber (1 Adet)	\N	2026-04-02 23:40:02.3194	Sistem	\N
+230	ÇIKIŞ	Genel Gider Çıkışı	1.00	W	\N	2026-04-02 23:45:04.58139	Sistem	\N
+231	ÇIKIŞ	Toptancıya Ödeme / Stok Alımı	1000.00	Stok Alımı: Biber (2 Adet)	\N	2026-04-02 23:46:33.980353	Sistem	\N
+232	ÇIKIŞ	Toptancıya Ödeme / Stok Alımı	750.00	Stok Alımı: Biber (1 Adet)	\N	2026-04-02 23:47:23.499515	Sistem	\N
+233	ÇIKIŞ	Diğer Giderler	450.00	Avans	\N	2026-04-02 23:48:35.27726	Sistem	\N
+234	ÇIKIŞ	Genel Gider Çıkışı	1.00	F	\N	2026-04-02 23:54:40.631185	Sistem	\N
+235	ÇIKIŞ	Toptancıya Ödeme / Stok Alımı	2500.00	Stok Alımı: Biber (5 Adet)	\N	2026-04-02 23:55:34.160009	Sistem	\N
+236	ÇIKIŞ	Toptancıya Ödeme / Stok Alımı	3750.00	Stok Alımı: Biber (5 Adet)	\N	2026-04-02 23:56:13.433273	Sistem	\N
+237	ÇIKIŞ	Genel Gider Çıkışı	2.00	Hh	\N	2026-04-03 00:05:17.446885	Sistem	\N
+238	ÇIKIŞ	Mal Alımı	2500.00	Genel Stok Alımı: Biber | Adet: 5 | Birim: 500 ₺	\N	2026-04-03 00:06:05.995005	Banko Stok Girişi	\N
+239	ÇIKIŞ	Mal Alımı	3750.00	Genel Stok Alımı: Biber | Adet: 5 | Birim: 750 ₺	\N	2026-04-03 00:07:08.892724	Banko Stok Girişi	\N
+241	GİRİŞ	Kasaya Nakit Girişi	1500.00	Ggh	\N	2026-04-03 00:10:04.339001	Admin	\N
+242	GİRİŞ	Kasaya Nakit Girişi	48.00	Gegegdbe	\N	2026-04-03 10:23:43.182795	Admin	\N
+243	GİRİŞ	Kasaya Nakit Girişi	85.00	Bbb	\N	2026-04-03 11:16:08.180019	Admin	\N
+244	ÇIKIŞ	Mal Alımı	3000.00	Genel Stok Alımı: Ekran karti1 | Adet: 2 | Birim: 1500 ₺	\N	2026-04-03 12:26:44.604235	Banko Stok Girişi	\N
+245	GİRİŞ	Stok Satışı	2250.00	Stok Satışı: Ekran karti1 | Adet: 1 | Birim: 2250 ₺	\N	2026-04-03 12:41:06.227477	Barkod Satış	\N
+246	GİRİŞ	Stok Satışı	2025.00	Stok Satışı: Ekran karti1 (%50 İskonto) | Adet: 1 | Birim: 2025 ₺	\N	2026-04-03 12:43:24.87098	Barkod Satış	\N
+247	ÇIKIŞ	Mal Alımı	4500.00	Hızlı İşlem Radarı (+1): Hardisk | Adet: 1 | Birim: 4500 ₺	\N	2026-04-03 15:58:31.475699	Banko Stok Girişi	\N
+248	GİRİŞ	Stok Satışı	6750.00	Stok Satışı: Hardisk | Adet: 1 | Birim: 6750 ₺	\N	2026-04-03 15:59:22.893431	Barkod Satış	\N
+249	ÇIKIŞ	Mal Alımı	4500.00	Genel Stok Alımı: Hardisk | Adet: 1 | Birim: 4500 ₺	\N	2026-04-03 16:07:28.437048	Banko Stok Girişi	\N
+250	ÇIKIŞ	Mal Alımı	4500.00	Usta Siparişi Alımı: Hardisk | Adet: 1 | Birim: 4500 ₺	\N	2026-04-03 16:37:12.674825	Banko Stok Girişi	\N
+251	ÇIKIŞ	Mal Alımı	7600.00	Usta Siparişi Alımı: Ram | Adet: 2 | Birim: 3800 ₺	\N	2026-04-03 17:00:02.708639	Banko Stok Girişi	\N
+252	ÇIKIŞ	Mal Alımı	7050.00	Usta Siparişi Alımı: Ekran | Adet: 1 | Birim: 7050 ₺	\N	2026-04-03 17:03:24.573454	Banko Stok Girişi	\N
+253	GİRİŞ	Stok Satışı	25380.00	Stok Satışı: Hardisk (%30 İskonto) | Adet: 4 | Birim: 6345 ₺	\N	2026-04-03 17:14:35.296899	Barkod Satış	\N
+254	GİRİŞ	Tamir Ücreti Tahsili	2333.00	26040103 nolu işlem tahsilatı.	127	2026-04-04 09:54:54.03129	Banko	26040103
+255	GİRİŞ	Stok Satışı	4125.00	Stok Satışı: Ekmek | Adet: 1 | Birim: 4125 ₺	\N	2026-04-04 12:34:22.463888	Barkod Satış	\N
+256	GİRİŞ	Tamir Ücreti Tahsili	1875.00	26040404 nolu işlem tahsilatı.	130	2026-04-04 14:31:51.196453	Banko	26040404
+257	GİRİŞ	Tamir Ücreti Tahsili	3825.00	26040403 nolu işlem tahsilatı.	129	2026-04-04 14:42:16.855771	Banko	26040403
+258	GİRİŞ	Randevu Geliri Tahsili	1800.00	26040405 nolu işlem tahsilatı.	113	2026-04-04 14:55:50.376731	Banko	26040405
+259	GİRİŞ	Randevu Geliri Tahsili	11250.00	26040406 nolu işlem tahsilatı.	114	2026-04-04 15:08:03.408006	Banko	26040406
+260	GİRİŞ	Stok Satışı	4125.00	Stok Satışı: Ekmek | Adet: 1 | Birim: 4125 ₺	\N	2026-04-04 15:14:49.013402	Barkod Satış	\N
+261	GİRİŞ	Stok Satışı	2228.00	Stok Satışı: Ekran karti1 (%5 İskonto) | Adet: 1 | Birim: 2228 ₺	\N	2026-04-04 15:15:55.482242	Barkod Satış	\N
+262	ÇIKIŞ	Mal Alımı	2400.00	Usta Siparişi Alımı: Razor | Adet: 2 | Birim: 1200 ₺	\N	2026-04-05 12:30:21.176538	Banko Stok Girişi	\N
+263	ÇIKIŞ	Mal Alımı	1650.00	Usta Siparişi Alımı: Kesme bicagi | Adet: 3 | Birim: 550 ₺	\N	2026-04-05 12:32:23.916617	Banko Stok Girişi	\N
+264	GİRİŞ	Tamir Ücreti Tahsili	11666.00	26040501 nolu işlem tahsilatı.	131	2026-04-05 12:35:12.097295	Banko	26040501
+265	ÇIKIŞ	Mal Alımı	7000.00	Usta Siparişi Alımı: Elek | Adet: 1 | Birim: 7000 ₺	\N	2026-04-05 12:51:11.700903	Banko Stok Girişi	\N
+266	GİRİŞ	Tamir Ücreti Tahsili	5000.00	26040502 nolu işlem tahsilatı.	132	2026-04-05 12:53:39.59147	Banko	26040502
+267	ÇIKIŞ	Mal Alımı	7500.00	Usta Siparişi Alımı: Elek | Adet: 1 | Birim: 7500 ₺	\N	2026-04-05 13:04:17.288595	Banko Stok Girişi	\N
+268	ÇIKIŞ	Mal Alımı	5000.00	Usta Siparişi Alımı: masa | Adet: 2 | Birim: 2500 ₺	\N	2026-04-05 15:40:09.419355	Banko Stok Girişi	\N
+269	ÇIKIŞ	Mal Alımı	7600.00	Usta Siparişi Alımı: Ram | Adet: 2 | Birim: 3800 ₺	\N	2026-04-05 15:41:05.709365	Banko Stok Girişi	\N
+270	ÇIKIŞ	Mal Alımı	7875.00	Usta Siparişi Alımı: Saksak | Adet: 15 | Birim: 525 ₺	\N	2026-04-05 15:43:16.064013	Banko Stok Girişi	\N
+271	ÇIKIŞ	Mal Alımı	1777.00	Usta Siparişi Alımı: Resim | Adet: 1 | Birim: 1777 ₺	\N	2026-04-05 15:44:20.422749	Banko Stok Girişi	\N
+272	GİRİŞ	Tamir Ücreti Tahsili	52500.00	26040505 nolu işlem tahsilatı.	135	2026-04-05 15:49:22.283339	Banko	26040505
+273	GİRİŞ	Randevu Geliri Tahsili	7500.00	26040506 nolu işlem tahsilatı.	115	2026-04-05 16:16:22.35488	Banko	26040506
+274	GİRİŞ	Kasaya Nakit Girişi	949.00	Bdbdbddh	\N	2026-04-06 21:37:30.797255	Admin	\N
 \.
 
 
@@ -1323,9 +1441,29 @@ COPY public.material_requests (id, service_id, usta_email, part_name, quantity, 
 42	116	Usta_1	Hehe	1	Cihaz: Apple T10 - Not: Bsbd	Geldi	2026-03-26 13:32:43.28886	f
 41	116	Usta_1	Bddhdhd	1	Cihaz: Apple T10 - Not: Hshe	Geldi	2026-03-26 13:32:43.273675	f
 43	119	Usta_1	M4 HDD (APPLE)	2	Cihaz: Apple M4 - Not: 512 SSD OLSUN	Geldi	2026-03-30 17:46:55.795258	f
-45	124	Usta_1	Ketcap	2	Cihaz: Casped 1 - Not: Mangal	Stokta	2026-03-31 20:04:37.515809	t
-44	124	Usta_1	Hardal	1	Cihaz: Casped 1 - Not: Sari	Onay Bekliyor	2026-03-31 20:04:37.490306	t
-46	124	Usta_1	Mayonez	3	Cihaz: Casped 1 - Not: Yagsiz	Onay Bekliyor	2026-03-31 20:04:37.529564	t
+53	126	Usta_1	Varyete	2	Siyah olacak	Geldi	2026-04-01 12:16:50.388565	t
+52	126	Usta_1	Somun	25	Kirmizi olsun	Geldi	2026-04-01 12:16:50.362864	t
+47	125	Usta_1	Ekmek	4	Cihaz: Zebra TC21 El Terminali - Not: Tahilli	Geldi	2026-04-01 11:12:29.975153	t
+46	124	Usta_1	Mayonez	3	Cihaz: Casped 1 - Not: Yagsiz	Geldi	2026-03-31 20:04:37.529564	t
+45	124	Usta_1	Ketcap	2	Cihaz: Casped 1 - Not: Mangal	Geldi	2026-03-31 20:04:37.515809	t
+44	124	Usta_1	Hardal	1	Cihaz: Casped 1 - Not: Sari	Geldi	2026-03-31 20:04:37.490306	t
+51	126	Usta_1	Vida	10	Yesil sari olacak	Geldi	2026-04-01 12:16:50.344023	t
+49	125	Usta_1	Biber	5	Cihaz: Zebra TC21 El Terminali - Not: Kara	Geldi	2026-04-01 11:12:30.010802	f
+50	125	Usta_1	Biber	1	Cihaz: Zebra TC21 El Terminali - Not: Kirmizi	Geldi	2026-04-01 11:12:30.026854	t
+48	125	Usta_1	Tuz	2	Cihaz: Zebra TC21 El Terminali - Not: Kaya	Geldi	2026-04-01 11:12:29.993381	f
+59	131	Usta_1	Kesme bicagi	3	Elekli	Geldi	2026-04-05 12:29:11.127599	t
+63	135	Usta_1	Masa	2	Kirmizi	Geldi	2026-04-05 15:37:40.225144	t
+58	127	Usta_1	Ekran	1	20 inch	Geldi	2026-04-03 16:24:11.008959	t
+57	127	Usta_1	Ram	2	1600 luk	Geldi	2026-04-03 16:24:10.988867	t
+55	127	Usta_1	Somun	3	Ortak v3	Geldi	2026-04-01 13:19:47.736592	t
+54	127	Usta_1	Vida	1	Ortak	Geldi	2026-04-01 13:19:47.720481	t
+66	134	Usta_1	Resim	1	Alma	Geldi	2026-04-05 15:38:38.28983	t
+61	132	Usta_1	Elek	1	Krom	Geldi	2026-04-05 12:50:08.934405	t
+56	127	Usta_1	Hdd	1	Ssd_1000gb	Geldi	2026-04-03 16:24:10.969201	t
+60	131	Usta_1	Razor	2	Tras model	Geldi	2026-04-05 12:29:11.258048	t
+65	134	Usta_1	Saksak	15	Yesil	Geldi	2026-04-05 15:38:37.669197	t
+64	135	Usta_1	Ram	2	1200	Geldi	2026-04-05 15:37:40.246231	t
+62	133	Usta_1	Elek	1	Tras	Geldi	2026-04-05 13:03:18.437615	t
 \.
 
 
@@ -1354,6 +1492,20 @@ COPY public.price_history (id, inventory_id, eski_alis, yeni_alis, eski_satis, y
 18	12	1000.00	2500.00	0.00	0.00	2026-03-31 19:45:30.913598
 19	19	8.00	550.00	0.00	0.00	2026-03-31 19:50:26.3964
 20	19	550.00	675.00	0.00	0.00	2026-03-31 19:55:39.538761
+21	69	55.00	65.00	0.00	0.00	2026-04-01 13:48:55.622411
+22	69	65.00	72.00	0.00	0.00	2026-04-01 14:06:44.973675
+23	67	2222.00	500.00	0.00	0.00	2026-04-01 17:08:10.077042
+24	67	500.00	750.00	0.00	0.00	2026-04-03 00:07:08.892724
+25	94	7000.00	7500.00	0.00	0.00	2026-04-05 13:04:17.288595
+26	94	7500.00	85.00	0.00	0.00	2026-04-05 14:14:32.538429
+27	99	1777.00	1800.00	0.00	0.00	2026-04-06 21:18:33.222764
+28	99	1800.00	2000.00	0.00	0.00	2026-04-06 21:32:11.665835
+29	99	2000.00	2100.00	0.00	0.00	2026-04-06 21:32:37.493838
+30	99	2100.00	4000.00	0.00	0.00	2026-04-06 21:32:50.041933
+31	66	2750.00	20.00	0.00	0.00	2026-04-06 21:33:10.951606
+32	66	20.00	1750.00	0.00	0.00	2026-04-06 21:35:08.158034
+33	66	1750.00	500.00	0.00	0.00	2026-04-06 21:35:36.876026
+34	66	500.00	1000.00	0.00	0.00	2026-04-06 21:36:03.750464
 \.
 
 
@@ -1420,6 +1572,47 @@ COPY public.service_notes (id, service_id, note_text, created_at) FROM stdin;
 56	124	LOG: Parça için stok girişi yapıldı, Banko onayı bekleniyor.	2026-03-31 20:07:55.973548
 57	124	LOG: Parça için stok girişi yapıldı, Banko onayı bekleniyor.	2026-03-31 20:18:07.125835
 58	124	LOG: Parça için stok girişi yapıldı, Banko onayı bekleniyor.	2026-03-31 20:51:21.486284
+59	124	Kemal Müdür: Mayonez teslim alındı. Cihaz otomatik 'Tamirde' moduna çekildi.	2026-04-01 11:07:49.65412
+60	124	Kemal Müdür: Ketcap teslim alındı. Cihaz otomatik 'Tamirde' moduna çekildi.	2026-04-01 11:07:52.621336
+61	124	Kemal Müdür: Hardal teslim alındı. Cihaz otomatik 'Tamirde' moduna çekildi.	2026-04-01 11:07:55.535583
+62	125	LOG: Parça için stok girişi yapıldı, Banko onayı bekleniyor.	2026-04-01 11:18:49.86632
+63	125	Kemal Müdür: Ekmek teslim alındı. Cihaz otomatik 'Tamirde' moduna çekildi.	2026-04-01 11:20:37.338442
+64	125	LOG: Parça için stok girişi yapıldı, Banko onayı bekleniyor.	2026-04-01 11:21:56.714413
+65	125	Kemal Müdür: Biber teslim alındı. Cihaz otomatik 'Tamirde' moduna çekildi.	2026-04-01 12:11:49.686826
+66	125	Kemal Müdür: Biber teslim alındı. Cihaz otomatik 'Tamirde' moduna çekildi.	2026-04-01 12:11:53.208893
+67	125	Kemal Müdür: Tuz teslim alındı. Cihaz otomatik 'Tamirde' moduna çekildi.	2026-04-01 12:11:57.605703
+68	126	LOG: Parça için stok girişi yapıldı, Banko onayı bekleniyor.	2026-04-01 12:18:25.256616
+69	126	LOG: Parça için stok girişi yapıldı, Banko onayı bekleniyor.	2026-04-01 12:25:28.686655
+70	126	LOG: Parça için stok girişi yapıldı, Banko onayı bekleniyor.	2026-04-01 13:10:51.806416
+71	126	Kemal Müdür: Varyete teslim alındı. Cihaz otomatik 'Tamirde' moduna çekildi.	2026-04-01 13:14:32.967234
+72	126	Kemal Müdür: Somun teslim alındı. Cihaz otomatik 'Tamirde' moduna çekildi.	2026-04-01 13:14:35.364716
+73	126	Kemal Müdür: Vida teslim alındı. Cihaz otomatik 'Tamirde' moduna çekildi.	2026-04-01 13:14:37.987726
+74	127	LOG: Parça için stok girişi yapıldı, Banko onayı bekleniyor.	2026-04-01 13:21:11.154646
+75	127	LOG: Parça için stok girişi yapıldı, Banko onayı bekleniyor.	2026-04-01 13:48:55.622411
+76	127	Kemal Müdür: Somun teslim alındı. Cihaz otomatik 'Tamirde' moduna çekildi.	2026-04-01 13:50:08.066831
+77	127	Kemal Müdür: Vida teslim alındı. Cihaz otomatik 'Tamirde' moduna çekildi.	2026-04-01 13:50:16.811616
+78	127	LOG: Parça için stok girişi yapıldı, Banko onayı bekleniyor.	2026-04-03 16:37:12.674825
+79	127	Kemal Müdür: Hdd teslim alındı. Cihaz otomatik 'Tamirde' moduna çekildi.	2026-04-03 16:57:00.298385
+80	127	LOG: Parça için stok girişi yapıldı, Banko onayı bekleniyor.	2026-04-03 17:00:02.708639
+81	127	LOG: Parça için stok girişi yapıldı, Banko onayı bekleniyor.	2026-04-03 17:03:24.573454
+82	127	Kemal Müdür: Ekran teslim alındı. Cihaz otomatik 'Tamirde' moduna çekildi.	2026-04-03 17:05:42.034552
+83	127	Kemal Müdür: Ram teslim alındı. Cihaz otomatik 'Tamirde' moduna çekildi.	2026-04-03 17:05:44.933921
+84	131	LOG: Parça için stok girişi yapıldı, Banko onayı bekleniyor.	2026-04-05 12:30:21.176538
+85	131	Kemal Müdür: Razor teslim alındı. Cihaz otomatik 'Tamirde' moduna çekildi.	2026-04-05 12:31:34.42059
+86	131	LOG: Parça için stok girişi yapıldı, Banko onayı bekleniyor.	2026-04-05 12:32:23.916617
+87	131	Kemal Müdür: Kesme bicagi teslim alındı. Cihaz otomatik 'Tamirde' moduna çekildi.	2026-04-05 12:33:51.604895
+88	132	LOG: Parça için stok girişi yapıldı, Banko onayı bekleniyor.	2026-04-05 12:51:11.700903
+89	132	Kemal Müdür: Elek teslim alındı. Cihaz otomatik 'Tamirde' moduna çekildi.	2026-04-05 12:51:42.230856
+90	133	LOG: Parça için stok girişi yapıldı, Banko onayı bekleniyor.	2026-04-05 13:04:17.288595
+91	133	Kemal Müdür: Elek teslim alındı. Cihaz otomatik 'Tamirde' moduna çekildi.	2026-04-05 13:04:55.937996
+92	135	LOG: Parça için stok girişi yapıldı, Banko onayı bekleniyor.	2026-04-05 15:40:09.419355
+93	135	LOG: Parça için stok girişi yapıldı, Banko onayı bekleniyor.	2026-04-05 15:41:05.709365
+94	135	Kemal Müdür: Ram teslim alındı. Cihaz otomatik 'Tamirde' moduna çekildi.	2026-04-05 15:42:08.315273
+95	135	Kemal Müdür: Masa teslim alındı. Cihaz otomatik 'Tamirde' moduna çekildi.	2026-04-05 15:42:10.677904
+96	134	LOG: Parça için stok girişi yapıldı, Banko onayı bekleniyor.	2026-04-05 15:43:16.064013
+97	134	LOG: Parça için stok girişi yapıldı, Banko onayı bekleniyor.	2026-04-05 15:44:20.422749
+98	134	Kemal Müdür: Resim teslim alındı. Cihaz otomatik 'Tamirde' moduna çekildi.	2026-04-05 15:45:03.682763
+99	134	Kemal Müdür: Saksak teslim alındı. Cihaz otomatik 'Tamirde' moduna çekildi.	2026-04-05 15:45:07.879828
 \.
 
 
@@ -1575,6 +1768,42 @@ COPY public.service_status_history (id, service_id, old_status, new_status, chan
 137	124	Yeni Kayıt	Onay Bekliyor	Usta_1	Usta 12500 TL fiyat verdi	2026-03-31 20:02:50.295896
 138	124	Onaylandı	Tamirde	Usta_1	Durum usta tarafından güncellendi	2026-03-31 20:03:27.765316
 139	124	Tamirde	Parça Bekliyor	Usta_1	Durum usta tarafından güncellendi	2026-03-31 20:04:37.556732
+140	124	Tamirde	Hazır	Usta_1	Durum usta tarafından güncellendi	2026-04-01 11:08:30.860098
+141	125	Yeni Kayıt	Onay Bekliyor	Usta_1	Usta 9999 TL fiyat verdi	2026-04-01 11:10:28.546623
+142	125	Onaylandı	Tamirde	Usta_1	Durum usta tarafından güncellendi	2026-04-01 11:10:55.024939
+143	125	Tamirde	Parça Bekliyor	Usta_1	Durum usta tarafından güncellendi	2026-04-01 11:12:30.045168
+144	125	Tamirde	Hazır	Usta_1	Durum usta tarafından güncellendi	2026-04-01 12:13:01.235014
+145	126	Yeni Kayıt	Onay Bekliyor	Usta_1	Usta 5555 TL fiyat verdi	2026-04-01 12:13:16.743745
+146	126	Onaylandı	Tamirde	Usta_1	Durum usta tarafından güncellendi	2026-04-01 12:14:59.293567
+147	126	Tamirde	Parça Bekliyor	Usta_1	Durum usta tarafından güncellendi	2026-04-01 12:16:50.414943
+148	126	Tamirde	Hazır	Usta_1	Durum usta tarafından güncellendi	2026-04-01 13:14:58.687686
+149	127	Yeni Kayıt	Onay Bekliyor	Usta_1	Usta 1555 TL fiyat verdi	2026-04-01 13:18:16.741187
+150	127	Onaylandı	Tamirde	Usta_1	Durum usta tarafından güncellendi	2026-04-01 13:18:49.169903
+151	127	Tamirde	Parça Bekliyor	Usta_1	Durum usta tarafından güncellendi	2026-04-01 13:19:47.765534
+152	127	Tamirde	Parça Bekliyor	Usta_1	Durum usta tarafından güncellendi	2026-04-03 16:24:11.02857
+153	130	Yeni Kayıt	Onay Bekliyor	Usta_1	Usta 1250 TL fiyat verdi	2026-04-04 14:25:46.742194
+154	129	Yeni Kayıt	Onay Bekliyor	Usta_1	Usta 2550 TL fiyat verdi	2026-04-04 14:36:14.556369
+155	131	Yeni Kayıt	Onay Bekliyor	Usta_1	Usta 7777 TL fiyat verdi	2026-04-05 12:27:13.574214
+156	131	Onaylandı	Tamirde	Usta_1	Durum usta tarafından güncellendi	2026-04-05 12:27:42.998675
+157	131	Tamirde	Parça Bekliyor	Usta_1	Durum usta tarafından güncellendi	2026-04-05 12:29:11.271107
+158	131	Tamirde	Hazır	Usta_1	Durum usta tarafından güncellendi	2026-04-05 12:34:03.728468
+159	132	Yeni Kayıt	Onay Bekliyor	Usta_1	Usta 3333 TL fiyat verdi	2026-04-05 12:48:58.3602
+160	132	Onaylandı	Tamirde	Usta_1	Durum usta tarafından güncellendi	2026-04-05 12:49:37.331513
+161	132	Tamirde	Parça Bekliyor	Usta_1	Durum usta tarafından güncellendi	2026-04-05 12:50:08.962651
+162	132	Tamirde	Hazır	Usta_1	Durum usta tarafından güncellendi	2026-04-05 12:51:52.575251
+163	133	Yeni Kayıt	Onay Bekliyor	Usta_1	Usta 2500 TL fiyat verdi	2026-04-05 13:01:55.549194
+164	133	Onaylandı	Tamirde	Usta_1	Durum usta tarafından güncellendi	2026-04-05 13:02:24.369545
+165	133	Tamirde	Parça Bekliyor	Usta_1	Durum usta tarafından güncellendi	2026-04-05 13:03:18.463656
+166	133	Tamirde	Hazır	Usta_1	Durum usta tarafından güncellendi	2026-04-05 13:05:08.272114
+167	135	Yeni Kayıt	Onay Bekliyor	Usta_1	Usta 1000 TL fiyat verdi	2026-04-05 15:35:29.383424
+168	134	Yeni Kayıt	Onay Bekliyor	Usta_1	Usta 2000 TL fiyat verdi	2026-04-05 15:35:43.345189
+169	134	Yeni Kayıt	Onay Bekliyor	Usta_1	Usta 2000 TL fiyat verdi	2026-04-05 15:35:43.362909
+170	135	Onaylandı	Tamirde	Usta_1	Durum usta tarafından güncellendi	2026-04-05 15:36:26.972594
+171	135	Tamirde	Parça Bekliyor	Usta_1	Durum usta tarafından güncellendi	2026-04-05 15:37:40.257893
+172	134	Onaylandı	Tamirde	Usta_1	Durum usta tarafından güncellendi	2026-04-05 15:37:43.815492
+173	134	Tamirde	Parça Bekliyor	Usta_1	Durum usta tarafından güncellendi	2026-04-05 15:38:39.78587
+174	135	Tamirde	Hazır	Usta_1	Durum usta tarafından güncellendi	2026-04-05 15:45:37.064067
+175	134	Tamirde	Hazır	Usta_1	Durum usta tarafından güncellendi	2026-04-05 15:45:40.01332
 \.
 
 
@@ -1696,17 +1925,28 @@ COPY public.services (id, device_id, issue_text, status, created_at, atanan_usta
 108	27	ewerf	Teslim Edildi	2026-03-24 21:20:51.762693	Usta 1	26032425	\N	\N		250.00	Usta 250 TL fiyat verdi	2026-03-25 18:53:38.405458	11	\N
 122	38	Vvgh	Teslim Edildi	2026-03-31 14:22:07.378986	Usta 1	26033105	\N	\N		2500.00	\N	2026-03-31 14:23:33.824196	\N	13
 112	35	Musteri	Teslim Edildi	2026-03-25 18:55:11.149699	Usta 1	26032515	\N	\N	Gaz	550.00	Usta 550 TL fiyat verdi	2026-03-25 23:03:18.988105	6	\N
+135	39	Sjshdh	Teslim Edildi	2026-04-05 15:34:59.27562	Usta 1	26040505	\N	\N		35000.00	Durum usta tarafından güncellendi	2026-04-05 15:49:22.283339	\N	12
 123	14	N̈ejej	Teslim Edildi	2026-03-31 14:34:28.322235	Usta 1	26033107	\N	\N		7500.00	Usta 7500 TL fiyat verdi	2026-03-31 14:38:07.128692	\N	11
 113	14	B1	Teslim Edildi	2026-03-25 23:10:20.016853	Usta 1	26032516	\N	\N		555.00	\N	2026-03-26 10:15:06.954066	\N	11
 114	15	Nsndns	Teslim Edildi	2026-03-25 23:50:48.815293	Usta 1	26032518	\N	\N		101.00	\N	2026-03-26 10:15:41.829947	\N	8
 115	9	D	Teslim Edildi	2026-03-26 13:22:18.889163	Usta 1	26032604	\N	\N		101.00	\N	2026-03-26 13:29:31.130054	\N	4
-124	15	Rfgy	Parça Bekliyor	2026-03-31 20:02:30.377617	Usta 1	26033108	\N	\N		12500.00	Durum usta tarafından güncellendi	2026-03-31 20:04:37.556218	\N	8
+132	42	Lamba bozuk	Teslim Edildi	2026-04-05 12:48:33.069416	Usta 1	26040502	\N	\N		3333.00	Durum usta tarafından güncellendi	2026-04-05 12:53:39.59147	\N	11
+127	39	Cam catlak	Teslim Edildi	2026-04-01 13:17:54.304814	Usta 1	26040103	\N	\N	Toner verdim	1555.00	Durum usta tarafından güncellendi	2026-04-04 09:54:54.03129	\N	12
+124	15	Rfgy	Teslim Edildi	2026-03-31 20:02:30.377617	Usta 1	26033108	\N	\N		12500.00	Durum usta tarafından güncellendi	2026-04-01 11:09:15.079068	\N	8
 116	14	Hshdh	Teslim Edildi	2026-03-26 13:30:50.812652	Usta 1	26032607	\N	\N		1500.00	Durum usta tarafından güncellendi	2026-03-26 13:35:20.958675	\N	11
+128	9	Kilifi dar geldl	İptal Edildi	2026-04-04 11:31:03.165811	Usta 1	26040401	\N	\N		0.00	\N	2026-04-04 14:03:44.565809	\N	4
 119	37	Mavi ekran vae sikayet detagi	Teslim Edildi	2026-03-30 16:53:55.650863	Usta 1	26033001	\N	\N	Acele lazim	2750.00	Durum usta tarafından güncellendi	2026-03-30 18:09:10.894075	12	\N
+130	41	Bozuk c1	Teslim Edildi	2026-04-04 14:12:39.994697	Usta 1	26040404	\N	\N	Sarji yok	1250.00	Usta 1250 TL fiyat verdi	2026-04-04 14:31:51.196453	13	\N
+133	42	Ggg	Hazır	2026-04-05 13:01:38.502861	Usta 1	26040503	\N	\N		2500.00	Durum usta tarafından güncellendi	2026-04-05 13:05:08.271579	\N	11
 118	22	Hhh	Teslim Edildi	2026-03-26 16:59:13.210824	Usta 1	26032616	\N	\N		1500.00	Usta 1500 TL fiyat verdi	2026-03-31 13:53:24.27729	9	\N
 117	14	Vvv	Teslim Edildi	2026-03-26 16:58:54.523027	Usta 1	26032615	\N	\N		2750.00	\N	2026-03-31 13:55:17.139185	\N	11
+129	40	Bozuk ana	Teslim Edildi	2026-04-04 14:11:19.52684	Usta 1	26040403	\N	\N	Sarjli verildi	2550.00	Usta 2550 TL fiyat verdi	2026-04-04 14:42:16.855771	\N	14
 120	38	Sari ekran	Teslim Edildi	2026-03-31 13:56:58.707814	Usta 1	26033101	\N	\N	Kablo sizde	11500.00	\N	2026-03-31 13:59:14.096157	\N	13
+125	9	Cami kirik	Teslim Edildi	2026-04-01 11:10:03.904014	Usta 1	26040101	\N	\N		9999.00	Durum usta tarafından güncellendi	2026-04-01 12:14:02.686619	\N	4
 121	27	Ggg	Teslim Edildi	2026-03-31 14:11:53.300165	Usta 1	26033103	\N	\N		11000.00	Usta 11000 TL fiyat verdi	2026-03-31 14:16:57.804728	11	\N
+126	26	Sari kapak	Teslim Edildi	2026-04-01 12:12:37.137153	Usta 1	26040102	\N	\N		5555.00	Durum usta tarafından güncellendi	2026-04-01 13:16:16.699565	11	\N
+131	42	Az tras ediyor	Teslim Edildi	2026-04-05 12:26:38.278493	Usta 1	26040501	\N	\N	Kesmiyor	7777.00	Durum usta tarafından güncellendi	2026-04-05 12:35:12.097295	\N	11
+134	27	Bzhxhx	Hazır	2026-04-05 15:34:43.02326	Usta 1	26040504	\N	\N		2000.00	Durum usta tarafından güncellendi	2026-04-05 15:45:40.012733	11	\N
 \.
 
 
@@ -1736,63 +1976,63 @@ COPY public.users (id, email, password, role) FROM stdin;
 -- Name: appointments_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.appointments_id_seq', 111, true);
+SELECT pg_catalog.setval('public.appointments_id_seq', 117, true);
 
 
 --
 -- Name: customers_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.customers_id_seq', 12, true);
+SELECT pg_catalog.setval('public.customers_id_seq', 14, true);
 
 
 --
 -- Name: devices_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.devices_id_seq', 38, true);
+SELECT pg_catalog.setval('public.devices_id_seq', 42, true);
 
 
 --
 -- Name: envanter_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.envanter_id_seq', 65, true);
+SELECT pg_catalog.setval('public.envanter_id_seq', 99, true);
 
 
 --
 -- Name: firms_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.firms_id_seq', 13, true);
+SELECT pg_catalog.setval('public.firms_id_seq', 15, true);
 
 
 --
 -- Name: kasa_islemleri_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.kasa_islemleri_id_seq', 180, true);
+SELECT pg_catalog.setval('public.kasa_islemleri_id_seq', 274, true);
 
 
 --
 -- Name: material_requests_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.material_requests_id_seq', 46, true);
+SELECT pg_catalog.setval('public.material_requests_id_seq', 66, true);
 
 
 --
 -- Name: price_history_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.price_history_id_seq', 20, true);
+SELECT pg_catalog.setval('public.price_history_id_seq', 34, true);
 
 
 --
 -- Name: service_notes_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.service_notes_id_seq', 58, true);
+SELECT pg_catalog.setval('public.service_notes_id_seq', 99, true);
 
 
 --
@@ -1806,14 +2046,14 @@ SELECT pg_catalog.setval('public.service_records_id_seq', 1, false);
 -- Name: service_status_history_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.service_status_history_id_seq', 139, true);
+SELECT pg_catalog.setval('public.service_status_history_id_seq', 175, true);
 
 
 --
 -- Name: services_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.services_id_seq', 124, true);
+SELECT pg_catalog.setval('public.services_id_seq', 135, true);
 
 
 --
@@ -2108,5 +2348,5 @@ ALTER TABLE ONLY public.services
 -- PostgreSQL database dump complete
 --
 
-\unrestrict UnSgVaUmekTGhe8ovTiA7uKzecvoeaZophmJMgAGt19Ra7DWbM1y5hXmKklR9op
+\unrestrict 58poHSXJsi8YBdgzebhnjT6U320ThxReNB9k7dPNhWPgO3sXupVuKq4SLncgkbz
 
