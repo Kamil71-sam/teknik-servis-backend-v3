@@ -2,6 +2,40 @@ const express = require('express');
 const router = express.Router();
 const db = require('../database');
 
+
+
+// --- 1. REHBER SORGULAMA (HİBRİT) ---
+router.get("/search-customer", async (req, res) => {
+    const { phone } = req.query;
+    if (!phone) return res.status(400).json({ success: false });
+
+    try {
+        // MÜDÜR: 'address' ve 'adres as address' eklendi! Adres borusu açıldı.
+        const query = `
+            SELECT * FROM (
+                SELECT id, name, phone, 'bireysel' as tip, address FROM customers
+                UNION ALL
+                SELECT id, firma_adi as name, telefon as phone, 'firma' as tip, adres as address FROM firms
+            ) as combined
+            WHERE phone = $1
+            LIMIT 1
+        `;
+        const result = await db.query(query, [phone]);
+        if (result.rows.length > 0) {
+            res.json({ success: true, data: result.rows[0] });
+        } else {
+            res.json({ success: false, message: "Kayıt bulunamadı" });
+        }
+    } catch (err) {
+        console.error("🚨 Arama Hatası:", err.message);
+        res.status(500).json({ success: false, error: "Rehber hatası" });
+    }
+});
+
+
+
+/*
+
 // --- 1. REHBER SORGULAMA (HİBRİT) ---
 router.get("/search-customer", async (req, res) => {
     const { phone } = req.query;
@@ -28,6 +62,10 @@ router.get("/search-customer", async (req, res) => {
         res.status(500).json({ success: false, error: "Rehber hatası" });
     }
 });
+
+
+*/
+
 
 
 // --- 2. RANDEVU EKLEME (VARSAYILAN STATÜ: 'Beklemede') ---
