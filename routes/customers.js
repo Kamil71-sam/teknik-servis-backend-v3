@@ -30,34 +30,6 @@ router.get("/all", async (req, res) => {
 
 
 
-
-
-/*
-// --- MÜDÜR: REHBER İÇİN TÜM MÜŞTERİ VE FİRMALARI GETİR (YENİ EKİ) ---
-// Not: Bu rota, yeni randevu ekranındaki siyah rehber butonu için çalışır.
-router.get("/all", async (req, res) => {
-  try {
-    // Hem bireysel müşterileri hem de kurumsal firmaları tek listede birleştiriyoruz
-    const query = `
-      SELECT id, name, phone, 'bireysel' as tip FROM customers
-      UNION ALL
-      SELECT id, firma_adi as name, telefon as phone, 'firma' as tip FROM firms
-      ORDER BY name ASC
-    `;
-    const result = await db.query(query);
-    res.json({ success: true, data: result.rows });
-  } catch (err) {
-    console.error("REHBER HATASI:", err.message);
-    res.status(500).json({ success: false, error: err.message });
-  }
-});
-
-*/
-
-
-
-
-
 // --- MÜŞTERİ EKLEME (POST) ---
 router.post("/", async (req, res) => {
   const { name, phone, fax, email, address } = req.body;

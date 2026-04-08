@@ -29,42 +29,7 @@ const query = `
     LIMIT 1
 `;
 
-
-
-
-
-
-        /*
-
-        const query = `
-            SELECT 
-                s.id,
-                s.servis_no AS "servis_no",
-                -- MÜDÜR: PG'deki gerçek isimlerle (firma_adi ve full_name)
-                COALESCE(f.firma_adi, m.full_name, 'Bilinmeyen Müşteri') AS "musteri_adi",
-                d.cihaz_turu AS "cihaz_turu",
-                d.brand AS "marka",
-                d.model AS "model",
-                s.status AS "status",
-                s.offer_price AS "fiyatTeklifi"
-            FROM services s
-            LEFT JOIN devices d ON s.device_id = d.id
-            LEFT JOIN customers m ON s.customer_id = m.id
-            -- MÜDÜR: Patlayan yer burasıydı, 'firm_id' olarak düzelttik:
-            LEFT JOIN firms f ON m.firm_id = f.id 
-            WHERE s.servis_no = $1 
-              AND (s.status ILIKE 'Hazır' OR s.status ILIKE 'hazir')
-            LIMIT 1
-        `;
-
-
-        */
-
-        
-
-
-
-
+     
         const v2Result = await db.query(query, [servis_no]);
         console.log("Müdürüm Veritabanından Gelen Ham Veri:", v2Result.rows[0]);
 

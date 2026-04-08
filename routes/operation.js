@@ -72,47 +72,6 @@ router.get('/usta-jobs/:ustaName', async (req, res) => {
 
 
 
-/*
-=======
->>>>>>> 2aea985ecbaf54b4c81b26198c61d3e124edf943
-// 3. USTA: Kendine Atanan İşleri Getir
-router.get('/usta-jobs/:ustaName', async (req, res) => {
-    const { ustaName } = req.params;
-    try {
-        const query = `
-            SELECT 
-                a.id, 
-                a.servis_no, 
-                COALESCE(c.name, f.firma_adi, 'Müşteri Bilgisi Yok') as musteri_adi, 
-                a.appointment_date::text as tarih, 
-                a.appointment_time::text as saat,
-                a.issue_text as detay,
-                a.status
-            FROM appointments a
-            LEFT JOIN customers c ON a.customer_id = c.id
-            LEFT JOIN firms f ON a.firm_id = f.id
-            WHERE a.assigned_usta = $1 
-            AND a.status IN ('Beklemede', 'Devam Ediyor')
-            ORDER BY a.appointment_date ASC, a.appointment_time ASC;
-        `;
-        const result = await db.query(query, [ustaName]);
-        res.json({ success: true, data: result.rows });
-    } catch (err) {
-        res.status(500).json({ success: false, error: err.message });
-    }
-});
-
-*/
-
-
-
-
-
-
-
-
-
-
 // 4. USTA: İşi Bitir (MÜDÜR: Burası artık 'Mali Onay Bekliyor' yapacak!)
 router.patch('/complete-job/:id', async (req, res) => {
     const { id } = req.params;
@@ -135,27 +94,7 @@ router.patch('/complete-job/:id', async (req, res) => {
     }
 });
 
-/*
->>>>>>> 2aea985ecbaf54b4c81b26198c61d3e124edf943
-// 4. USTA: İşi Bitir (Fiyat ve Not Gir)
-router.patch('/complete-job/:id', async (req, res) => {
-    const { id } = req.params;
-    const { price, usta_notu } = req.body;
-    try {
-        const query = `
-            UPDATE appointments 
-            SET price = $1, usta_notu = $2, status = 'Tamamlandı' 
-            WHERE id = $3
-        `;
-        await db.query(query, [price, usta_notu, id]);
-        res.json({ success: true, message: "İşlem kaydedildi." });
-    } catch (err) {
-        res.status(500).json({ success: false, error: err.message });
-    }
-});
 
-
-*/
 
 
 router.get('/usta-stats/:ustaName', async (req, res) => {
