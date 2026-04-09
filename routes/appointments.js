@@ -292,4 +292,41 @@ router.get("/pending-confirmations", async (req, res) => {
     }
 });
 
+
+// 🚨 YENİ EKLENEN ARŞİV (GEÇMİŞ) ROTASI - ÇALIŞAN HİÇBİR KODU BOZMAZ!
+router.get("/liste/gecmis", async (req, res) => {
+    try {
+        const query = `
+            SELECT 
+                a.id, 
+                a.servis_no, 
+                a.appointment_date, 
+                a.appointment_time, 
+                a.status, 
+                a.assigned_usta,
+                TRIM(SPLIT_PART(a.issue_text, '🔧 CİHAZ:', 1)) AS parca_adres,
+                TRIM(SPLIT_PART(SPLIT_PART(a.issue_text, '🔧 CİHAZ:', 2), '📝 NOT:', 1)) AS parca_cihaz,
+                TRIM(SPLIT_PART(a.issue_text, '📝 NOT:', 2)) AS parca_not,
+                a.issue_text,
+                a.price, 
+                a.tahsil_edilen_tutar,
+                COALESCE(a.tahsil_edilen_tutar, a.price, 0) as usta_fiyati, 
+                COALESCE(c.name, f.firma_adi, 'İsimsiz Müşteri') as customer_name,
+                COALESCE(c.phone, f.telefon, '') as customer_phone
+            FROM appointments a
+            LEFT JOIN customers c ON a.customer_id = c.id
+            LEFT JOIN firms f ON a.firm_id = f.id
+            WHERE a.status IN ('Teslim Edildi', 'İptal', 'İptal Edildi')
+            ORDER BY a.appointment_date DESC, a.appointment_time DESC;
+        `;
+        const result = await db.query(query);
+        res.json({ success: true, data: result.rows });
+    } catch (err) {
+        console.error("🚨 Geçmiş Liste Hatası:", err.message);
+        res.status(500).json({ error: "Geçmiş liste çekilemedi" });
+    }
+});
+
+
+
 module.exports = router;

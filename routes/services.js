@@ -26,6 +26,100 @@ router.get("/all", async (req, res) => {
   }
 });
 
+
+// --- MÜDÜR: 1.5 KAPI (TAMAMLANAN İŞLER / ARŞİV) ---
+router.get("/tamamlanan", async (req, res) => {
+  try {
+    // Sadece aktif ekrandan kovulan bitmiş/silinmiş/iptal edilmiş işleri alıyoruz
+    const query = `
+      SELECT 
+        v.*, 
+        s.offer_price, 
+        s.updated_at, /* 🚨 İŞTE EKSİK OLAN BİTİŞ TARİHİ VANASI BURASI! */
+        COALESCE(c.name, f.firma_adi, 'İsimsiz') as musteri,
+        COALESCE(c.name, f.firma_adi, 'İsimsiz') as musteri_adi
+      FROM servis_detay v
+      LEFT JOIN services s ON v.id = s.id
+      LEFT JOIN customers c ON s.customer_id = c.id
+      LEFT JOIN firms f ON s.firm_id = f.id
+      WHERE v.durum IN ('Pasif', 'PASIF / ARSIV', 'Teslim Edildi', 'İptal Edildi', 'İptal')
+      ORDER BY v.id DESC
+    `;
+    const result = await db.query(query);
+
+    // MÜDÜRÜN MAKYAJI: Frontend "Pasif" kelimesini anlamaz, biz onu yollamadan önce havada "Teslim Edildi" yapıyoruz.
+    const duzenlenmisKayitlar = result.rows.map(row => {
+      let gorselDurum = row.durum;
+      if (['Pasif', 'PASIF / ARSIV'].includes(row.durum)) gorselDurum = 'Teslim Edildi';
+      if (row.durum === 'İptal') gorselDurum = 'İptal Edildi';
+      
+      return { ...row, durum: gorselDurum };
+    });
+
+    res.json(duzenlenmisKayitlar);
+  } catch (err) {
+    console.error("Arşiv Çekme Hatası:", err.message);
+    res.status(500).json({ error: "SQL hatası: " + err.message });
+  }
+});
+
+
+
+
+
+
+
+
+/*
+// --- MÜDÜR: 1.5 KAPI (TAMAMLANAN İŞLER / ARŞİV) ---
+router.get("/tamamlanan", async (req, res) => {
+  try {
+    // Sadece aktif ekrandan kovulan bitmiş/silinmiş/iptal edilmiş işleri alıyoruz
+    const query = `
+      SELECT 
+        v.*, 
+        s.offer_price, 
+        COALESCE(c.name, f.firma_adi, 'İsimsiz') as musteri,
+        COALESCE(c.name, f.firma_adi, 'İsimsiz') as musteri_adi
+      FROM servis_detay v
+      LEFT JOIN services s ON v.id = s.id
+      LEFT JOIN customers c ON s.customer_id = c.id
+      LEFT JOIN firms f ON s.firm_id = f.id
+      WHERE v.durum IN ('Pasif', 'PASIF / ARSIV', 'Teslim Edildi', 'İptal Edildi', 'İptal')
+      ORDER BY v.id DESC
+    `;
+    const result = await db.query(query);
+
+    // MÜDÜRÜN MAKYAJI: Frontend "Pasif" kelimesini anlamaz, biz onu yollamadan önce havada "Teslim Edildi" yapıyoruz.
+    const duzenlenmisKayitlar = result.rows.map(row => {
+      let gorselDurum = row.durum;
+      if (['Pasif', 'PASIF / ARSIV'].includes(row.durum)) gorselDurum = 'Teslim Edildi';
+      if (row.durum === 'İptal') gorselDurum = 'İptal Edildi';
+      
+      return { ...row, durum: gorselDurum };
+    });
+
+    res.json(duzenlenmisKayitlar);
+  } catch (err) {
+    console.error("Arşiv Çekme Hatası:", err.message);
+    res.status(500).json({ error: "SQL hatası: " + err.message });
+  }
+});
+
+*/
+
+
+
+
+
+
+
+
+
+
+
+
+
 // --- MÜDÜR: 2. KAPI (KAYIT EKLEME) ---
 router.post("/", async (req, res) => {
   const { device_id, issue_text, atanan_usta, musteri_notu, customer_id, firm_id } = req.body; 
@@ -171,6 +265,13 @@ router.put("/:id", async (req, res) => {
   }
 
 });
+
+
+
+
+
+
+
 
 
 module.exports = router;
