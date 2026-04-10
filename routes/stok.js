@@ -197,6 +197,40 @@ router.put('/update/:id', async (req, res) => {
     }
 });
 
+
+
+
+
+
+// --- 5. AKILLI RADAR (DÜZELTİLDİ: BANKO VE USTA AYRILDI) ---
+router.get('/search', async (req, res) => {
+    const { malzeme_adi, barkod } = req.query;
+    try {
+        if (barkod) {
+            // 🚨 BANKO MOTORU: Barkod okutulduğunda eski usül TEK ürün (obje) döner!
+            const result = await db.query("SELECT * FROM envanter WHERE barkod = $1 LIMIT 1", [barkod]);
+            return res.json({ success: true, data: result.rows[0], found: result.rows.length > 0 });
+        } 
+        else if (malzeme_adi) {
+            // 🚨 USTA MOTORU: İsim yazıldığında yeni usül LİSTE (array) döner!
+            const result = await db.query("SELECT * FROM envanter WHERE malzeme_adi ILIKE $1 LIMIT 10", [`%${malzeme_adi}%`]);
+            return res.json({ success: true, data: result.rows, found: result.rows.length > 0 });
+        } 
+        else {
+            return res.json({ success: true, data: null });
+        }
+    } catch (err) {
+        res.status(500).json({ success: false, error: err.message });
+    }
+});
+
+
+
+
+
+
+
+/*
 // --- 5. AKILLI RADAR ---
 router.get('/search', async (req, res) => {
     const { malzeme_adi, barkod } = req.query;
@@ -216,6 +250,13 @@ router.get('/search', async (req, res) => {
         res.status(500).json({ success: false, error: err.message });
     }
 });
+
+*/
+
+
+
+
+
 
 
 // --- MÜDÜR: ÜRÜN ÖZELİNDE FİYAT GEÇMİŞİNİ GETİR ---

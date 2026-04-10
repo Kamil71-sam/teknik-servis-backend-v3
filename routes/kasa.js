@@ -121,12 +121,32 @@ router.post('/add', async (req, res) => {
                 const service_id = sQuery.rows[0].id;
 
                 // Taktığı parçaların GÜNCEL ALIŞ MALİYETİNİ (Depodan) topla
+                
+                const pQuery = `
+                    SELECT SUM(mr.quantity * COALESCE(e.alis_fiyati, 0)) as toplam_maliyet
+                    FROM material_requests mr
+                    LEFT JOIN envanter e ON TRIM(mr.part_name) = TRIM(e.malzeme_adi) -- MÜDÜR: İŞTE BURASI! Sadece TAM eşleşenleri alacak.
+                    WHERE mr.service_id = $1
+                `;
+
+
+
+
+
+                /*
+                
                 const pQuery = `
                     SELECT SUM(mr.quantity * COALESCE(e.alis_fiyati, 0)) as toplam_maliyet
                     FROM material_requests mr
                     LEFT JOIN envanter e ON TRIM(mr.part_name) ILIKE '%' || TRIM(e.malzeme_adi) || '%'
                     WHERE mr.service_id = $1
                 `;
+
+                */
+
+
+
+
                 const pResult = await db.query(pQuery, [service_id]);
                 const maliyet = parseFloat(pResult.rows[0].toplam_maliyet || 0);
                 const girilenTutar = parseFloat(tutar || 0);
