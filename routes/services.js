@@ -36,6 +36,7 @@ router.get("/tamamlanan", async (req, res) => {
         v.*, 
         s.offer_price, 
         s.updated_at, /* 🚨 İŞTE EKSİK OLAN BİTİŞ TARİHİ VANASI BURASI! */
+        s.yonetici_notu, /* 🚨 YENİ EKLENDİ: Yönetici Notu 🚨 */
         COALESCE(c.name, f.firma_adi, 'İsimsiz') as musteri,
         COALESCE(c.name, f.firma_adi, 'İsimsiz') as musteri_adi
       FROM servis_detay v
@@ -69,44 +70,6 @@ router.get("/tamamlanan", async (req, res) => {
 
 
 
-
-/*
-// --- MÜDÜR: 1.5 KAPI (TAMAMLANAN İŞLER / ARŞİV) ---
-router.get("/tamamlanan", async (req, res) => {
-  try {
-    // Sadece aktif ekrandan kovulan bitmiş/silinmiş/iptal edilmiş işleri alıyoruz
-    const query = `
-      SELECT 
-        v.*, 
-        s.offer_price, 
-        COALESCE(c.name, f.firma_adi, 'İsimsiz') as musteri,
-        COALESCE(c.name, f.firma_adi, 'İsimsiz') as musteri_adi
-      FROM servis_detay v
-      LEFT JOIN services s ON v.id = s.id
-      LEFT JOIN customers c ON s.customer_id = c.id
-      LEFT JOIN firms f ON s.firm_id = f.id
-      WHERE v.durum IN ('Pasif', 'PASIF / ARSIV', 'Teslim Edildi', 'İptal Edildi', 'İptal')
-      ORDER BY v.id DESC
-    `;
-    const result = await db.query(query);
-
-    // MÜDÜRÜN MAKYAJI: Frontend "Pasif" kelimesini anlamaz, biz onu yollamadan önce havada "Teslim Edildi" yapıyoruz.
-    const duzenlenmisKayitlar = result.rows.map(row => {
-      let gorselDurum = row.durum;
-      if (['Pasif', 'PASIF / ARSIV'].includes(row.durum)) gorselDurum = 'Teslim Edildi';
-      if (row.durum === 'İptal') gorselDurum = 'İptal Edildi';
-      
-      return { ...row, durum: gorselDurum };
-    });
-
-    res.json(duzenlenmisKayitlar);
-  } catch (err) {
-    console.error("Arşiv Çekme Hatası:", err.message);
-    res.status(500).json({ error: "SQL hatası: " + err.message });
-  }
-});
-
-*/
 
 
 
@@ -267,7 +230,24 @@ router.put("/:id", async (req, res) => {
 });
 
 
+// --- MÜDÜR: 6. KAPI (YÖNETİCİ NOTU KAYDETME) 🚨 YENİ 🚨 ---
+router.put("/:id/hizli-not", async (req, res) => {
+    const { id } = req.params;
+    const { yonetici_notu } = req.body;
 
+    try {
+        const query = 'UPDATE services SET yonetici_notu = $1 WHERE id = $2';
+        await db.query(query, [yonetici_notu, id]);
+
+        console.log(`✅ [SERVİS NOTU] ID: ${id} için not güncellendi: ${yonetici_notu}`);
+        res.status(200).json({ success: true, message: 'Yönetici notu başarıyla kaydedildi.' });
+    } catch (err) {
+        console.error("🚨 Servis Notu Kaydetme Hatası:", err.message);
+        res.status(500).json({ success: false, message: 'Not güncellenemedi.' });
+    }
+});
+
+module.exports = router;
 
 
 

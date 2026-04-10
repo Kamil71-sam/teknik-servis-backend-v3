@@ -304,6 +304,7 @@ router.get("/liste/gecmis", async (req, res) => {
                 a.appointment_time, 
                 a.status, 
                 a.assigned_usta,
+                a.yonetici_notu, -- MÜDÜR: YENİ NOT SÜTUNU EKLENDİ!
                 TRIM(SPLIT_PART(a.issue_text, '🔧 CİHAZ:', 1)) AS parca_adres,
                 TRIM(SPLIT_PART(SPLIT_PART(a.issue_text, '🔧 CİHAZ:', 2), '📝 NOT:', 1)) AS parca_cihaz,
                 TRIM(SPLIT_PART(a.issue_text, '📝 NOT:', 2)) AS parca_not,
@@ -326,6 +327,28 @@ router.get("/liste/gecmis", async (req, res) => {
         res.status(500).json({ error: "Geçmiş liste çekilemedi" });
     }
 });
+
+
+// --- YÖNETİCİ HIZLI NOT KAYDETME ENDPOINT'İ ---
+router.put("/:id/hizli-not", async (req, res) => {
+    const { id } = req.params;
+    const { yonetici_notu } = req.body;
+
+    try {
+        const query = 'UPDATE appointments SET yonetici_notu = $1 WHERE id = $2';
+        await db.query(query, [yonetici_notu, id]);
+
+        console.log(`✅ NOT EKLENDİ (ID: ${id}): ${yonetici_notu}`);
+        res.status(200).json({ success: true, message: 'Not başarıyla kaydedildi.' });
+    } catch (err) {
+        console.error("🚨 Not kaydetme hatası:", err.message);
+        res.status(500).json({ success: false, message: 'Not güncellenemedi.' });
+    }
+});
+
+
+
+
 
 
 
