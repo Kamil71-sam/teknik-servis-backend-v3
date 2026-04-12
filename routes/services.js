@@ -27,6 +27,11 @@ router.get("/all", async (req, res) => {
 });
 
 
+
+
+
+
+
 // --- MÜDÜR: 1.5 KAPI (TAMAMLANAN İŞLER / ARŞİV) ---
 router.get("/tamamlanan", async (req, res) => {
   try {
@@ -34,9 +39,13 @@ router.get("/tamamlanan", async (req, res) => {
     const query = `
       SELECT 
         v.*, 
-        s.offer_price, 
-        s.updated_at, /* 🚨 İŞTE EKSİK OLAN BİTİŞ TARİHİ VANASI BURASI! */
-        s.yonetici_notu, /* 🚨 YENİ EKLENDİ: Yönetici Notu 🚨 */
+        -- 🚨 MÜDÜRÜN KASA KANCASI 🚨
+        COALESCE(
+          (SELECT SUM(tutar) FROM kasa_islemleri WHERE servis_no = s.servis_no AND islem_yonu = 'GİRİŞ'),
+          s.offer_price
+        ) AS offer_price, 
+        s.updated_at, 
+        s.yonetici_notu, 
         COALESCE(c.name, f.firma_adi, 'İsimsiz') as musteri,
         COALESCE(c.name, f.firma_adi, 'İsimsiz') as musteri_adi
       FROM servis_detay v
@@ -44,6 +53,7 @@ router.get("/tamamlanan", async (req, res) => {
       LEFT JOIN customers c ON s.customer_id = c.id
       LEFT JOIN firms f ON s.firm_id = f.id
       WHERE v.durum IN ('Pasif', 'PASIF / ARSIV', 'Teslim Edildi', 'İptal Edildi', 'İptal')
+        AND s.created_at >= '2020-08-01'
       ORDER BY v.id DESC
     `;
     const result = await db.query(query);
@@ -63,6 +73,11 @@ router.get("/tamamlanan", async (req, res) => {
     res.status(500).json({ error: "SQL hatası: " + err.message });
   }
 });
+
+
+
+
+
 
 
 
@@ -246,11 +261,6 @@ router.put("/:id/hizli-not", async (req, res) => {
         res.status(500).json({ success: false, message: 'Not güncellenemedi.' });
     }
 });
-
-module.exports = router;
-
-
-
 
 
 
