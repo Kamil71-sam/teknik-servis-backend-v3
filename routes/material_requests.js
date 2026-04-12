@@ -58,40 +58,37 @@ router.get('/all', async (req, res) => {
 
 
 
-/*
 
-// --- 2. BANKO LİSTESİ (GET) ---
-router.get('/all', async (req, res) => {
-    // MÜDÜR: brand ve model sütunlarını birleştirip 'marka_model' takma adıyla çekiyoruz
-    const query = `
-        SELECT 
-            mr.id, 
-            mr.service_id,
-            mr.part_name, 
-            mr.quantity, 
-            mr.description, 
-            mr.status,
-            mr.created_at,
-            s.servis_no,
-            (d.brand || ' ' || d.model) as marka_model
-        FROM material_requests mr
-        LEFT JOIN services s ON mr.service_id = s.id
-        LEFT JOIN devices d ON s.device_id = d.id
-        ORDER BY mr.created_at DESC
-    `;
 
+
+
+// --- YEDEK PARÇA TAKİBİ İÇİN ÖZEL KAPI (SERVİS NO VE FİYATLI) ---
+router.get('/takip-listesi', async (req, res) => {
     try {
+        const query = `
+            SELECT 
+                m.*, 
+                s.servis_no AS gercek_servis_no, 
+                e.alis_fiyati AS price,
+                e.barkod AS barkod
+            FROM material_requests m
+            LEFT JOIN services s ON m.service_id = s.id
+            LEFT JOIN envanter e ON m.part_name = e.malzeme_adi
+            ORDER BY m.id DESC
+        `;
+        
         const result = await db.query(query);
         res.json({ success: true, data: result.rows });
     } catch (err) {
-        console.error("MÜDÜR - Sorgu Hatası Detayı:", err.message);
+        console.error("Takip listesi çekilirken hata:", err.message);
         res.status(500).json({ success: false, error: err.message });
     }
 });
 
 
 
-*/
+
+
 
 
 
