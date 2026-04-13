@@ -62,17 +62,21 @@ router.get('/all', async (req, res) => {
 
 
 
-// --- YEDEK PARÇA TAKİBİ İÇİN ÖZEL KAPI (SERVİS NO VE FİYATLI) ---
+// --- YEDEK PARÇA TAKİBİ İÇİN ÖZEL KAPI (TAM KAPSAMLI FİYAT ÇEKİCİ) ---
 router.get('/takip-listesi', async (req, res) => {
     try {
         const query = `
             SELECT 
                 m.*, 
                 s.servis_no AS gercek_servis_no, 
+                -- 🚨 AĞI GENİŞLETTİK: Hem Servis tablosunda (offer_price) hem Randevu tablosunda (price) arıyoruz! Hangisi doluysa onu alır.
+                COALESCE(s.offer_price, a.price, 0) AS teklif_fiyati,   
                 e.alis_fiyati AS price,
                 e.barkod AS barkod
             FROM material_requests m
             LEFT JOIN services s ON m.service_id = s.id
+            -- 🚨 TİP UYUŞMAZLIĞINI ENGELLEMEK İÇİN İKİSİNİ DE TEXT'E ÇEVİREREK BAĞLADIK
+            LEFT JOIN appointments a ON CAST(s.servis_no AS TEXT) = CAST(a.servis_no AS TEXT) 
             LEFT JOIN envanter e ON m.part_name = e.malzeme_adi
             ORDER BY m.id DESC
         `;
@@ -84,8 +88,6 @@ router.get('/takip-listesi', async (req, res) => {
         res.status(500).json({ success: false, error: err.message });
     }
 });
-
-
 
 
 
@@ -190,6 +192,64 @@ router.get('/pending', async (req, res) => {
         res.status(200).json([]); 
     }
 });
+
+
+
+// =================================================================
+// 🚨 MÜDÜR: PATRON İÇİN PARÇA İPTAL ETME (SİLME) KAPISI 🚨
+// =================================================================
+router.delete('/sil/:id', async (req, res) => {
+    try {
+        const { id } = req.params;
+        await db.query("DELETE FROM material_requests WHERE id = $1", [id]);
+        res.json({ success: true, message: 'Parça başarıyla silindi.' });
+    } catch (err) {
+        console.error("Silme hatası:", err.message);
+        res.status(500).json({ success: false, error: err.message });
+    }
+});
+
+// =================================================================
+// 🚨 MÜDÜR: PATRON İÇİN ADET, NOT VE FİYAT GÜNCELLEME KAPISI 🚨
+// =================================================================
+router.put('/guncelle/:id', async (req, res) => {
+    const { id } = req.params;
+    const { quantity, description, price, part_name } = req.body;
+
+    try {
+        await db.query('BEGIN'); // Zincirleme işlem başlat
+
+        // 1. Adeti ve notu material_requests tablosunda güncelle
+        await db.query(
+            "UPDATE material_requests SET quantity = $1, description = $2 WHERE id = $3",
+            [quantity, description, id]
+        );
+
+        // 2. FİYAT GÜNCELLEMESİ (Çok Kritik!)
+        // Müdürüm: Fiyat material_requests tablosunda tutulmuyor, 'envanter'den çekiliyor.
+        // O yüzden fiyatı değiştirince, envanterdeki (depodaki) 'alis_fiyati' güncellenecek.
+        if (price !== undefined && part_name) {
+            await db.query(
+                "UPDATE envanter SET alis_fiyati = $1 WHERE malzeme_adi = $2",
+                [price, part_name]
+            );
+        }
+
+        await db.query('COMMIT');
+        res.json({ success: true, message: 'Parça ve fiyat güncellendi.' });
+    } catch (err) {
+        await db.query('ROLLBACK'); // Hata olursa geri al
+        console.error("Güncelleme hatası:", err.message);
+        res.status(500).json({ success: false, error: err.message });
+    }
+});
+
+
+
+
+
+
+
 
 
 module.exports = router;

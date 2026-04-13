@@ -347,6 +347,39 @@ router.put("/:id/hizli-not", async (req, res) => {
 });
 
 
+// =================================================================
+// 🚨 MÜDÜR: PATRONUN TEKLİF YÜKSELTME VE KİLİT AÇMA KAPISI (ÇİFT DİKİŞLİ) 🚨
+// =================================================================
+router.put('/update-teklif', async (req, res) => {
+    const { servis_no, yeni_teklif } = req.body;
+    try {
+        await db.query('BEGIN'); // Zinciri başlatıyoruz
+
+        // 1. Randevu tablosunu güncelle
+        await db.query(
+            "UPDATE appointments SET price = $1 WHERE servis_no = $2", 
+            [yeni_teklif, servis_no]
+        );
+
+        // 2. Servis tablosunu da GÜNCELLE (Asıl inatçı 7500 buradaydı!)
+        await db.query(
+            "UPDATE services SET offer_price = $1 WHERE servis_no = $2", 
+            [yeni_teklif, servis_no]
+        );
+
+        await db.query('COMMIT'); // İşlemleri mühürle
+        res.json({ success: true, message: "Teklif başarıyla yükseltildi, her iki tablo da güncellendi!" });
+    } catch (err) {
+        await db.query('ROLLBACK'); // Hata olursa geri sar
+        console.error("Teklif Güncelleme Hatası:", err.message);
+        res.status(500).json({ success: false, error: err.message });
+    }
+});
+
+
+
+
+
 
 
 module.exports = router;
