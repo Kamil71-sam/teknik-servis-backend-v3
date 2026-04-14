@@ -77,6 +77,45 @@ router.get('/all', async (req, res) => {
 });
 
 
+
+
+
+// --- 3. CİHAZ ARAMA (Para Girişi Formundaki Radar İçin) ---
+router.get('/search-service', async (req, res) => {
+    const { servis_no } = req.query;
+    try {
+        const query = `
+            SELECT 
+                s.servis_no, 
+                s.offer_price as fiyatTeklifi,
+                d.brand as marka, 
+                d.model,
+                -- Seri numarasını sildik, bize hata çıkartıyordu.
+                COALESCE(c.name, f.firma_adi, 'Bilinmeyen Müşteri') as musteri_adi
+            FROM services s
+            LEFT JOIN devices d ON s.device_id = d.id
+            LEFT JOIN customers c ON s.customer_id = c.id
+            LEFT JOIN firms f ON s.firm_id = f.id
+            WHERE s.servis_no = $1
+        `;
+        const result = await db.query(query, [servis_no]);
+        if (result.rows.length > 0) {
+            res.json({ success: true, found: true, device: result.rows[0] });
+        } else {
+            res.json({ success: true, found: false });
+        }
+    } catch (err) {
+        console.error("Cihaz Arama Hatası:", err.message);
+        res.status(500).json({ success: false, error: err.message });
+    }
+});
+
+
+
+/*
+
+
+14041903 WEB KASA ÇIKIŞI BOZULDU
 // --- 3. CİHAZ ARAMA (Para Girişi Formundaki Radar İçin) ---
 router.get('/search-service', async (req, res) => {
     const { servis_no } = req.query;
@@ -103,6 +142,17 @@ router.get('/search-service', async (req, res) => {
         res.status(500).json({ success: false, error: err.message });
     }
 });
+
+*/
+
+
+
+
+
+
+
+
+
 
 
 // --- KASAYA İŞLEM EKLEME VE STATÜ KAPATMA (TEK VE KESİN GÜÇ) ---
@@ -236,6 +286,30 @@ router.get('/search-randevu', async (req, res) => {
         res.status(500).json({ success: false, error: err.message }); 
     }
 });
+
+
+
+// --- 🚨 MÜDÜRÜN ÖZEL OPERASYON ROTASI: SADECE STATÜ İPTAL EDER, PARAYA DOKUNMAZ ---
+router.post('/iptal-et', async (req, res) => {
+    const { servis_no } = req.body;
+    try {
+        if (servis_no) {
+            // Sadece statüleri günceller, kasa hesabını bozmaz!
+            await db.query(`UPDATE appointments SET status = 'İptal Edildi' WHERE servis_no = $1`, [servis_no]);
+            await db.query(`UPDATE services SET status = 'İptal Edildi' WHERE servis_no = $1`, [servis_no]);
+            console.log(`✅ [İADE OPERASYONU] ${servis_no} nolu işin statüsü İptal Edildi yapıldı.`);
+        }
+        res.json({ success: true });
+    } catch (err) {
+        console.error("İptal Hatası:", err.message);
+        res.status(500).json({ success: false, error: err.message });
+    }
+});
+
+
+
+
+
 
 
 
