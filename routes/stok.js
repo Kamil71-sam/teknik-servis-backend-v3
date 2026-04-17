@@ -158,8 +158,18 @@ router.post('/sell', async (req, res) => {
         
         // 4. 💰 KASAYA GİRİŞ YAP (Tam Entegrasyon)
         const indirimNotu = parseFloat(manual_discount || 0) > 0 ? ` (%${manual_discount} İskonto)` : "";
-        const kasaAciklama = `Stok Satışı: ${mal.malzeme_adi}${indirimNotu} | Adet: ${cikan_adet} | Birim: ${nihaiBirimSatis} ₺`;
+       
+       
+       
+        const kasaAciklama = `Barkod: ${barkod} | Stok Satışı: ${mal.malzeme_adi}${indirimNotu} | Adet: ${cikan_adet} | Birim: ${nihaiBirimSatis} ₺`;
+
+
+        //const kasaAciklama = `Stok Satışı: ${mal.malzeme_adi}${indirimNotu} | Adet: ${cikan_adet} | Birim: ${nihaiBirimSatis} ₺`;
         
+       
+       
+       
+       
         await db.query(`INSERT INTO kasa_islemleri (islem_yonu, kategori, tutar, aciklama, islem_yapan) 
                         VALUES ('GİRİŞ', 'Stok Satışı', $1, $2, 'Barkod Satış')`, 
                         [toplamTahsilat, kasaAciklama]);
@@ -223,36 +233,6 @@ router.get('/search', async (req, res) => {
         res.status(500).json({ success: false, error: err.message });
     }
 });
-
-
-
-
-
-
-
-/*
-// --- 5. AKILLI RADAR ---
-router.get('/search', async (req, res) => {
-    const { malzeme_adi, barkod } = req.query;
-    try {
-        let query = "";
-        let values = [];
-        if (barkod) {
-            query = "SELECT * FROM envanter WHERE barkod = $1 LIMIT 1";
-            values = [barkod];
-        } else if (malzeme_adi) {
-            query = "SELECT * FROM envanter WHERE malzeme_adi ILIKE $1 LIMIT 1";
-            values = [`%${malzeme_adi}%`];
-        }
-        const result = await db.query(query, values);
-        res.json({ success: true, data: result.rows[0], found: result.rows.length > 0 });
-    } catch (err) {
-        res.status(500).json({ success: false, error: err.message });
-    }
-});
-
-*/
-
 
 
 

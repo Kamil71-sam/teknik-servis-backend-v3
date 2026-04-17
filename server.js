@@ -51,6 +51,8 @@ app.use('/api/kasa_v2', guvenlik, kasaV2Router);
 app.use('/api/fatura', guvenlik, faturaRoutes);
 app.use("/api/material-requests", guvenlik, materialRequestsRoutes);
 app.use("/api/material", guvenlik, materialRequestsRoutes);
+app.use('/api/settings', require('./routes/settings'));
+
 
 // --- 4. MÜDÜRÜN ÖZEL GÜMRÜK VE TEST ROTLARI ---
 
