@@ -261,4 +261,73 @@ router.get('/history/:id', async (req, res) => {
 
 
 
+// --- 🚨 YENİ İZOLE STOK ALIMI (BARKOD MÜHÜRLÜ - ESKİ SİSTEMİ BOZMAZ) ---
+router.post('/add-alim', async (req, res) => {
+    const { barkod, malzeme_adi, uyumlu_cihaz, marka, miktar, alis_fiyati, request_id, fiyat_guncelle } = req.body;
+    const updatePriceFlag = fiyat_guncelle !== false; 
+
+    try {
+        await db.query('BEGIN'); 
+        
+        // 1. ZIRHLI ENVANTER KAYDI
+        const insertQuery = `
+            INSERT INTO envanter (barkod, malzeme_adi, uyumlu_cihaz, marka, miktar, alis_fiyati)
+            VALUES ($1, $2, $3, $4, $5, $6)
+            ON CONFLICT (barkod) 
+            DO UPDATE SET 
+                miktar = envanter.miktar + EXCLUDED.miktar,
+                alis_fiyati = CASE WHEN $7 = TRUE AND EXCLUDED.alis_fiyati > 0 THEN EXCLUDED.alis_fiyati ELSE envanter.alis_fiyati END,
+                malzeme_adi = CASE WHEN EXCLUDED.malzeme_adi <> '' AND EXCLUDED.malzeme_adi IS NOT NULL THEN EXCLUDED.malzeme_adi ELSE envanter.malzeme_adi END,
+                marka = CASE WHEN EXCLUDED.marka <> '' AND EXCLUDED.marka IS NOT NULL THEN EXCLUDED.marka ELSE envanter.marka END,
+                uyumlu_cihaz = CASE WHEN EXCLUDED.uyumlu_cihaz <> '' AND EXCLUDED.uyumlu_cihaz IS NOT NULL THEN EXCLUDED.uyumlu_cihaz ELSE envanter.uyumlu_cihaz END,
+                son_guncelleme = CURRENT_TIMESTAMP
+            RETURNING *;
+        `;
+        
+        const result = await db.query(insertQuery, [barkod, malzeme_adi, uyumlu_cihaz, marka, miktar, alis_fiyati, updatePriceFlag]);
+        const guncelMalzeme = result.rows[0];
+
+        // 2. KASA ÇIKIŞI (SADECE BU ENDPOINT'E ÖZEL BARKOD ZIMBASI)
+        const ekrandanGelenFiyat = parseFloat(alis_fiyati || 0);
+        const kayitliFiyat = parseFloat(guncelMalzeme.alis_fiyati || 0);
+        const birimFiyat = ekrandanGelenFiyat > 0 ? ekrandanGelenFiyat : kayitliFiyat;
+
+        const adet = parseInt(miktar || 1);
+        const toplamMaliyet = birimFiyat * adet;
+
+        if (toplamMaliyet > 0) {
+            const malzemeIsmi = malzeme_adi || guncelMalzeme.malzeme_adi || 'Bilinmeyen Malzeme';
+            let islemTuru = request_id ? 'Usta Siparişi Alımı' : 'Genel Stok Alımı';
+
+            // 🚨 BARKOD MÜHRÜ VE SERVİS_NO ATAMASI BURADA!
+            const kasaAciklama = `Barkod: ${barkod} | ${islemTuru}: ${malzemeIsmi} | Adet: ${adet} | Birim: ${birimFiyat} ₺`;
+            
+            await db.query(
+                `INSERT INTO kasa_islemleri (islem_yonu, kategori, tutar, aciklama, islem_yapan, servis_no) 
+                 VALUES ('ÇIKIŞ', 'Mal Alımı', $1, $2, 'Banko Stok Girişi', $3)`,
+                [toplamMaliyet, kasaAciklama, barkod]
+            );
+        }
+
+        // 3. USTA TALEBİ KONTROLÜ
+        if (request_id) {
+            await db.query("UPDATE material_requests SET stok_girisi_yapildi_mi = TRUE, status = 'Onay Bekliyor' WHERE id = $1", [request_id]);
+            await db.query(`INSERT INTO service_notes (service_id, note_text) SELECT service_id, 'LOG: Parça için stok girişi yapıldı, Banko onayı bekleniyor.' FROM material_requests WHERE id = $1`, [request_id]);
+        }
+
+        await db.query('COMMIT'); 
+        res.json({ success: true, message: 'Stok eklendi ve kasadan düşüldü.', data: guncelMalzeme });
+        
+    } catch (err) {
+        await db.query('ROLLBACK'); 
+        console.error("Yeni İzole Stok Giriş Hatası:", err.message);
+        res.status(500).json({ success: false, error: err.message });
+    }
+});
+
+
+
+
+
+
 module.exports = router;

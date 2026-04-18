@@ -81,7 +81,7 @@ app.listen(PORT, '0.0.0.0', () => {
   console.log("-----------------------------------------");
   console.log("🚀 Server ZIRHLI ve AĞA AÇIK!");
   console.log(`📡 Yerel Adres: http://localhost:${PORT}`);
-  console.log(`📱 Telefon İçin: http://192.168.1.51:${PORT}`);
+  console.log(`📱 Telefon İçin: http://192.168.1.53:${PORT}`);
   console.log("🛡️  Tüm odalar Güvenlik Şefi denetiminde.");
   console.log("-----------------------------------------");
 });
