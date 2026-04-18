@@ -104,7 +104,9 @@ router.get("/liste/aktif", async (req, res) => {
                 COALESCE(a.tahsil_edilen_tutar, a.price, 0) as usta_fiyati, 
                 -- MÜDÜRÜ BİLGİLERİ
                 COALESCE(c.name, f.firma_adi, 'İsimsiz Müşteri') as customer_name,
-                COALESCE(c.phone, f.telefon, '') as customer_phone
+                COALESCE(c.phone, f.telefon, '') as customer_phone,
+                COALESCE(c.address, f.adres, '') as customer_address
+
             FROM appointments a
             LEFT JOIN customers c ON a.customer_id = c.id
             LEFT JOIN firms f ON a.firm_id = f.id
@@ -313,7 +315,10 @@ router.get("/liste/gecmis", async (req, res) => {
                 a.tahsil_edilen_tutar,
                 COALESCE(a.tahsil_edilen_tutar, a.price, 0) as usta_fiyati, 
                 COALESCE(c.name, f.firma_adi, 'İsimsiz Müşteri') as customer_name,
-                COALESCE(c.phone, f.telefon, '') as customer_phone
+                COALESCE(c.phone, f.telefon, '') as customer_phone,
+                COALESCE(c.address, f.adres, '') as customer_address
+
+
             FROM appointments a
             LEFT JOIN customers c ON a.customer_id = c.id
             LEFT JOIN firms f ON a.firm_id = f.id

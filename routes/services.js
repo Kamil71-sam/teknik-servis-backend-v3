@@ -10,7 +10,10 @@ router.get("/all", async (req, res) => {
         v.*, 
         s.offer_price, 
         COALESCE(c.name, f.firma_adi, 'İsimsiz') as musteri,
-        COALESCE(c.name, f.firma_adi, 'İsimsiz') as musteri_adi
+        COALESCE(c.name, f.firma_adi, 'İsimsiz') as musteri_adi,
+        COALESCE(c.phone, f.telefon, '') as customer_phone,
+        COALESCE(c.address, f.adres, '') as customer_address  
+
       FROM servis_detay v
       LEFT JOIN services s ON v.id = s.id
       LEFT JOIN customers c ON s.customer_id = c.id
@@ -47,7 +50,10 @@ router.get("/tamamlanan", async (req, res) => {
         s.updated_at, 
         s.yonetici_notu, 
         COALESCE(c.name, f.firma_adi, 'İsimsiz') as musteri,
-        COALESCE(c.name, f.firma_adi, 'İsimsiz') as musteri_adi
+        COALESCE(c.name, f.firma_adi, 'İsimsiz') as musteri_adi,
+        COALESCE(c.phone, f.telefon, '') as customer_phone,
+        COALESCE(c.address, f.adres, '') as customer_address
+
       FROM servis_detay v
       LEFT JOIN services s ON v.id = s.id
       LEFT JOIN customers c ON s.customer_id = c.id
