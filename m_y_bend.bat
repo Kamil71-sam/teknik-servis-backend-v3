@@ -1,42 +1,40 @@
 @echo off
-set /p mesaj="Yedekleme notunuzu girin: "
-echo [%date% %time%] Bekent 10'lu yedekleme sistemi baslatiliyor...
+color 0A
+echo ===================================================
+echo 🚀 KALANDAR YAZILIM - TAM OTOMATIK YEDEKLEME
+echo ===================================================
 
+set /p mesaj="Yedekleme notunuzu girin (Bos birakabilirsiniz): "
+if "%mesaj%"=="" set mesaj="Otomatik Gunluk Yedek"
 
-
-
-:: 1. SQL Yedek Klasör Kontrolü
+echo.
+echo [1/3] SQL Veritabani Yedekleniyor...
 if not exist "bekent-sql-yedekler" mkdir "bekent-sql-yedekler"
 set PGPASSWORD=123456
 
-
-
-
-
-
-
-:: Sira takibi icin bir dosya kullanalim (yoksa olusturur)
+:: Sira takibi
 if not exist "sira.txt" echo 1 > sira.txt
 set /p sira=<sira.txt
 
-echo SQL yedekleniyor (Yedek No: %sira%)...
-
-:: Yedekleme islemi (C:\pgdata\bin yolunu kullaniyoruz)
 "C:\pgdata\bin\pg_dump.exe" -U postgres -d teknik_servis -f "bekent-sql-yedekler\db_yedek_%sira%.sql"
 
-:: Siradaki numara icin hesaplama yapalim
+:: Siradaki numara hesaplama (10'da bir doner)
 set /a "sira=%sira% + 1"
 if %sira% gtr 10 set sira=1
 echo %sira% > sira.txt
 
-:: 2. GitHub Yedekleme
-echo GitHub'a gonderiliyor...
-git add .
-git commit -m "MANUEL YEDEK %sira%: %mesaj%"
+echo.
+echo [2/3] Butun Kodlar Paketleniyor (Git Add)...
+:: Git'in her seyi (yeni, silinmis, degismis) yakalamasini garantilemek icin:
+git add -A
+
+echo.
+echo [3/3] GitHub Bulutuna Gonderiliyor...
+git commit -m "TAM YEDEK %sira%: %mesaj%"
 git push origin main
 
 echo.
-echo ===========================================
-echo   YEDEK %sira% ALINDI. 10 YEDEKTE BIR DONER.
-echo ===========================================
+echo ===================================================
+echo ✅ ISLEM TAMAM! HEM SQL HEM DE KODLAR GITHUB'DA!
+echo ===================================================
 pause

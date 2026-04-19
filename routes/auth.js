@@ -1,3 +1,73 @@
+
+
+
+const express = require("express");
+const router = express.Router();
+const db = require("../database");
+const jwt = require("jsonwebtoken");
+const bcrypt = require("bcrypt");
+
+router.post("/login", async (req, res) => {
+  console.log("LOGIN HIT:", req.body);
+
+  const { email, password } = req.body;
+
+  try {
+    const result = await db.query(
+      "SELECT * FROM users WHERE email = $1",
+      [email]
+    );
+
+    if (result.rows.length === 0) {
+      return res.status(401).json({ error: "E-posta veya şifre hatalı" });
+    }
+
+    const user = result.rows[0];
+    let isPasswordValid = false;
+
+    if (
+      typeof user.password === "string" &&
+      (user.password.startsWith("$2b$") || user.password.startsWith("$2a$"))
+    ) {
+      isPasswordValid = await bcrypt.compare(password, user.password);
+    } else {
+      isPasswordValid = password === user.password;
+    }
+
+    if (!isPasswordValid) {
+      return res.status(401).json({ error: "E-posta veya şifre hatalı" });
+    }
+
+    const token = jwt.sign(
+      { id: user.id, email: user.email, role: user.role },
+      process.env.JWT_SECRET,
+      { expiresIn: "24h" }
+    );
+
+    return res.json({
+      success: true,
+      message: "Giriş başarılı",
+      token,
+      user: {
+        id: user.id,
+        email: user.email,
+        role: user.role || "user",
+      },
+    });
+  } catch (err) {
+    console.error("Login Hatası:", err);
+    return res.status(500).json({ error: "Sunucu hatası oluştu" });
+  }
+});
+
+module.exports = router;
+
+
+
+
+
+
+/*
 const express = require("express");
 const router = express.Router();
 const db = require("../database"); // MÜDÜR: Veritabanı anahtarı
@@ -60,4 +130,4 @@ router.post("/login", async (req, res) => {
   }
 });
 
-module.exports = router;
+module.exports = router;*/
