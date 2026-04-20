@@ -96,6 +96,11 @@ router.get('/takip-listesi', async (req, res) => {
 
 
 
+
+
+
+
+
 // --- 3. AKILLI DURUM GÜNCELLEME VE LOG SİSTEMİ (PUT) ---
 router.put('/update-status/:id', async (req, res) => {
     const { id } = req.params;
@@ -117,6 +122,58 @@ router.put('/update-status/:id', async (req, res) => {
         // ADIM A: Parça talebini güncelle
         await db.query("UPDATE material_requests SET status = $1 WHERE id = $2", [status, id]);
 
+
+
+        if (status === 'Geldi') {
+            
+            // 🚨 MÜDÜR: ÇIRAK ARTIK BURADA SAYIM YAPIYOR!
+            // Bu cihaza ait 'Geldi', 'İptal' veya 'Reddedildi' OLMAYAN (yani hala bekleyen) başka parça var mı?
+            const checkOthers = await db.query(`
+                SELECT COUNT(*) FROM material_requests 
+                WHERE service_id = $1 AND status NOT IN ('Geldi', 'İptal', 'Reddedildi')
+            `, [service_id]);
+
+            const kalanParcaSayisi = parseInt(checkOthers.rows[0].count);
+
+            if (kalanParcaSayisi === 0) {
+                // ADIM B1: Bekleyen BAŞKA parça kalmadıysa (hepsi geldiyse), o zaman Tamirde yap!
+                await db.query("UPDATE services SET status = 'Tamirde' WHERE id = $1", [service_id]);
+
+                // ADIM C1: Eksiksiz Teslim Logu
+                const logNote = `${user_name}: ${part_name} teslim alındı. Cihazın bekleyen tüm parçaları tamamlandı, otomatik 'Tamirde' moduna çekildi.`;
+                await db.query("INSERT INTO service_notes (service_id, note_text) VALUES ($1, $2)", [service_id, logNote]);
+            } else {
+                // ADIM B2: Hala bekleyen parça varsa, cihazın ana statüsüne DOKUNMA! Sadece log at.
+                const logNote = `${user_name}: ${part_name} teslim alındı. (Hala bekleyen ${kalanParcaSayisi} adet farklı parça var. Cihaz beklemeye devam ediyor).`;
+                await db.query("INSERT INTO service_notes (service_id, note_text) VALUES ($1, $2)", [service_id, logNote]);
+            }
+        }
+
+        await db.query('COMMIT'); 
+        res.json({ success: true, message: 'Parça ve Servis durumu güncellendi, log yazıldı.' });
+
+    } catch (err) {
+        await db.query('ROLLBACK'); 
+        console.error("MÜDÜR - Zincirleme İşlem Hatası:", err.message);
+        res.status(500).json({ success: false, error: err.message });
+    }
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+        /*
+
+
         if (status === 'Geldi') {
             // ADIM B: Servis kaydını otomatik 'Tamirde'ye çek
             await db.query("UPDATE services SET status = 'Tamirde' WHERE id = $1", [service_id]);
@@ -131,6 +188,7 @@ router.put('/update-status/:id', async (req, res) => {
             await db.query(logQuery, [service_id, logNote]);
         }
 
+
         await db.query('COMMIT'); 
         res.json({ success: true, message: 'Parça ve Servis durumu güncellendi, log yazıldı.' });
 
@@ -140,6 +198,17 @@ router.put('/update-status/:id', async (req, res) => {
         res.status(500).json({ success: false, error: err.message });
     }
 });
+
+
+*/
+
+
+
+
+
+
+
+
 
 
 // --- MÜDÜR: MOBİLİN HİÇBİR ŞEKİLDE 404 ALMAMASI İÇİN YEDEK ROTA ---

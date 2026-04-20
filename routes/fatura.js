@@ -162,6 +162,83 @@ router.get('/detay', async (req, res) => {
 
 
 
+// --- LİSTELEME MOTORU (ÇELİK VANA TAKILDI - KASA TARİHİ BAZ ALINIYOR) ---
+router.get('/bekleyenler', async (req, res) => {
+    const gun = req.query.gun || 1; 
+    const gunFarki = Math.max(0, parseInt(gun) - 1); 
+    try {
+        const query = `
+            SELECT s.servis_no as id, COALESCE(c.name, f.firma_adi, 'Bilinmeyen Müşteri') as musteri_adi, 'Tamir' as islem_tipi, COALESCE(d.brand, '') || ' ' || COALESCE(d.model, '') as cihaz, 
+            COALESCE((SELECT tutar FROM kasa_islemleri WHERE servis_no = s.servis_no ORDER BY id DESC LIMIT 1), s.offer_price) as tutar, 
+            s.updated_at as tarih
+            FROM services s LEFT JOIN customers c ON s.customer_id = c.id LEFT JOIN firms f ON s.firm_id = f.id LEFT JOIN devices d ON s.device_id = d.id
+            WHERE (s.status ILIKE 'Teslim Edildi' OR s.status ILIKE 'Bitti') AND DATE(s.updated_at) >= CURRENT_DATE - $1::int AND DATE(s.updated_at) >= '2020-08-01'
+            UNION ALL
+            -- 🚨 MÜDÜR: ÇELİK VANA BURADA! Randevu tablosunda olmayan sütunu aramak yerine, paranın KASAYA girdiği tarihi çekiyoruz!
+            SELECT a.servis_no as id, COALESCE(c.name, f.firma_adi, 'Bilinmeyen Müşteri') as musteri_adi, 'Randevu' as islem_tipi, COALESCE(a.issue_text, 'Randevu İşlemi') as cihaz, 
+            COALESCE((SELECT tutar FROM kasa_islemleri WHERE servis_no = a.servis_no ORDER BY id DESC LIMIT 1), a.tahsil_edilen_tutar) as tutar, 
+            COALESCE((SELECT islem_tarihi FROM kasa_islemleri WHERE servis_no = a.servis_no ORDER BY id DESC LIMIT 1), a.created_at) as tarih
+            FROM appointments a LEFT JOIN customers c ON a.customer_id = c.id LEFT JOIN firms f ON a.firm_id = f.id
+            WHERE (a.status ILIKE 'Teslim Edildi' OR a.status ILIKE 'Bitti') 
+            AND DATE(COALESCE((SELECT islem_tarihi FROM kasa_islemleri WHERE servis_no = a.servis_no ORDER BY id DESC LIMIT 1), a.created_at)) >= CURRENT_DATE - $1::int 
+            AND DATE(COALESCE((SELECT islem_tarihi FROM kasa_islemleri WHERE servis_no = a.servis_no ORDER BY id DESC LIMIT 1), a.created_at)) >= '2020-08-01'
+            UNION ALL
+            SELECT CAST(k.id AS TEXT) as id, 'Hızlı Satış' as musteri_adi, 'Stok' as islem_tipi, COALESCE(k.aciklama, 'Stok Satışı') as cihaz, k.tutar as tutar, k.islem_tarihi as tarih
+            FROM kasa_islemleri k 
+            WHERE k.kategori = 'Stok Satışı' AND DATE(k.islem_tarihi) >= CURRENT_DATE - $1::int AND DATE(k.islem_tarihi) >= '2020-08-01'
+            ORDER BY tarih DESC
+        `;
+        const result = await db.query(query, [gunFarki]);
+        res.json({ success: true, data: result.rows });
+    } catch (err) { res.status(500).json({ success: false, error: err.message }); }
+});
+
+
+
+
+
+
+
+/*
+
+
+// --- LİSTELEME MOTORU (HAYALET KAYITLARDAN ARINDIRILDI) ---
+router.get('/bekleyenler', async (req, res) => {
+    const gun = req.query.gun || 1; 
+    const gunFarki = Math.max(0, parseInt(gun) - 1); 
+    try {
+        const query = `
+            SELECT s.servis_no as id, COALESCE(c.name, f.firma_adi, 'Bilinmeyen Müşteri') as musteri_adi, 'Tamir' as islem_tipi, COALESCE(d.brand, '') || ' ' || COALESCE(d.model, '') as cihaz, 
+            COALESCE((SELECT tutar FROM kasa_islemleri WHERE servis_no = s.servis_no ORDER BY id DESC LIMIT 1), s.offer_price) as tutar, 
+            s.updated_at as tarih
+            FROM services s LEFT JOIN customers c ON s.customer_id = c.id LEFT JOIN firms f ON s.firm_id = f.id LEFT JOIN devices d ON s.device_id = d.id
+            WHERE (s.status ILIKE 'Teslim Edildi' OR s.status ILIKE 'Bitti') AND DATE(s.updated_at) >= CURRENT_DATE - $1::int AND DATE(s.updated_at) >= '2020-08-01'
+            UNION ALL
+            SELECT a.servis_no as id, COALESCE(c.name, f.firma_adi, 'Bilinmeyen Müşteri') as musteri_adi, 'Randevu' as islem_tipi, COALESCE(a.issue_text, 'Randevu İşlemi') as cihaz, 
+            COALESCE((SELECT tutar FROM kasa_islemleri WHERE servis_no = a.servis_no ORDER BY id DESC LIMIT 1), a.tahsil_edilen_tutar) as tutar, 
+            a.created_at as tarih
+            FROM appointments a LEFT JOIN customers c ON a.customer_id = c.id LEFT JOIN firms f ON a.firm_id = f.id
+            WHERE (a.status ILIKE 'Teslim Edildi' OR a.status ILIKE 'Bitti') AND DATE(a.created_at) >= CURRENT_DATE - $1::int AND DATE(a.created_at) >= '2020-08-01'
+            UNION ALL
+            -- 🚨 MÜDÜR: İŞTE NEŞTERİ VURDUĞUMUZ YER BURASI! (EN ALT SATIR)
+            -- Envanter JOIN'ini iptal ettik, direkt Kasa'nın tertemiz açıklamasını çektik.
+            SELECT CAST(k.id AS TEXT) as id, 'Hızlı Satış' as musteri_adi, 'Stok' as islem_tipi, COALESCE(k.aciklama, 'Stok Satışı') as cihaz, k.tutar as tutar, k.islem_tarihi as tarih
+            FROM kasa_islemleri k 
+            WHERE k.kategori = 'Stok Satışı' AND DATE(k.islem_tarihi) >= CURRENT_DATE - $1::int AND DATE(k.islem_tarihi) >= '2020-08-01'
+            ORDER BY tarih DESC
+        `;
+        const result = await db.query(query, [gunFarki]);
+        res.json({ success: true, data: result.rows });
+    } catch (err) { res.status(500).json({ success: false, error: err.message }); }
+});
+
+
+
+
+
+
+
+
 // --- LİSTELEME MOTORU ---
 router.get('/bekleyenler', async (req, res) => {
     const gun = req.query.gun || 1; 
@@ -189,6 +266,11 @@ router.get('/bekleyenler', async (req, res) => {
         res.json({ success: true, data: result.rows });
     } catch (err) { res.status(500).json({ success: false, error: err.message }); }
 });
+
+
+
+*/
+
 
 
 

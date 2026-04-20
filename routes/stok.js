@@ -212,6 +212,42 @@ router.put('/update/:id', async (req, res) => {
 
 
 
+// --- 5. AKILLI RADAR (DÜZELTİLDİ: BANKO VE USTA AYRILDI + TAM EŞLEŞME EKLENDİ) ---
+router.get('/search', async (req, res) => {
+    const { malzeme_adi, barkod, tam_eslesme } = req.query; // 🚨 tam_eslesme eklendi
+    try {
+        if (barkod) {
+            // Barkod okutulduğunda tek ürün döner
+            const result = await db.query("SELECT * FROM envanter WHERE barkod = $1 LIMIT 1", [barkod]);
+            return res.json({ success: true, data: result.rows[0], found: result.rows.length > 0 });
+        } 
+        else if (tam_eslesme) {
+            // 🚨 YENİ EKLENEN: Usta listesinden tıklandığında BİREBİR AYNI ismi bulur ve TEK obje döner!
+            const result = await db.query("SELECT * FROM envanter WHERE malzeme_adi = $1 LIMIT 1", [tam_eslesme]);
+            return res.json({ success: true, data: result.rows[0], found: result.rows.length > 0 });
+        }
+        else if (malzeme_adi) {
+            // Arama kutusuna yazıldığında liste döner (Eski usül)
+            const result = await db.query("SELECT * FROM envanter WHERE malzeme_adi ILIKE $1 LIMIT 10", [`%${malzeme_adi}%`]);
+            return res.json({ success: true, data: result.rows, found: result.rows.length > 0 });
+        } 
+        else {
+            return res.json({ success: true, data: null });
+        }
+    } catch (err) {
+        res.status(500).json({ success: false, error: err.message });
+    }
+});
+
+
+
+
+
+
+
+
+
+/*
 // --- 5. AKILLI RADAR (DÜZELTİLDİ: BANKO VE USTA AYRILDI) ---
 router.get('/search', async (req, res) => {
     const { malzeme_adi, barkod } = req.query;
@@ -233,6 +269,11 @@ router.get('/search', async (req, res) => {
         res.status(500).json({ success: false, error: err.message });
     }
 });
+*/
+
+
+
+
 
 
 
@@ -261,6 +302,118 @@ router.get('/history/:id', async (req, res) => {
 
 
 
+
+
+
+
+// --- 🚨 YENİ İZOLE STOK ALIMI (MOBİL VE WEB TAM UYUMLU ZIRHLI MOTOR) ---
+router.post('/add-alim', async (req, res) => {
+    // 🚨 MÜDÜR: Mobilin gönderdiği 'request_id' ve Web'in gönderdiği 'islem_turu', 'servis_no', 'aciklama' aynı anda çekiliyor. İkisi de yolda kalmaz!
+    const { barkod, malzeme_adi, uyumlu_cihaz, marka, miktar, alis_fiyati, request_id, fiyat_guncelle, islem_turu, servis_no, aciklama } = req.body;
+    const updatePriceFlag = fiyat_guncelle !== false; 
+
+    try {
+        await db.query('BEGIN'); 
+        
+        // 1. ZIRHLI ENVANTER KAYDI (Ortak)
+        const insertQuery = `
+            INSERT INTO envanter (barkod, malzeme_adi, uyumlu_cihaz, marka, miktar, alis_fiyati)
+            VALUES ($1, $2, $3, $4, $5, $6)
+            ON CONFLICT (barkod) 
+            DO UPDATE SET 
+                miktar = envanter.miktar + EXCLUDED.miktar,
+                alis_fiyati = CASE WHEN $7 = TRUE AND EXCLUDED.alis_fiyati > 0 THEN EXCLUDED.alis_fiyati ELSE envanter.alis_fiyati END,
+                malzeme_adi = CASE WHEN EXCLUDED.malzeme_adi <> '' AND EXCLUDED.malzeme_adi IS NOT NULL THEN EXCLUDED.malzeme_adi ELSE envanter.malzeme_adi END,
+                marka = CASE WHEN EXCLUDED.marka <> '' AND EXCLUDED.marka IS NOT NULL THEN EXCLUDED.marka ELSE envanter.marka END,
+                uyumlu_cihaz = CASE WHEN EXCLUDED.uyumlu_cihaz <> '' AND EXCLUDED.uyumlu_cihaz IS NOT NULL THEN EXCLUDED.uyumlu_cihaz ELSE envanter.uyumlu_cihaz END,
+                son_guncelleme = CURRENT_TIMESTAMP
+            RETURNING *;
+        `;
+        
+        const result = await db.query(insertQuery, [barkod, malzeme_adi, uyumlu_cihaz, marka, miktar, alis_fiyati, updatePriceFlag]);
+        const guncelMalzeme = result.rows[0];
+
+        // 2. KASA ÇIKIŞI 
+        const ekrandanGelenFiyat = parseFloat(alis_fiyati || 0);
+        const kayitliFiyat = parseFloat(guncelMalzeme.alis_fiyati || 0);
+        const birimFiyat = ekrandanGelenFiyat > 0 ? ekrandanGelenFiyat : kayitliFiyat;
+
+        const adet = parseInt(miktar || 1);
+        const toplamMaliyet = birimFiyat * adet;
+
+        if (toplamMaliyet > 0) {
+            const malzemeIsmi = malzeme_adi || guncelMalzeme.malzeme_adi || 'Bilinmeyen Malzeme';
+            
+            // Mobil request_id yolluyor, Web islem_turu yolluyor. İkisine de uyumlu kalkan:
+            let kasaKategori = islem_turu || (request_id ? 'Usta Siparişi Alımı' : 'Genel Stok Alımı');
+
+            // Web açıklama yolluyorsa onu kullan, mobil yollamıyorsa kendin üret (Mobil bozulmaz)
+            const kasaAciklama = aciklama || `Barkod: ${barkod} | ${kasaKategori}: ${malzemeIsmi} | Adet: ${adet} | Birim: ${birimFiyat} ₺`;
+            
+            // Web Servis No yolluyor, Mobil yollamıyorsa barkod kullan
+            const gercekServisNo = servis_no || barkod;
+            
+            await db.query(
+                `INSERT INTO kasa_islemleri (islem_yonu, kategori, tutar, aciklama, islem_yapan, servis_no) 
+                 VALUES ('ÇIKIŞ', 'Mal Alımı', $1, $2, 'Banko Stok Girişi', $3)`,
+                [toplamMaliyet, kasaAciklama, gercekServisNo]
+            );
+        }
+
+        // 3. USTA TALEBİ KONTROLÜ (🚨 CİNAYETİN ÇÖZÜLDÜĞÜ YER)
+        
+        // DURUM A (MOBİL GELDİYSE): Mobil 'request_id' gönderiyor. Eski sistem tıkır tıkır çalışır.
+        if (request_id) {
+            // Eskiden 'Onay Bekliyor' yapıyordu, ustada yeşil yanması için 'Geldi' olarak düzeltildi!
+            await db.query("UPDATE material_requests SET stok_girisi_yapildi_mi = TRUE, status = 'Geldi' WHERE id = $1", [request_id]);
+            await db.query(`INSERT INTO service_notes (service_id, note_text) SELECT service_id, 'LOG: Parça için stok girişi yapıldı, durum Geldi olarak güncellendi.' FROM material_requests WHERE id = $1`, [request_id]);
+        } 
+        // DURUM B (WEB GELDİYSE): Web 'request_id' göndermiyor, ama 'islem_turu' ve 'servis_no' gönderiyor. Biz eşleştiriyoruz!
+        else if (islem_turu === 'Usta Siparişi Geldi' && servis_no) {
+            const ustaTalepQuery = `
+                UPDATE material_requests mr
+                SET stok_girisi_yapildi_mi = TRUE, status = 'Onay Bekliyor'
+                FROM services s
+                WHERE mr.service_id = s.id 
+                  AND s.servis_no = $1 
+                  AND mr.part_name ILIKE $2
+                RETURNING mr.id, mr.service_id;
+            `;
+            // Malzeme adını içeren (% %) kaydı bulur, büyük/küçük harfe takılmadan eşler.
+            const talepResult = await db.query(ustaTalepQuery, [servis_no, `%${malzeme_adi}%`]);
+            
+            if (talepResult.rows.length > 0) {
+                const foundServiceId = talepResult.rows[0].service_id;
+                await db.query(`INSERT INTO service_notes (service_id, note_text) VALUES ($1, $2)`, [foundServiceId, `LOG: ${malzeme_adi} için bankodan stok girişi yapıldı, durum Geldi olarak güncellendi.`]);
+            }
+        }
+
+        await db.query('COMMIT'); 
+        res.json({ success: true, message: 'Stok eklendi ve kasadan düşüldü.', data: guncelMalzeme });
+        
+    } catch (err) {
+        await db.query('ROLLBACK'); 
+        console.error("Yeni İzole Stok Giriş Hatası:", err.message);
+        res.status(500).json({ success: false, error: err.message });
+    }
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*
 // --- 🚨 YENİ İZOLE STOK ALIMI (BARKOD MÜHÜRLÜ - ESKİ SİSTEMİ BOZMAZ) ---
 router.post('/add-alim', async (req, res) => {
     const { barkod, malzeme_adi, uyumlu_cihaz, marka, miktar, alis_fiyati, request_id, fiyat_guncelle } = req.body;
@@ -325,8 +478,7 @@ router.post('/add-alim', async (req, res) => {
     }
 });
 
-
-
+*/
 
 
 
