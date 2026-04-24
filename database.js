@@ -1,15 +1,19 @@
-const { Pool } = require("pg");
+
+const { Pool } = require('pg');
 
 const pool = new Pool({
-  user: "postgres",
-  host: "localhost",
-  database: "teknik_servis",
-  password: "123456",
-  port: 5432,
+  connectionString: process.env.DATABASE_URL,
+  ssl: {
+    rejectUnauthorized: false
+  }
 });
 
 pool.connect()
-  .then(() => console.log("PostgreSQL veritabanına bağlandı"))
+  .then(() => console.log("PostgreSQL veritabanına bağlandı (RENDER BULUT AKTİF!)"))
   .catch(err => console.error("Bağlantı hatası:", err));
 
 module.exports = pool;
+
+
+
+

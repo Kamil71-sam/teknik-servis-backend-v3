@@ -1,15 +1,9 @@
+
 const express = require('express');
 const router = express.Router();
-const { Pool } = require('pg');
+const pool = require('../database'); // 🔥 İŞTE BU KADAR! DİREKT ANA ŞALTERE BAĞLADIK!
 
-// MÜDÜR: Buradaki bilgiler senin pgAdmin ayarlarınla birebir aynı olmalı
-const pool = new Pool({
-  user: 'postgres',
-  host: 'localhost',
-  database: 'teknik_servis', 
-  password: '123456', // Burayı mutlaka kendi şifrenle değiştir
-  port: 5432,
-});
+
 
 // --- YENİ FİRMA KAYIT (POST) ---
 router.post('/add', async (req, res) => {
